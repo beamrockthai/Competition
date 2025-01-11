@@ -223,7 +223,20 @@ export const Evaluation = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>สร้างใบประเมิน</h2>
+      <Row
+        justify="space-between"
+        align="middle"
+        style={{ marginBottom: "20px" }}
+      >
+        <Col>
+          <h2>สร้างใบประเมิน</h2>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={handleAddData}>
+            เพิ่มใบประเมิน
+          </Button>
+        </Col>
+      </Row>
       <Form layout="vertical">
         <Row gutter={16}>
           <Col xs={24} sm={12} md={8}>
@@ -321,11 +334,7 @@ export const Evaluation = () => {
             sm={12}
             md={8}
             style={{ display: "flex", alignItems: "flex-end" }}
-          >
-            <Button type="primary" onClick={handleAddData} block>
-              เพิ่มใบประเมิน
-            </Button>
-          </Col>
+          ></Col>
         </Row>
       </Form>
       <hr />

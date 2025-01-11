@@ -133,6 +133,15 @@ export const Tournaments = () => {
         <Col>
           <h2>เพิ่มข้อมูลทัวร์นาเมนต์</h2>
         </Col>
+        <Col>
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => form.submit()}
+          >
+            {"Add Tournament"}
+          </Button>
+        </Col>
       </Row>
 
       <Form
@@ -193,9 +202,6 @@ export const Tournaments = () => {
             </Form.Item>
           </Col>
         </Row>
-        <Button type="primary" htmlType="submit">
-          {editingRecord ? "Update Tournament" : "Add Tournament"}
-        </Button>
       </Form>
 
       <Table
@@ -208,7 +214,7 @@ export const Tournaments = () => {
 
       <Modal
         title="Edit Tournament"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >

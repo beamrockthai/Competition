@@ -8,10 +8,12 @@ import {
   TrophyOutlined,
   FileOutlined,
   MenuOutlined,
+  SettingOutlined,
+  UserAddOutlined,
 } from "@ant-design/icons";
 import { Tournaments } from "./components/Tournaments/Tournaments";
 import { Evaluation } from "./components/Evaluation/evaluation";
-import { Dashboard } from "./components/Dashboard/Dashboard";
+// import { Dashboard } from "./components/Dashboard/Dashboard";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -31,20 +33,27 @@ const App = () => {
 
   const menuItems = [
     { key: "1", icon: <UserOutlined />, label: <Link to="/">Dashboard</Link> },
+
     {
       key: "2",
-      icon: <VideoCameraOutlined />,
-      label: <Link to="/videos">Videos</Link>,
-    },
-    {
-      key: "3",
       icon: <TrophyOutlined />,
       label: <Link to="/tournaments">Tournaments</Link>,
     },
     {
-      key: "4",
+      key: "3",
       icon: <FileOutlined />,
       label: <Link to="/evaluation">Evaluation</Link>,
+    },
+
+    {
+      key: "4",
+      icon: <SettingOutlined />,
+      label: <Link to="/setting">Setting</Link>,
+    },
+    {
+      key: "5",
+      icon: <UserAddOutlined />,
+      label: <Link to="/manage directors">Manage Directors</Link>,
     },
   ];
 
@@ -103,7 +112,16 @@ const App = () => {
                 style={{ fontSize: "18px", marginLeft: "16px" }}
               />
             )}
-            <h2 style={{ marginLeft: "16px", color: "#1890ff" }}>MY COMP</h2>
+            <h2
+              style={{
+                color: "#1890ff",
+                textAlign: "center",
+                width: "100%",
+                margin: 0,
+              }}
+            >
+              MY COMP
+            </h2>
           </Header>
 
           <Content
@@ -124,9 +142,13 @@ const App = () => {
             >
               <Routes>
                 <Route path="/" element={<h1>Welcome to Dashboard</h1>} />
-                <Route path="/videos" element={<h1>Videos Page</h1>} />
                 <Route path="/evaluation" element={<Evaluation />} />
                 <Route path="/tournaments" element={<Tournaments />} />
+                <Route path="/setting" element={<h1>Setting</h1>} />
+                <Route
+                  path="/manage directors"
+                  element={<h1>Manage Directors</h1>}
+                />
               </Routes>
             </div>
           </Content>
