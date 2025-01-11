@@ -88,8 +88,8 @@ export const Tournaments = () => {
     formEdit.setFieldsValue({
       tournamentName: record.tournamentName,
       description: record.description,
-      startDate: record.startDate ? moment(record.startDate) : null,
-      endDate: record.endDate ? moment(record.endDate) : null,
+      startDate: record.startDate ? moment(record.startDate.toDate()) : null,
+      endDate: record.endDate ? moment(record.endDate.toDate()) : null,
       maxRounds: record.maxRounds,
     });
     setIsModalVisible(true);
@@ -101,8 +101,8 @@ export const Tournaments = () => {
       const values = await formEdit.validateFields();
       const updatedValues = {
         ...values,
-        startDate: values.startDate.format("YYYY-MM-DD"),
-        endDate: values.endDate.format("YYYY-MM-DD"),
+        startDate: values.startDate, // ส่ง moment object
+        endDate: values.endDate, // ส่ง moment object
       };
       if (await updateTournament(editingRecord.id, updatedValues)) {
         message.success("Tournament updated successfully");
@@ -136,14 +136,16 @@ export const Tournaments = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
+      render: (date) =>
+        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
       responsive: ["md", "lg", "xl"],
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
+      render: (date) =>
+        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
       responsive: ["md", "lg", "xl"],
     },
     {
