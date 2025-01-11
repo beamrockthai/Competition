@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button, Modal, Form, message, DatePicker } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Modal,
+  Form,
+  DatePicker,
+  Row,
+  Col,
+  message,
+} from "antd";
 import moment from "moment";
 import {
   fetchTournaments,
@@ -51,6 +61,7 @@ export const Tournaments = () => {
   // เพิ่มข้อมูล
   const handleAddData = async () => {
     if (await addTournament(form)) {
+      message.success("Tournament added successfully");
       loadData();
       setForm({
         tournamentName: "",
@@ -59,12 +70,15 @@ export const Tournaments = () => {
         endDate: null,
         maxRounds: "",
       });
+    } else {
+      message.error("Failed to add tournament");
     }
   };
 
   // ลบข้อมูล
   const handleDelete = async (id) => {
     await deleteTournament(id);
+    message.success("Tournament deleted successfully");
     loadData();
   };
 
@@ -74,8 +88,8 @@ export const Tournaments = () => {
     formEdit.setFieldsValue({
       tournamentName: record.tournamentName,
       description: record.description,
-      startDate: record.startDate ? moment(record.startDate.toDate()) : null,
-      endDate: record.endDate ? moment(record.endDate.toDate()) : null,
+      startDate: record.startDate ? moment(record.startDate) : null,
+      endDate: record.endDate ? moment(record.endDate) : null,
       maxRounds: record.maxRounds,
     });
     setIsModalVisible(true);
@@ -83,11 +97,23 @@ export const Tournaments = () => {
 
   // อัปเดตข้อมูล
   const handleUpdate = async () => {
-    const values = await formEdit.validateFields();
-    if (await updateTournament(editingRecord.id, values)) {
-      setIsModalVisible(false);
-      setEditingRecord(null);
-      loadData();
+    try {
+      const values = await formEdit.validateFields();
+      const updatedValues = {
+        ...values,
+        startDate: values.startDate.format("YYYY-MM-DD"),
+        endDate: values.endDate.format("YYYY-MM-DD"),
+      };
+      if (await updateTournament(editingRecord.id, updatedValues)) {
+        message.success("Tournament updated successfully");
+        setIsModalVisible(false);
+        setEditingRecord(null);
+        loadData();
+      } else {
+        message.error("Failed to update tournament");
+      }
+    } catch (error) {
+      message.error("Please complete the form correctly");
     }
   };
 
@@ -103,38 +129,45 @@ export const Tournaments = () => {
       title: "Tournament Name",
       dataIndex: "tournamentName",
       key: "tournamentName",
+      responsive: ["xs", "sm", "md", "lg", "xl"],
     },
     { title: "Description", dataIndex: "description", key: "description" },
     {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      render: (timestamp) =>
-        timestamp
-          ? new Date(timestamp.seconds * 1000).toLocaleDateString()
-          : "",
+      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
+      responsive: ["md", "lg", "xl"],
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      render: (timestamp) =>
-        timestamp
-          ? new Date(timestamp.seconds * 1000).toLocaleDateString()
-          : "",
+      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
+      responsive: ["md", "lg", "xl"],
     },
-    { title: "Max Rounds", dataIndex: "maxRounds", key: "maxRounds" },
+    {
+      title: "Max Rounds",
+      dataIndex: "maxRounds",
+      key: "maxRounds",
+      responsive: ["sm", "md", "lg", "xl"],
+    },
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
         <>
-          <Button onClick={() => handleEdit(record)} type="primary">
+          <Button
+            onClick={() => handleEdit(record)}
+            type="primary"
+            size="small"
+          >
             Edit
           </Button>
           <Button
             onClick={() => handleDelete(record.id)}
             danger
+            size="small"
             style={{ marginLeft: 8 }}
           >
             Delete
@@ -147,53 +180,89 @@ export const Tournaments = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2>เพิ่มข้อมูลทัวร์นาเมนต์</h2>
-      <Input
-        onChange={handleChange}
-        value={form.tournamentName}
-        type="text"
-        name="tournamentName"
-        placeholder="Tournament Name"
-        style={{ marginBottom: "10px" }}
-      />
-      <Input
-        onChange={handleChange}
-        value={form.description}
-        type="text"
-        name="description"
-        placeholder="Description"
-        style={{ marginBottom: "10px" }}
-      />
-      <DatePicker
-        onChange={(date, dateString) =>
-          handleDateChange(date, dateString, "startDate")
-        }
-        value={form.startDate ? moment(form.startDate, "YYYY-MM-DD") : null}
-        format="YYYY-MM-DD"
-        style={{ width: "100%", marginBottom: "10px" }}
-        placeholder="Start Date"
-      />
-      <DatePicker
-        onChange={(date, dateString) =>
-          handleDateChange(date, dateString, "endDate")
-        }
-        value={form.endDate ? moment(form.endDate, "YYYY-MM-DD") : null}
-        format="YYYY-MM-DD"
-        style={{ width: "100%", marginBottom: "10px" }}
-        placeholder="End Date"
-      />
-      <Input
-        onChange={handleChange}
-        value={form.maxRounds}
-        type="number"
-        name="maxRounds"
-        placeholder="Max Rounds"
-        style={{ marginBottom: "10px" }}
-      />
-      <Button onClick={handleAddData} type="primary">
-        Add Data
-      </Button>
+      <Form layout="vertical">
+        <Row gutter={16}>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Tournament Name" required>
+              <Input
+                name="tournamentName"
+                placeholder="Tournament Name"
+                value={form.tournamentName}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Description" required>
+              <Input
+                name="description"
+                placeholder="Description"
+                value={form.description}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Start Date" required>
+              <DatePicker
+                style={{ width: "100%" }}
+                format="YYYY-MM-DD"
+                value={
+                  form.startDate ? moment(form.startDate, "YYYY-MM-DD") : null
+                }
+                onChange={(date, dateString) =>
+                  handleDateChange(date, dateString, "startDate")
+                }
+                placeholder="Start Date"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="End Date" required>
+              <DatePicker
+                style={{ width: "100%" }}
+                format="YYYY-MM-DD"
+                value={form.endDate ? moment(form.endDate, "YYYY-MM-DD") : null}
+                onChange={(date, dateString) =>
+                  handleDateChange(date, dateString, "endDate")
+                }
+                placeholder="End Date"
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Max Rounds" required>
+              <Input
+                type="number"
+                name="maxRounds"
+                placeholder="Max Rounds"
+                value={form.maxRounds}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col
+            xs={24}
+            sm={12}
+            md={8}
+            style={{ display: "flex", alignItems: "flex-end" }}
+          >
+            <Button type="primary" onClick={handleAddData} block>
+              เพิ่มการแข่งขัน
+            </Button>
+          </Col>
+        </Row>
+      </Form>
       <hr />
-      <Table dataSource={data} columns={columns} rowKey="id" />
+      <Table
+        dataSource={data}
+        columns={columns}
+        rowKey="id"
+        pagination={{ responsive: true }}
+        scroll={{ x: "max-content" }}
+      />
 
       {/* Edit Modal */}
       <Modal
