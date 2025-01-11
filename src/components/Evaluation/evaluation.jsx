@@ -1,3 +1,4 @@
+// components/Evaluation/Evaluation.js
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -9,22 +10,26 @@ import {
   Row,
   Col,
   message,
+  Menu,
 } from "antd";
 import moment from "moment";
 import {
-  fetchTournaments,
-  addTournament,
-  deleteTournament,
-  updateTournament,
-} from "./service/tournamentService";
+  fetchEvaluation,
+  addEvaluation,
+  deleteEvaluation,
+  updateEvaluation,
+} from "./service/evaluationService";
 
-export const Tournaments = () => {
+export const Evaluation = () => {
   const [form, setForm] = useState({
-    tournamentName: "",
-    description: "",
+    playerName: "",
+    playerID: "",
+    round: "",
+    score: "",
+    comments: "",
     startDate: null,
     endDate: null,
-    maxRounds: "",
+    judgeNameId: "",
   });
   const [data, setData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -37,8 +42,8 @@ export const Tournaments = () => {
 
   // โหลดข้อมูล
   const loadData = async () => {
-    const tournaments = await fetchTournaments();
-    setData(tournaments);
+    const evaluation = await fetchEvaluation();
+    setData(evaluation);
   };
 
   // จัดการการเปลี่ยนค่าในฟอร์ม
@@ -60,26 +65,28 @@ export const Tournaments = () => {
 
   // เพิ่มข้อมูล
   const handleAddData = async () => {
-    if (await addTournament(form)) {
-      message.success("Tournament added successfully");
+    if (await addEvaluation(form)) {
+      message.success("Evaluation added successfully");
       loadData();
       setForm({
-        tournamentName: "",
-        description: "",
+        playerName: "",
+        playerID: "",
+        round: "",
+        score: "",
+        comments: "",
         startDate: null,
         endDate: null,
-        maxRounds: "",
+        judgeNameId: "",
       });
-      navigate("/");
     } else {
-      message.error("Failed to add tournament");
+      message.error("Failed to add Evaluation");
     }
   };
 
   // ลบข้อมูล
   const handleDelete = async (id) => {
-    await deleteTournament(id);
-    message.success("Tournament deleted successfully");
+    await deleteEvaluation(id);
+    message.success("Evaluation deleted successfully");
     loadData();
   };
 
@@ -87,11 +94,14 @@ export const Tournaments = () => {
   const handleEdit = (record) => {
     setEditingRecord(record);
     formEdit.setFieldsValue({
-      tournamentName: record.tournamentName,
-      description: record.description,
+      playerName: record.playerName,
+      playerID: record.playerID,
+      round: record.round,
+      score: record.score,
+      comments: record.comments,
       startDate: record.startDate ? moment(record.startDate.toDate()) : null,
       endDate: record.endDate ? moment(record.endDate.toDate()) : null,
-      maxRounds: record.maxRounds,
+      judgeNameId: record.judgeNameId,
     });
     setIsModalVisible(true);
   };
@@ -105,13 +115,13 @@ export const Tournaments = () => {
         startDate: values.startDate, // ส่ง moment object
         endDate: values.endDate, // ส่ง moment object
       };
-      if (await updateTournament(editingRecord.id, updatedValues)) {
-        message.success("Tournament updated successfully");
+      if (await updateEvaluation(editingRecord.id, updatedValues)) {
+        message.success("Evaluation updated successfully");
         setIsModalVisible(false);
         setEditingRecord(null);
         loadData();
       } else {
-        message.error("Failed to update tournament");
+        message.error("Failed to update Evaluation");
       }
     } catch (error) {
       message.error("Please complete the form correctly");
@@ -127,12 +137,35 @@ export const Tournaments = () => {
   // คอลัมน์ของตาราง
   const columns = [
     {
-      title: "Tournament Name",
-      dataIndex: "tournamentName",
-      key: "tournamentName",
+      title: "Player Name",
+      dataIndex: "playerName",
+      key: "playerName",
       responsive: ["xs", "sm", "md", "lg", "xl"],
     },
-    { title: "Description", dataIndex: "description", key: "description" },
+    {
+      title: "Player ID",
+      dataIndex: "playerID",
+      key: "playerID",
+      responsive: ["xs", "sm", "md", "lg", "xl"],
+    },
+    {
+      title: "Round",
+      dataIndex: "round",
+      key: "round",
+      responsive: ["sm", "md", "lg", "xl"],
+    },
+    {
+      title: "Score",
+      dataIndex: "score",
+      key: "score",
+      responsive: ["sm", "md", "lg", "xl"],
+    },
+    {
+      title: "Comments",
+      dataIndex: "comments",
+      key: "comments",
+      responsive: ["xs", "sm", "md", "lg", "xl"],
+    },
     {
       title: "Start Date",
       dataIndex: "startDate",
@@ -150,10 +183,10 @@ export const Tournaments = () => {
       responsive: ["md", "lg", "xl"],
     },
     {
-      title: "Max Rounds",
-      dataIndex: "maxRounds",
-      key: "maxRounds",
-      responsive: ["sm", "md", "lg", "xl"],
+      title: "Judge Name ID",
+      dataIndex: "judgeNameId",
+      key: "judgeNameId",
+      responsive: ["xs", "sm", "md", "lg", "xl"],
     },
     {
       title: "Actions",
@@ -164,6 +197,14 @@ export const Tournaments = () => {
             onClick={() => handleEdit(record)}
             type="primary"
             size="small"
+          >
+            Add
+          </Button>
+          <Button
+            onClick={() => handleEdit(record)}
+            type="primary"
+            size="small"
+            style={{ marginLeft: 8 }}
           >
             Edit
           </Button>
@@ -182,25 +223,55 @@ export const Tournaments = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>เพิ่มข้อมูลทัวร์นาเมนต์</h2>
+      <h2>สร้างใบประเมิน</h2>
       <Form layout="vertical">
         <Row gutter={16}>
           <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Tournament Name" required>
+            <Form.Item label="Player Name" required>
               <Input
-                name="tournamentName"
-                placeholder="Tournament Name"
-                value={form.tournamentName}
+                name="playerName"
+                placeholder="Player Name"
+                value={form.playerName}
                 onChange={handleChange}
               />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Description" required>
+            <Form.Item label="Player ID" required>
               <Input
-                name="description"
-                placeholder="Description"
-                value={form.description}
+                name="playerID"
+                placeholder="Player ID"
+                value={form.playerID}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Round" required>
+              <Input
+                name="round"
+                placeholder="Round"
+                value={form.round}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Score" required>
+              <Input
+                name="score"
+                placeholder="Score"
+                value={form.score}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="Comments" required>
+              <Input
+                name="comments"
+                placeholder="Comments"
+                value={form.comments}
                 onChange={handleChange}
               />
             </Form.Item>
@@ -236,12 +307,11 @@ export const Tournaments = () => {
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Max Rounds" required>
+            <Form.Item label="Judge Name ID" required>
               <Input
-                type="number"
-                name="maxRounds"
-                placeholder="Max Rounds"
-                value={form.maxRounds}
+                name="judgeNameId"
+                placeholder="Judge Name ID"
+                value={form.judgeNameId}
                 onChange={handleChange}
               />
             </Form.Item>
@@ -253,7 +323,7 @@ export const Tournaments = () => {
             style={{ display: "flex", alignItems: "flex-end" }}
           >
             <Button type="primary" onClick={handleAddData} block>
-              เพิ่มการแข่งขัน
+              เพิ่มใบประเมิน
             </Button>
           </Col>
         </Row>
@@ -269,7 +339,7 @@ export const Tournaments = () => {
 
       {/* Edit Modal */}
       <Modal
-        title="แก้ไขข้อมูลทัวร์นาเมนต์"
+        title="แก้ไขข้อมูลการสร้างใบประเมิน"
         open={isModalVisible}
         onOk={handleUpdate}
         onCancel={handleCancel}
@@ -278,19 +348,45 @@ export const Tournaments = () => {
       >
         <Form form={formEdit} layout="vertical">
           <Form.Item
-            name="tournamentName"
-            label="Tournament Name"
-            rules={[{ required: true, message: "กรุณากรอกชื่อทัวร์นาเมนต์" }]}
+            name="playerName"
+            label="Player Name"
+            rules={[{ required: true, message: "กรุณากรอกรายชื่อผู้เล่น" }]}
           >
             <Input />
           </Form.Item>
+
           <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "กรุณากรอกรายละเอียด" }]}
+            name="playerID"
+            label="Player ID"
+            rules={[{ required: true, message: "กรุณากรอก ID ผู้เล่น" }]}
           >
             <Input />
           </Form.Item>
+
+          <Form.Item
+            name="round"
+            label="Round"
+            rules={[{ required: true, message: "กรุณากรอกรอกรอบ" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="score"
+            label="Score"
+            rules={[{ required: true, message: "กรุณากรอกคะแนน" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="comments"
+            label="Comments"
+            rules={[{ required: true, message: "กรุณาคอมเมนต์" }]}
+          >
+            <Input />
+          </Form.Item>
+
           <Form.Item
             name="startDate"
             label="Start Date"
@@ -298,6 +394,7 @@ export const Tournaments = () => {
           >
             <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
           </Form.Item>
+
           <Form.Item
             name="endDate"
             label="End Date"
@@ -305,12 +402,13 @@ export const Tournaments = () => {
           >
             <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
           </Form.Item>
+
           <Form.Item
-            name="maxRounds"
-            label="Max Rounds"
-            rules={[{ required: true, message: "กรุณากรอกจำนวนรอบสูงสุด" }]}
+            name="judgeNameId"
+            label="Judge Name ID"
+            rules={[{ required: true, message: "กรุณาใส่ ID กรรมการ" }]}
           >
-            <Input type="number" />
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
