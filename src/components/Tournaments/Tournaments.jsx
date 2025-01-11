@@ -28,7 +28,6 @@ export const Tournaments = () => {
   // โหลดข้อมูล
   const loadData = async () => {
     const tournaments = await fetchTournaments();
-
     setData(tournaments);
   };
 
