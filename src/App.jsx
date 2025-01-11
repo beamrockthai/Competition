@@ -31,19 +31,16 @@ const App = () => {
 
   const menuItems = [
     { key: "1", icon: <UserOutlined />, label: <Link to="/">Dashboard</Link> },
-
     {
       key: "2",
       icon: <VideoCameraOutlined />,
       label: <Link to="/videos">Videos</Link>,
     },
-
     {
       key: "3",
       icon: <TrophyOutlined />,
       label: <Link to="/tournaments">Tournaments</Link>,
     },
-
     {
       key: "4",
       icon: <FileOutlined />,
@@ -62,7 +59,7 @@ const App = () => {
             onClose={() => setCollapsed(false)}
             open={collapsed}
           >
-            <Menu mode="vertical" items={menuItems} />
+            <Menu theme="light" mode="vertical" items={menuItems} />
           </Drawer>
         ) : (
           <Sider
@@ -70,13 +67,27 @@ const App = () => {
             collapsible
             collapsed={collapsed}
             onCollapse={setCollapsed}
+            style={{
+              position: "fixed", // ทำให้ Sider คงที่
+              top: 0, // ให้ Sider เริ่มต้นที่ด้านบน
+              left: 0, // ให้ Sider เริ่มต้นที่ด้านซ้าย
+              bottom: 0, // ให้ Sider ยืดเต็มความสูง
+              backgroundColor: "#fff", // สีพื้นหลังของ Sider
+              zIndex: 100, // ให้ Sider อยู่ด้านหน้า Content
+              transition: "all 0.3s", // เพิ่มการเปลี่ยนแปลงให้ลื่นไหล
+            }}
           >
             <div className="demo-logo-vertical" />
-            <Menu theme="dark" mode="inline" items={menuItems} />
+            <Menu
+              theme="light"
+              mode="inline"
+              items={menuItems}
+              style={{ color: "#000" }}
+            />
           </Sider>
         )}
 
-        <Layout>
+        <Layout style={{ marginLeft: mobileView ? 0 : collapsed ? 80 : 200 }}>
           <Header
             style={{
               display: "flex",
@@ -112,7 +123,7 @@ const App = () => {
               }}
             >
               <Routes>
-                <Route path="/" element={<null />} />
+                <Route path="/" element={<h1>Welcome to Dashboard</h1>} />
                 <Route path="/videos" element={<h1>Videos Page</h1>} />
                 <Route path="/evaluation" element={<Evaluation />} />
                 <Route path="/tournaments" element={<Tournaments />} />
@@ -120,9 +131,9 @@ const App = () => {
             </div>
           </Content>
 
-          <Footer style={{ textAlign: "center" }}>
+          {/* <Footer style={{ textAlign: "center" }}>
             Ant Design ©{new Date().getFullYear()} Created by Ant UED
-          </Footer>
+          </Footer> */}
         </Layout>
       </Layout>
     </Router>

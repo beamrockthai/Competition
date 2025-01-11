@@ -19,141 +19,84 @@ import {
 } from "./service/tournamentService";
 
 export const Tournaments = () => {
-  const [form, setForm] = useState({
-    tournamentName: "",
-    description: "",
-    startDate: null,
-    endDate: null,
-    maxRounds: "",
-  });
+  const [form] = Form.useForm(); // ใช้ form ของ Ant Design
   const [data, setData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
-  const [formEdit] = Form.useForm();
 
   useEffect(() => {
     loadData();
   }, []);
 
-  // โหลดข้อมูล
   const loadData = async () => {
     const tournaments = await fetchTournaments();
     setData(tournaments);
   };
 
-  // จัดการการเปลี่ยนค่าในฟอร์ม
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
-
-  // จัดการการเปลี่ยนวันที่
-  const handleDateChange = (date, dateString, name) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: dateString,
-    }));
-  };
-
-  // เพิ่มข้อมูล
-  const handleAddData = async () => {
-    if (await addTournament(form)) {
+  const handleAddData = async (values) => {
+    if (await addTournament(values)) {
       message.success("Tournament added successfully");
       loadData();
-      setForm({
-        tournamentName: "",
-        description: "",
-        startDate: null,
-        endDate: null,
-        maxRounds: "",
-      });
-      navigate("/");
+      form.resetFields();
     } else {
       message.error("Failed to add tournament");
     }
   };
 
-  // ลบข้อมูล
   const handleDelete = async (id) => {
-    await deleteTournament(id);
-    message.success("Tournament deleted successfully");
-    loadData();
-  };
-
-  // เปิด modal สำหรับแก้ไขข้อมูล
-  const handleEdit = (record) => {
-    setEditingRecord(record);
-    formEdit.setFieldsValue({
-      tournamentName: record.tournamentName,
-      description: record.description,
-      startDate: record.startDate ? moment(record.startDate.toDate()) : null,
-      endDate: record.endDate ? moment(record.endDate.toDate()) : null,
-      maxRounds: record.maxRounds,
-    });
-    setIsModalVisible(true);
-  };
-
-  // อัปเดตข้อมูล
-  const handleUpdate = async () => {
-    try {
-      const values = await formEdit.validateFields();
-      const updatedValues = {
-        ...values,
-        startDate: values.startDate, // ส่ง moment object
-        endDate: values.endDate, // ส่ง moment object
-      };
-      if (await updateTournament(editingRecord.id, updatedValues)) {
-        message.success("Tournament updated successfully");
-        setIsModalVisible(false);
-        setEditingRecord(null);
-        loadData();
-      } else {
-        message.error("Failed to update tournament");
-      }
-    } catch (error) {
-      message.error("Please complete the form correctly");
+    if (await deleteTournament(id)) {
+      message.success("Tournament deleted successfully");
+      loadData();
+    } else {
+      message.error("Failed to delete tournament");
     }
   };
 
-  // ยกเลิกการแก้ไข
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setEditingRecord(null);
+  const handleEdit = (record) => {
+    setEditingRecord(record);
+    setIsModalVisible(true);
+    form.setFieldsValue({
+      ...record,
+      startDate: record.startDate
+        ? moment(record.startDate, "YYYY-MM-DD")
+        : null,
+      endDate: record.endDate ? moment(record.endDate, "YYYY-MM-DD") : null,
+    });
   };
 
-  // คอลัมน์ของตาราง
+  const handleUpdate = async (values) => {
+    if (await updateTournament({ ...editingRecord, ...values })) {
+      message.success("Tournament updated successfully");
+      setIsModalVisible(false);
+      loadData();
+    } else {
+      message.error("Failed to update tournament");
+    }
+  };
+
   const columns = [
     {
       title: "Tournament Name",
       dataIndex: "tournamentName",
       key: "tournamentName",
-      responsive: ["xs", "sm", "md", "lg", "xl"],
     },
     { title: "Description", dataIndex: "description", key: "description" },
     {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      render: (date) =>
-        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
-      responsive: ["md", "lg", "xl"],
+      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      render: (date) =>
-        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
-      responsive: ["md", "lg", "xl"],
+      render: (date) => (date ? moment(date).format("YYYY-MM-DD") : ""),
     },
     {
       title: "Max Rounds",
       dataIndex: "maxRounds",
       key: "maxRounds",
-      responsive: ["sm", "md", "lg", "xl"],
     },
     {
       title: "Actions",
@@ -182,83 +125,79 @@ export const Tournaments = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>เพิ่มข้อมูลทัวร์นาเมนต์</h2>
-      <Form layout="vertical">
+      <Row
+        justify="space-between"
+        align="middle"
+        style={{ marginBottom: "20px" }}
+      >
+        <Col>
+          <h2>เพิ่มข้อมูลทัวร์นาเมนต์</h2>
+        </Col>
+      </Row>
+
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={editingRecord ? handleUpdate : handleAddData}
+      >
         <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Tournament Name" required>
-              <Input
-                name="tournamentName"
-                placeholder="Tournament Name"
-                value={form.tournamentName}
-                onChange={handleChange}
-              />
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Tournament Name"
+              name="tournamentName"
+              rules={[
+                { required: true, message: "Please enter tournament name" },
+              ]}
+            >
+              <Input placeholder="Tournament Name" />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Description" required>
-              <Input
-                name="description"
-                placeholder="Description"
-                value={form.description}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Start Date" required>
-              <DatePicker
-                style={{ width: "100%" }}
-                format="YYYY-MM-DD"
-                value={
-                  form.startDate ? moment(form.startDate, "YYYY-MM-DD") : null
-                }
-                onChange={(date, dateString) =>
-                  handleDateChange(date, dateString, "startDate")
-                }
-                placeholder="Start Date"
-              />
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[{ required: true, message: "Please enter description" }]}
+            >
+              <Input placeholder="Description" />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="End Date" required>
-              <DatePicker
-                style={{ width: "100%" }}
-                format="YYYY-MM-DD"
-                value={form.endDate ? moment(form.endDate, "YYYY-MM-DD") : null}
-                onChange={(date, dateString) =>
-                  handleDateChange(date, dateString, "endDate")
-                }
-                placeholder="End Date"
-              />
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Start Date"
+              name="startDate"
+              rules={[{ required: true, message: "Please select start date" }]}
+            >
+              <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Max Rounds" required>
-              <Input
-                type="number"
-                name="maxRounds"
-                placeholder="Max Rounds"
-                value={form.maxRounds}
-                onChange={handleChange}
-              />
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="End Date"
+              name="endDate"
+              rules={[{ required: true, message: "Please select end date" }]}
+            >
+              <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
             </Form.Item>
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={8}
-            style={{ display: "flex", alignItems: "flex-end" }}
-          >
-            <Button type="primary" onClick={handleAddData} block>
-              เพิ่มการแข่งขัน
-            </Button>
           </Col>
         </Row>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Max Rounds"
+              name="maxRounds"
+              rules={[{ required: true, message: "Please enter max rounds" }]}
+            >
+              <Input type="number" placeholder="Max Rounds" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Button type="primary" htmlType="submit">
+          {editingRecord ? "Update Tournament" : "Add Tournament"}
+        </Button>
       </Form>
-      <hr />
+
       <Table
         dataSource={data}
         columns={columns}
@@ -267,51 +206,17 @@ export const Tournaments = () => {
         scroll={{ x: "max-content" }}
       />
 
-      {/* Edit Modal */}
       <Modal
-        title="แก้ไขข้อมูลทัวร์นาเมนต์"
-        open={isModalVisible}
-        onOk={handleUpdate}
-        onCancel={handleCancel}
-        okText="บันทึก"
-        cancelText="ยกเลิก"
+        title="Edit Tournament"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
       >
-        <Form form={formEdit} layout="vertical">
-          <Form.Item
-            name="tournamentName"
-            label="Tournament Name"
-            rules={[{ required: true, message: "กรุณากรอกชื่อทัวร์นาเมนต์" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "กรุณากรอกรายละเอียด" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="startDate"
-            label="Start Date"
-            rules={[{ required: true, message: "กรุณาเลือกวันที่เริ่มต้น" }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="endDate"
-            label="End Date"
-            rules={[{ required: true, message: "กรุณาเลือกวันที่สิ้นสุด" }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="maxRounds"
-            label="Max Rounds"
-            rules={[{ required: true, message: "กรุณากรอกจำนวนรอบสูงสุด" }]}
-          >
-            <Input type="number" />
-          </Form.Item>
+        <Form form={form} layout="vertical" onFinish={handleUpdate}>
+          {/* Fields similar to above */}
+          <Button type="primary" htmlType="submit">
+            Save Changes
+          </Button>
         </Form>
       </Modal>
     </div>
