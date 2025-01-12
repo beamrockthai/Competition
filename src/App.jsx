@@ -1,21 +1,20 @@
+// App.jsx
+
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Layout, Menu, theme, Button, Drawer } from "antd";
 import {
-  UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
   TrophyOutlined,
   FileOutlined,
   MenuOutlined,
   SettingOutlined,
   UserAddOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { Tournaments } from "./components/Tournaments/Tournaments";
-import { Evaluation } from "./components/Evaluation/evaluation";
-// import { Dashboard } from "./components/Dashboard/Dashboard";
+import { Link, useNavigate, Outlet } from "react-router-dom";
+import { useUserAuth } from "./Context/UserAuth"; // ดึงข้อมูลผู้ใช้จาก Context
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const App = () => {
   const {
@@ -25,15 +24,32 @@ const App = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileView, setMobileView] = useState(window.innerWidth < 768);
 
+  const { user, logOut } = useUserAuth();
+  const navigate = useNavigate();
+
+  // ติดตามขนาดหน้าจอเพื่อตัดสินใจแสดง Drawer (มือถือ) หรือ Sider (PC)
   useEffect(() => {
-    const handleResize = () => setMobileView(window.innerWidth < 768);
+    const handleResize = () => {
+      setMobileView(window.innerWidth < 768);
+    };
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const menuItems = [
-    { key: "1", icon: <UserOutlined />, label: <Link to="/">Dashboard</Link> },
+  // ฟังก์ชัน Logout
+  const handleLogout = async () => {
+    await logOut();
+    navigate("/login");
+  };
 
+  // เมนูย่อยต่าง ๆ จะใช้ Link ไป path ตามที่กำหนดใน index.jsx
+  const menuItems = [
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: <Link to="/">Dashboard</Link>,
+    },
     {
       key: "2",
       icon: <TrophyOutlined />,
@@ -44,7 +60,6 @@ const App = () => {
       icon: <FileOutlined />,
       label: <Link to="/evaluation">Evaluation</Link>,
     },
-
     {
       key: "4",
       icon: <SettingOutlined />,
@@ -58,107 +73,109 @@ const App = () => {
   ];
 
   return (
-    <Router>
-      <Layout>
-        {mobileView ? (
-          <Drawer
-            title="Menu"
-            placement="left"
-            closable={true}
-            onClose={() => setCollapsed(false)}
-            open={collapsed}
-          >
-            <Menu theme="light" mode="vertical" items={menuItems} />
-          </Drawer>
-        ) : (
-          <Sider
-            breakpoint="lg"
-            collapsible
-            collapsed={collapsed}
-            onCollapse={setCollapsed}
-            style={{
-              position: "fixed", // ทำให้ Sider คงที่
-              top: 0, // ให้ Sider เริ่มต้นที่ด้านบน
-              left: 0, // ให้ Sider เริ่มต้นที่ด้านซ้าย
-              bottom: 0, // ให้ Sider ยืดเต็มความสูง
-              backgroundColor: "#fff", // สีพื้นหลังของ Sider
-              zIndex: 100, // ให้ Sider อยู่ด้านหน้า Content
-              transition: "all 0.3s", // เพิ่มการเปลี่ยนแปลงให้ลื่นไหล
-            }}
-          >
-            <div className="demo-logo-vertical" />
-            <Menu
-              theme="light"
-              mode="inline"
-              items={menuItems}
-              style={{ color: "#000" }}
+    <Layout>
+      {/* ถ้าหน้าจอเล็ก (mobileView) จะแสดง Drawer */}
+      {mobileView ? (
+        <Drawer
+          title="Menu"
+          placement="left"
+          closable={true}
+          onClose={() => setCollapsed(false)}
+          open={collapsed}
+        >
+          <Menu theme="light" mode="vertical" items={menuItems} />
+        </Drawer>
+      ) : (
+        // ถ้าหน้าจอใหญ่ (PC) ให้ใช้ Sider
+        <Sider
+          breakpoint="lg"
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            backgroundColor: "#fff",
+            zIndex: 100,
+            transition: "all 0.3s",
+          }}
+        >
+          <Menu
+            theme="light"
+            mode="inline"
+            items={menuItems}
+            style={{ color: "#000" }}
+          />
+        </Sider>
+      )}
+
+      {/* ส่วน Layout ด้านขวา */}
+      <Layout style={{ marginLeft: mobileView ? 0 : collapsed ? 80 : 200 }}>
+        <Header
+          style={{
+            display: "flex",
+            alignItems: "center",
+            background: colorBgContainer,
+            transition: "all 0.3s",
+          }}
+        >
+          {/* ปุ่มแฮมเบอร์เกอร์ เมนู (เฉพาะหน้าจอเล็ก) */}
+          {mobileView && (
+            <Button
+              type="text"
+              icon={<MenuOutlined />}
+              onClick={() => setCollapsed(true)}
+              style={{ fontSize: "18px", marginLeft: "16px" }}
             />
-          </Sider>
-        )}
-
-        <Layout style={{ marginLeft: mobileView ? 0 : collapsed ? 80 : 200 }}>
-          <Header
+          )}
+          <h2
             style={{
-              display: "flex",
-              alignItems: "center",
+              color: "#1890ff",
+              textAlign: "center",
+              width: "100%",
+              margin: 0,
+            }}
+          >
+            MY COMP
+          </h2>
+
+          {user && (
+            <Button
+              type="primary"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+              style={{ marginLeft: "auto" }}
+            >
+              Logout
+            </Button>
+          )}
+        </Header>
+
+        <Content
+          style={{
+            margin: "24px 16px 0",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+            transition: "all 0.3s",
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              padding: 24,
               background: colorBgContainer,
+              borderRadius: borderRadiusLG,
             }}
           >
-            {mobileView && (
-              <Button
-                type="text"
-                icon={<MenuOutlined />}
-                onClick={() => setCollapsed(true)}
-                style={{ fontSize: "18px", marginLeft: "16px" }}
-              />
-            )}
-            <h2
-              style={{
-                color: "#1890ff",
-                textAlign: "center",
-                width: "100%",
-                margin: 0,
-              }}
-            >
-              MY COMP
-            </h2>
-          </Header>
-
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <div
-              style={{
-                flex: 1,
-                padding: 24,
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              <Routes>
-                <Route path="/" element={<h1>Welcome to Dashboard</h1>} />
-                <Route path="/evaluation" element={<Evaluation />} />
-                <Route path="/tournaments" element={<Tournaments />} />
-                <Route path="/setting" element={<h1>Setting</h1>} />
-                <Route
-                  path="/manage directors"
-                  element={<h1>Manage Directors</h1>}
-                />
-              </Routes>
-            </div>
-          </Content>
-
-          {/* <Footer style={{ textAlign: "center" }}>
-            Ant Design ©{new Date().getFullYear()} Created by Ant UED
-          </Footer> */}
-        </Layout>
+            {/* ส่วนที่จะเอาไว้แสดงหน้าลูก (children) ตามเส้นทางใน index.jsx */}
+            <Outlet />
+          </div>
+        </Content>
       </Layout>
-    </Router>
+    </Layout>
   );
 };
 
