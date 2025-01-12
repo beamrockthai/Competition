@@ -9,6 +9,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { message } from "antd";
+import moment from "moment";
 
 // ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
 export const fetchTournaments = async () => {
@@ -40,8 +41,14 @@ export const addTournament = async (form) => {
       return false;
     }
 
-    const startTimestamp = Timestamp.fromDate(new Date(startDate));
-    const endTimestamp = Timestamp.fromDate(new Date(endDate));
+    const startTimestamp =
+      startDate instanceof moment
+        ? Timestamp.fromDate(startDate.toDate())
+        : Timestamp.fromDate(new Date(startDate));
+    const endTimestamp =
+      endDate instanceof moment
+        ? Timestamp.fromDate(endDate.toDate())
+        : Timestamp.fromDate(new Date(endDate));
 
     await addDoc(collection(db, "tournaments"), {
       tournamentName,
