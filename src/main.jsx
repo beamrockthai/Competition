@@ -11,14 +11,16 @@ import { UserAuthContextProvider } from "./Context/UserAuth";
 import App from "./App";
 
 // Protected Route
-import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
+import { ProtectedRoute } from "./pages/ProtectedRoute/ProtectedRoute";
 
 // Components
-import { Login } from "./components/UserAuth/Login";
-import { Register } from "./components/UserAuth/Register";
-import { Dashboard } from "./components/Dashboard/Dashboard";
-import { Tournaments } from "./components/Tournaments/Tournaments";
-import { Evaluation } from "./components/Evaluation/evaluation";
+import { Login } from "./pages/UserAuth/Login";
+import { Register } from "./pages/UserAuth/Register";
+import { Dashboard } from "./pages/Dashboard/Dashboard";
+import { Tournaments } from "./pages/Tournaments/Tournaments";
+import { Evaluation } from "./pages/Evaluation/evaluation";
+import { ManageDirectors } from "./pages/Admin/ManageDirectors";
+import { UserManagement } from "./pages/Admin/UserManagement";
 
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
@@ -65,6 +67,22 @@ const router = createBrowserRouter([
       {
         path: "setting",
         element: <h1>Setting</h1>,
+      },
+      {
+        path: "manage-directors",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ManageDirectors />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "user-management",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <UserManagement />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "manage directors",

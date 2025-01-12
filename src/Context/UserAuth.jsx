@@ -1,4 +1,3 @@
-// Context/UserAuth.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
@@ -15,29 +14,68 @@ export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
 
-  // สมัครผู้ใช้ด้วยอีเมล/รหัสผ่าน
-  async function signUp(email, password) {
-    // สร้าง user ใน Firebase Auth
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const newUser = userCredential.user;
+  // ✅ ฟังก์ชันสมัครสมาชิกทั่วไป
+  async function signUpUser(email, password) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const newUser = userCredential.user;
 
-    // -- ถ้าต้องการบันทึกข้อมูลเพิ่มใน Firestore --
-    const userDocRef = doc(db, "users", newUser.uid);
-    await setDoc(userDocRef, {
-      email: newUser.email,
-      role: role, // เก็บ role ลง firestore
-      createdAt: serverTimestamp(),
-      // อาจเก็บข้อมูลอื่น ๆ เช่น displayName, role ฯลฯ
-    });
+      const userDocRef = doc(db, "users", newUser.uid);
+      await setDoc(userDocRef, {
+        email: newUser.email,
+        role: "user", // 🔹 ให้ default เป็น "user"
+        createdAt: serverTimestamp(),
+      });
 
-    return newUser;
+      return newUser;
+    } catch (error) {
+      console.error("Error signing up user:", error);
+      throw error;
+    }
   }
 
-  // ล็อกอินด้วยอีเมล/รหัสผ่าน
+  // ✅ ฟังก์ชันสมัครกรรมการ โดยไม่ทำให้ Admin ถูกล็อกเอาต์
+  async function signUpDirector(email, password) {
+    try {
+      const adminEmail = auth.currentUser?.email; // 🔹 บันทึกอีเมลของ Admin
+      const adminPassword = prompt("Enter Admin Password to stay logged in"); // 🔹 ขอรหัสผ่านของ Admin
+
+      if (!adminPassword) {
+        throw new Error("Admin password is required.");
+      }
+
+      // 🔹 สร้างบัญชีกรรมการใน Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const newUser = userCredential.user;
+
+      // 🔹 บันทึกข้อมูลกรรมการใน Firestore
+      const userDocRef = doc(db, "users", newUser.uid);
+      await setDoc(userDocRef, {
+        email: newUser.email,
+        role: "director",
+        createdAt: serverTimestamp(),
+      });
+
+      // ✅ ล็อกอินกลับเป็น Admin หลังจากสร้างกรรมการ
+      if (adminEmail) {
+        await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+      }
+
+      return newUser.uid;
+    } catch (error) {
+      console.error("Error creating director:", error);
+      throw error;
+    }
+  }
+
   async function logIn(email, password) {
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -46,32 +84,31 @@ export function UserAuthContextProvider({ children }) {
     );
     const existingUser = userCredential.user;
 
-    // -- หากต้องการตรวจสอบข้อมูลใน Firestore --
     const userDocRef = doc(db, "users", existingUser.uid);
     const docSnap = await getDoc(userDocRef);
 
-    if (!docSnap.exists()) {
+    if (docSnap.exists()) {
       setRole(docSnap.data().role);
-      // ถ้าไม่พบใน Firestore (แต่ Auth มี) อาจเลือก setDoc หรือแจ้งเตือนก็ได้
-      console.log("No user doc in Firestore, create if needed");
-      // await setDoc(userDocRef, { email: existingUser.email });
-    } else {
-      console.log("User doc found:", docSnap.data());
     }
 
     return existingUser;
   }
 
-  // ออกจากระบบ
   function logOut() {
+    setRole(null);
     return signOut(auth);
   }
 
-  // ติดตามสถานะผู้ใช้ (login / logout) แบบเรียลไทม์
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth state changed:", currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          setRole(docSnap.data().role);
+        }
+      }
     });
     return () => {
       unsubscribe();
@@ -79,7 +116,9 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, role, logIn, signUp, logOut }}>
+    <userAuthContext.Provider
+      value={{ user, role, logIn, signUpUser, signUpDirector, logOut }}
+    >
       {children}
     </userAuthContext.Provider>
   );

@@ -1,5 +1,3 @@
-// App.jsx
-
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, theme, Button, Drawer } from "antd";
 import {
@@ -23,14 +21,17 @@ const App = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileView, setMobileView] = useState(window.innerWidth < 768);
+  const [drawerVisible, setDrawerVisible] = useState(false); // 🔹 เพิ่ม state สำหรับ Drawer
 
-  const { user, logOut } = useUserAuth();
+  const { user, role, logOut } = useUserAuth(); // 🔹 เพิ่ม role เพื่อใช้ในการควบคุมเมนู
   const navigate = useNavigate();
 
   // ติดตามขนาดหน้าจอเพื่อตัดสินใจแสดง Drawer (มือถือ) หรือ Sider (PC)
   useEffect(() => {
     const handleResize = () => {
-      setMobileView(window.innerWidth < 768);
+      const isMobile = window.innerWidth < 768;
+      setMobileView(isMobile);
+      setCollapsed(isMobile);
     };
     window.addEventListener("resize", handleResize);
 
@@ -43,7 +44,7 @@ const App = () => {
     navigate("/login");
   };
 
-  // เมนูย่อยต่าง ๆ จะใช้ Link ไป path ตามที่กำหนดใน index.jsx
+  // สร้างเมนูตาม role ของ user
   const menuItems = [
     {
       key: "1",
@@ -65,28 +66,43 @@ const App = () => {
       icon: <SettingOutlined />,
       label: <Link to="/setting">Setting</Link>,
     },
-    {
-      key: "5",
-      icon: <UserAddOutlined />,
-      label: <Link to="/manage directors">Manage Directors</Link>,
-    },
+    // 🔹 เฉพาะ admin เท่านั้นที่เห็นเมนู "Manage Directors" และ "User Management"
+    ...(role === "admin"
+      ? [
+          {
+            key: "5",
+            icon: <UserAddOutlined />,
+            label: <Link to="/manage-directors">Manage Directors</Link>,
+          },
+          {
+            key: "6",
+            icon: <UserOutlined />,
+            label: <Link to="/user-management">User Management</Link>,
+          },
+        ]
+      : []),
   ];
 
   return (
     <Layout>
-      {/* ถ้าหน้าจอเล็ก (mobileView) จะแสดง Drawer */}
+      {/* 🔹 ถ้าหน้าจอเล็ก (mobileView) จะแสดง Drawer */}
       {mobileView ? (
         <Drawer
           title="Menu"
           placement="left"
           closable={true}
-          onClose={() => setCollapsed(false)}
-          open={collapsed}
+          onClose={() => setDrawerVisible(false)} // 🔹 แก้ไขให้ปิด Drawer ถูกต้อง
+          open={drawerVisible}
         >
-          <Menu theme="light" mode="vertical" items={menuItems} />
+          <Menu
+            theme="light"
+            mode="vertical"
+            items={menuItems}
+            onClick={() => setDrawerVisible(false)} // 🔹 ปิด Drawer เมื่อคลิกเมนู
+          />
         </Drawer>
       ) : (
-        // ถ้าหน้าจอใหญ่ (PC) ให้ใช้ Sider
+        // 🔹 ถ้าหน้าจอใหญ่ (PC) ให้ใช้ Sider
         <Sider
           breakpoint="lg"
           collapsible
@@ -111,8 +127,13 @@ const App = () => {
         </Sider>
       )}
 
-      {/* ส่วน Layout ด้านขวา */}
-      <Layout style={{ marginLeft: mobileView ? 0 : collapsed ? 80 : 200 }}>
+      {/* 🔹 ส่วน Layout ด้านขวา */}
+      <Layout
+        style={{
+          marginLeft: mobileView ? 0 : collapsed ? 80 : 200, // 🔹 แก้ไข margin-left ให้เหมาะสม
+          transition: "all 0.3s",
+        }}
+      >
         <Header
           style={{
             display: "flex",
@@ -121,12 +142,12 @@ const App = () => {
             transition: "all 0.3s",
           }}
         >
-          {/* ปุ่มแฮมเบอร์เกอร์ เมนู (เฉพาะหน้าจอเล็ก) */}
+          {/* 🔹 ปุ่มแฮมเบอร์เกอร์ เมนู (เฉพาะหน้าจอเล็ก) */}
           {mobileView && (
             <Button
               type="text"
               icon={<MenuOutlined />}
-              onClick={() => setCollapsed(true)}
+              onClick={() => setDrawerVisible(true)} // 🔹 แก้ไขให้เปิด Drawer ถูกต้อง
               style={{ fontSize: "18px", marginLeft: "16px" }}
             />
           )}
@@ -170,7 +191,7 @@ const App = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            {/* ส่วนที่จะเอาไว้แสดงหน้าลูก (children) ตามเส้นทางใน index.jsx */}
+            {/* 🔹 ส่วนแสดงหน้าต่างๆ ตามเส้นทางใน index.jsx */}
             <Outlet />
           </div>
         </Content>

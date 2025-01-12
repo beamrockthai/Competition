@@ -18,7 +18,7 @@ import {
   addEvaluation,
   deleteEvaluation,
   updateEvaluation,
-} from "./service/evaluationService";
+} from "../../services/evaluationService";
 
 export const Evaluation = () => {
   const [form, setForm] = useState({

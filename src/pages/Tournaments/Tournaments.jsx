@@ -16,7 +16,7 @@ import {
   addTournament,
   deleteTournament,
   updateTournament,
-} from "./service/tournamentService";
+} from "../../services/tournamentService";
 
 export const Tournaments = () => {
   const [form] = Form.useForm();
@@ -159,7 +159,7 @@ export const Tournaments = () => {
         style={{ marginBottom: "20px" }}
       >
         <Col>
-          <h2>Add Tournament</h2>
+          <h2>ทัวร์นาเมนต์</h2>
         </Col>
         <Col>
           <Button
@@ -167,7 +167,7 @@ export const Tournaments = () => {
             htmlType="submit"
             onClick={() => form.submit()}
           >
-            Add Tournament
+            สร้างทัวร์นาเมนต์
           </Button>
         </Col>
       </Row>

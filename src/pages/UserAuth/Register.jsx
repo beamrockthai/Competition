@@ -1,4 +1,3 @@
-// components/UserAuth/Register.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message, Typography } from "antd";
@@ -8,11 +7,10 @@ const { Title } = Typography;
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
-  const { user, signUp } = useUserAuth();
+  const { user, signUpUser } = useUserAuth(); // ✅ ใช้ signUpUser แทน
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ถ้า user มีค่าแล้ว (ล็อกอินค้างอยู่) ก็กลับไปหน้า "/"
     if (user) {
       navigate("/");
     }
@@ -21,10 +19,8 @@ export const Register = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // สมัครผู้ใช้ใหม่ใน Firebase Auth
-      await signUp(values.email, values.password);
+      await signUpUser(values.email, values.password);
       message.success("Register successful!");
-      // ไปหน้า "/" หรือ "/login"
       navigate("/");
     } catch (error) {
       console.log("Register error:", error.code, error.message);
@@ -40,10 +36,6 @@ export const Register = () => {
       }
     }
     setLoading(false);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Register form validation failed:", errorInfo);
   };
 
   return (
@@ -63,7 +55,6 @@ export const Register = () => {
         name="register"
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         layout="vertical"
       >
         <Form.Item
