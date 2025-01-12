@@ -11,6 +11,9 @@ import {
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth"; // ดึงข้อมูลผู้ใช้จาก Context
+import "./css/App.css";
+import { AppstoreOutlined } from "@ant-design/icons";
+import { Modal } from "antd"; // นำเข้า Modal จาก Ant Design
 
 const { Header, Content, Sider } = Layout;
 
@@ -35,13 +38,26 @@ const App = () => {
     };
     window.addEventListener("resize", handleResize);
 
+    // cleanup function to remove event listener
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // ฟังก์ชัน Logout
   const handleLogout = async () => {
-    await logOut();
-    navigate("/login");
+    Modal.confirm({
+      title: "ต้องการออกจากระบบหรือไม่ ?",
+      okText: "ตกลง",
+      cancelText: "ยกเลิก",
+      onOk: async () => {
+        // ฟังก์ชันที่จะทำเมื่อผู้ใช้ยืนยันออกจากระบบ
+        await logOut(); // ออกจากระบบ
+        navigate("/login"); // เปลี่ยนหน้าไปที่หน้า Login
+      },
+      onCancel: () => {
+        // ฟังก์ชันที่จะทำเมื่อผู้ใช้กด Cancel (ไม่ออกจากระบบ)
+        console.log("Logout cancelled");
+      },
+    });
   };
 
   // สร้างเมนูตาม role ของ user
@@ -98,6 +114,7 @@ const App = () => {
             theme="light"
             mode="vertical"
             items={menuItems}
+            className="custom-menu" // เพิ่ม className สำหรับ custom style
             onClick={() => setDrawerVisible(false)} // 🔹 ปิด Drawer เมื่อคลิกเมนู
           />
         </Drawer>
@@ -110,7 +127,7 @@ const App = () => {
           onCollapse={setCollapsed}
           style={{
             position: "fixed",
-            top: 0,
+            top: 95,
             left: 0,
             bottom: 0,
             backgroundColor: "#fff",
@@ -122,6 +139,7 @@ const App = () => {
             theme="light"
             mode="inline"
             items={menuItems}
+            className="custom-menu" // เพิ่ม className สำหรับ custom style
             style={{ color: "#000" }}
           />
         </Sider>
@@ -153,13 +171,15 @@ const App = () => {
           )}
           <h2
             style={{
-              color: "#1890ff",
+              fontSize: "27px",
+              color: "#b12341",
               textAlign: "center",
               width: "100%",
               margin: 0,
             }}
           >
-            MY COMP
+            <AppstoreOutlined />
+            COMP
           </h2>
 
           {user && (

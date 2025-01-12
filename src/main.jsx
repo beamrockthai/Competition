@@ -1,4 +1,5 @@
 // index.jsx
+
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -48,9 +49,6 @@ const router = createBrowserRouter([
         index: true,
         element: <h1>Welcome to Dashboard</h1>,
       },
-      // หรือถ้าต้องการให้ "/" เป็นหน้า Dashboard จริง ๆ ก็ได้:
-      // index: true,
-      // element: <Dashboard />,
 
       {
         path: "dashboard",

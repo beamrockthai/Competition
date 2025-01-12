@@ -1,10 +1,59 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Custom sidebar */
+.custom-sidebar {
+  background-color: #fff; /* พื้นหลังของ sidebar */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* เปลี่ยนเฉพาะสีพื้นหลังและเงา */
+  box-shadow: none; /* ลบเงาของ sidebar */
 }
 
+/* เปลี่ยนฟอนต์ของ menu */
+.custom-menu {
+  font-family: "Prompt", sans-serif; /* ใช้ฟอนต์ Prompt */
+  background-color: #fff; /* พื้นหลังของ menu */
+  border: none; /* ลบเส้นขอบของ menu */
+}
+
+/* สไตล์เมนูที่ถูกเลือก */
+.custom-menu .ant-menu-item-selected {
+  background-color: #b12341 !important; /* เปลี่ยนสีพื้นหลังของเมนูที่เลือก */
+  color: #fff !important; /* เปลี่ยนสีตัวหนังสือของเมนูที่เลือก */
+}
+
+/* เปลี่ยนสีพื้นหลังเมื่อ hover เมนูที่ถูกเลือก */
+.custom-menu .ant-menu-item-selected:hover {
+  background-color: #b12341 !important; /* สีพื้นหลังเมื่อ hover เมนูที่เลือก */
+  color: #fff !important; /* สีข้อความ */
+}
+
+/* สำหรับเมนูใน Sider และ Drawer */
+.custom-menu .ant-menu-item:hover {
+  background-color: #b12341 !important; /* เปลี่ยนสีพื้นหลังเมื่อ hover */
+  color: #fff; /* เปลี่ยนสีตัวอักษรเป็นขาวเมื่อ hover */
+}
+
+/* เปลี่ยนสีตัวอักษรเมนูใน Sidebar */
+.custom-menu .ant-menu-item {
+  color: #333; /* สีข้อความปกติ */
+  transition: color 0.3s ease; /* เพิ่มการเปลี่ยนแปลงสีตัวอักษรเมื่อ hover */
+}
+
+/* สไตล์ของ Header ใน Sidebar */
+.custom-header {
+  font-family: "Prompt", sans-serif; /* ใช้ฟอนต์ Prompt */
+  font-size: 18px;
+  color: #b12341; /* กำหนดสีข้อความใน Header */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease; /* ใช้เฉพาะ color ที่เปลี่ยน */
+}
+
+/* เพิ่มเงาให้กับ Sidebar เมื่อยุบ */
+.custom-sidebar.collapsed {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* เมื่อ sidebar ยุบจะมีเงา */
+}
+
+/* โลโก้ที่หมุน */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -12,12 +61,13 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #82ff0652);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #b12341);
 }
 
+/* Animation โลโก้หมุน */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -33,10 +83,12 @@
   }
 }
 
+/* เพิ่ม padding ให้กับ card */
 .card {
   padding: 2em;
 }
 
+/* เพิ่มสีให้ข้อความในส่วน read-the-docs */
 .read-the-docs {
   color: #888;
 }
