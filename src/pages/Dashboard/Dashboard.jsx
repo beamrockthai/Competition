@@ -1,5 +1,5 @@
 import React from "react";
-import { Tournaments } from "../Tournaments/Tournaments"; // ตรวจสอบเส้นทางการนำเข้า
+// import { Tournaments } from "../Tournaments/Tournaments"; // ตรวจสอบเส้นทางการนำเข้า
 import { Statistic, Row, Col } from "antd"; // นำเข้า Statistic, Row, Col จาก antd
 import { LikeOutlined } from "@ant-design/icons"; // นำเข้าไอคอนจาก antd
 
@@ -17,7 +17,7 @@ export const Dashboard = () => {
       </Row>
 
       {/* ส่วนแสดงคอมโพเนนต์ Tournaments */}
-      <Tournaments highlight={true} />
+      {/* <Tournaments highlight={true} /> */}
     </div>
   );
 };

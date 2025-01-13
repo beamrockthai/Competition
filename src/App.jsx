@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, theme, Button, Drawer } from "antd";
+import { Layout, Menu, theme, Button, Drawer, Dropdown } from "antd";
 import {
   UserOutlined,
   TrophyOutlined,
@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth"; // ดึงข้อมูลผู้ใช้จาก Context
 import "./css/App.css";
-import { AppstoreOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, DownOutlined } from "@ant-design/icons";
 import { Modal } from "antd"; // นำเข้า Modal จาก Ant Design
 
 const { Header, Content, Sider } = Layout;
@@ -29,7 +29,6 @@ const App = () => {
   const { user, role, logOut } = useUserAuth(); // 🔹 เพิ่ม role เพื่อใช้ในการควบคุมเมนู
   const navigate = useNavigate();
 
-  // ติดตามขนาดหน้าจอเพื่อตัดสินใจแสดง Drawer (มือถือ) หรือ Sider (PC)
   useEffect(() => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
@@ -38,34 +37,29 @@ const App = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // cleanup function to remove event listener
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ฟังก์ชัน Logout
   const handleLogout = async () => {
     Modal.confirm({
       title: "ต้องการออกจากระบบหรือไม่ ?",
       okText: "ตกลง",
       cancelText: "ยกเลิก",
       onOk: async () => {
-        // ฟังก์ชันที่จะทำเมื่อผู้ใช้ยืนยันออกจากระบบ
         await logOut(); // ออกจากระบบ
         navigate("/login"); // เปลี่ยนหน้าไปที่หน้า Login
       },
       onCancel: () => {
-        // ฟังก์ชันที่จะทำเมื่อผู้ใช้กด Cancel (ไม่ออกจากระบบ)
         console.log("Logout cancelled");
       },
     });
   };
 
-  // สร้างเมนูตาม role ของ user
   const menuItems = [
     {
       key: "1",
       icon: <UserOutlined />,
-      label: <Link to="/">Dashboard</Link>,
+      label: <Link to="/dashboard">Dashboard</Link>,
     },
     {
       key: "2",
@@ -82,7 +76,6 @@ const App = () => {
       icon: <SettingOutlined />,
       label: <Link to="/setting">Setting</Link>,
     },
-    // 🔹 เฉพาะ admin เท่านั้นที่เห็นเมนู "Manage Directors" และ "User Management"
     ...(role === "admin"
       ? [
           {
@@ -99,27 +92,46 @@ const App = () => {
       : []),
   ];
 
+  // Dropdown เมนูสำหรับผู้ใช้งาน
+  const userMenu = (
+    <Menu>
+      <Menu.Item key="1" onClick={handleLogout} icon={<UserOutlined />}>
+        โปรไฟล์
+      </Menu.Item>
+      <Menu.Item key="2" onClick={handleLogout} icon={<SettingOutlined />}>
+        ตั้งค่า
+      </Menu.Item>
+
+      <Menu.Item
+        key="3"
+        style={{ color: "#fe000" }}
+        onClick={handleLogout}
+        icon={<LogoutOutlined />}
+      >
+        ออกจากระบบ
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
-      {/* 🔹 ถ้าหน้าจอเล็ก (mobileView) จะแสดง Drawer */}
       {mobileView ? (
         <Drawer
           title="Menu"
           placement="left"
           closable={true}
-          onClose={() => setDrawerVisible(false)} // 🔹 แก้ไขให้ปิด Drawer ถูกต้อง
+          onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
         >
           <Menu
             theme="light"
             mode="vertical"
             items={menuItems}
-            className="custom-menu" // เพิ่ม className สำหรับ custom style
-            onClick={() => setDrawerVisible(false)} // 🔹 ปิด Drawer เมื่อคลิกเมนู
+            className="custom-menu"
+            onClick={() => setDrawerVisible(false)}
           />
         </Drawer>
       ) : (
-        // 🔹 ถ้าหน้าจอใหญ่ (PC) ให้ใช้ Sider
         <Sider
           breakpoint="lg"
           collapsible
@@ -139,16 +151,15 @@ const App = () => {
             theme="light"
             mode="inline"
             items={menuItems}
-            className="custom-menu" // เพิ่ม className สำหรับ custom style
+            className="custom-menu"
             style={{ color: "#000" }}
           />
         </Sider>
       )}
 
-      {/* 🔹 ส่วน Layout ด้านขวา */}
       <Layout
         style={{
-          marginLeft: mobileView ? 0 : collapsed ? 80 : 200, // 🔹 แก้ไข margin-left ให้เหมาะสม
+          marginLeft: mobileView ? 0 : collapsed ? 80 : 200,
           transition: "all 0.3s",
         }}
       >
@@ -160,12 +171,11 @@ const App = () => {
             transition: "all 0.3s",
           }}
         >
-          {/* 🔹 ปุ่มแฮมเบอร์เกอร์ เมนู (เฉพาะหน้าจอเล็ก) */}
           {mobileView && (
             <Button
               type="text"
               icon={<MenuOutlined />}
-              onClick={() => setDrawerVisible(true)} // 🔹 แก้ไขให้เปิด Drawer ถูกต้อง
+              onClick={() => setDrawerVisible(true)}
               style={{ fontSize: "18px", marginLeft: "16px" }}
             />
           )}
@@ -183,14 +193,15 @@ const App = () => {
           </h2>
 
           {user && (
-            <Button
-              type="primary"
-              icon={<LogoutOutlined />}
-              onClick={handleLogout}
-              style={{ marginLeft: "auto" }}
-            >
-              Logout
-            </Button>
+            <Dropdown overlay={userMenu}>
+              <Button
+                icon={<UserOutlined />}
+                type="text"
+                style={{ marginLeft: "auto" }}
+              >
+                ธัชนนท์ <DownOutlined />
+              </Button>
+            </Dropdown>
           )}
         </Header>
 
@@ -211,7 +222,6 @@ const App = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            {/* 🔹 ส่วนแสดงหน้าต่างๆ ตามเส้นทางใน index.jsx */}
             <Outlet />
           </div>
         </Content>
