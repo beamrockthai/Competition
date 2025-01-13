@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, theme, Button, Drawer, Dropdown } from "antd";
+import { Layout, Menu, theme, Button, Drawer, Dropdown, Modal } from "antd";
 import {
   UserOutlined,
   TrophyOutlined,
@@ -8,12 +8,12 @@ import {
   SettingOutlined,
   UserAddOutlined,
   LogoutOutlined,
+  DownOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth"; // ดึงข้อมูลผู้ใช้จาก Context
 import "./css/App.css";
-import { AppstoreOutlined, DownOutlined } from "@ant-design/icons";
-import { Modal } from "antd"; // นำเข้า Modal จาก Ant Design
 
 const { Header, Content, Sider } = Layout;
 
@@ -101,7 +101,6 @@ const App = () => {
       <Menu.Item key="2" onClick={handleLogout} icon={<SettingOutlined />}>
         ตั้งค่า
       </Menu.Item>
-
       <Menu.Item
         key="3"
         style={{ color: "#fe000" }}
@@ -167,8 +166,9 @@ const App = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            background: colorBgContainer,
+            background: "#fff", // Or colorBgContainer if you have a theme color
             transition: "all 0.3s",
+            padding: mobileView ? "10px 20px" : "20px 40px", // Adjust padding for mobile
           }}
         >
           {mobileView && (
@@ -181,7 +181,7 @@ const App = () => {
           )}
           <h2
             style={{
-              fontSize: "27px",
+              fontSize: mobileView ? "20px" : "27px", // Font size adjustment for mobile
               color: "#b12341",
               textAlign: "center",
               width: "100%",
@@ -193,12 +193,8 @@ const App = () => {
           </h2>
 
           {user && (
-            <Dropdown overlay={userMenu}>
-              <Button
-                icon={<UserOutlined />}
-                type="text"
-                style={{ marginLeft: "auto" }}
-              >
+            <Dropdown overlay={userMenu} trigger={["click"]}>
+              <Button icon={<UserOutlined />}>
                 ธัชนนท์ <DownOutlined />
               </Button>
             </Dropdown>
