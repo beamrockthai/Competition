@@ -59,13 +59,14 @@ const App = () => {
     {
       key: "1",
       icon: <UserOutlined />,
-      label: <Link to="/dashboard">Dashboard</Link>,
+      label: <Link to="/userdashboard">Dashboard</Link>,
     },
-    // {
-    //   key: "2",
-    //   icon: <TrophyOutlined />,
-    //   label: <Link to="/tournaments">Tournaments</Link>,
-    // },
+    {
+      key: "2",
+      icon: <UserOutlined />,
+      label: <Link to="/userregisteredlist">ListMe</Link>,
+    },
+
     {
       key: "3",
       icon: <FileOutlined />,

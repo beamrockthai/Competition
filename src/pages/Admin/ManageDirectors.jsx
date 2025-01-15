@@ -15,7 +15,7 @@ import {
   loadDirectors,
   addDirector,
   deleteDirector,
-} from "../../services/directorFunctions";
+} from "./../../services/directorFunctions";
 
 export const ManageDirectors = () => {
   const { signUpDirector } = useUserAuth();

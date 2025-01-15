@@ -18,7 +18,7 @@ import {
   deleteTournament,
   updateTournament,
   getTournamentRegistrations,
-} from "../services/tournamentService";
+} from "../../services/tournamentService";
 
 const { useBreakpoint } = Grid;
 

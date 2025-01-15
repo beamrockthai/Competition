@@ -15,16 +15,12 @@ import { ProtectedRoute } from "./pages/ProtectedRoute/ProtectedRoute";
 // Components
 import { Login } from "./pages/UserAuth/Login";
 import { Register } from "./pages/UserAuth/Register";
-import { Dashboard } from "./pages/Dashboard/Dashboard";
-// import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
 import { UserManagement } from "./pages/Admin/UserManagement";
-
-// ✅ เพิ่มฟีเจอร์ที่ต้องการ
-import AdminTournament from "./components/AdminTournament"; // หน้าสร้างการแข่งขัน
+import AdminTournament from "./pages/Admin/AdminTournament"; // หน้าสร้างการแข่งขัน
 import UserDashboard from "./pages/Dashboard/UserDashboard"; // หน้า User สมัครแข่งขัน
-
+import UserRegisteredList from "./components/UserRegisteredList";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
   {
@@ -51,14 +47,17 @@ const router = createBrowserRouter([
         index: true,
         element: <h1>Welcome to Dashboard</h1>,
       },
+
       {
-        path: "dashboard",
-        element: <Dashboard />,
+        path: "userdashboard",
+        element: <UserDashboard />,
       },
-      // {
-      //   path: "tournaments",
-      //   element: <Tournaments />,
-      // },
+
+      {
+        path: "userregisteredlist",
+        element: <UserRegisteredList />,
+      },
+
       {
         path: "evaluation",
         element: <Evaluation />,
