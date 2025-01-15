@@ -1,5 +1,3 @@
-// index.jsx
-
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -18,10 +16,14 @@ import { ProtectedRoute } from "./pages/ProtectedRoute/ProtectedRoute";
 import { Login } from "./pages/UserAuth/Login";
 import { Register } from "./pages/UserAuth/Register";
 import { Dashboard } from "./pages/Dashboard/Dashboard";
-import { Tournaments } from "./pages/Tournaments/Tournaments";
+// import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
 import { UserManagement } from "./pages/Admin/UserManagement";
+
+// ✅ เพิ่มฟีเจอร์ที่ต้องการ
+import AdminTournament from "./components/AdminTournament"; // หน้าสร้างการแข่งขัน
+import UserDashboard from "./pages/Dashboard/UserDashboard"; // หน้า User สมัครแข่งขัน
 
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
@@ -49,16 +51,14 @@ const router = createBrowserRouter([
         index: true,
         element: <h1>Welcome to Dashboard</h1>,
       },
-
       {
         path: "dashboard",
         element: <Dashboard />,
       },
-
-      {
-        path: "tournaments",
-        element: <Tournaments />,
-      },
+      // {
+      //   path: "tournaments",
+      //   element: <Tournaments />,
+      // },
       {
         path: "evaluation",
         element: <Evaluation />,
@@ -67,6 +67,7 @@ const router = createBrowserRouter([
         path: "setting",
         element: <h1>Setting</h1>,
       },
+      // ✅ เพิ่ม Route สำหรับ Admin สร้างการแข่งขัน
       {
         path: "manage-directors",
         element: (
@@ -75,6 +76,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+
       {
         path: "user-management",
         element: (
@@ -83,9 +85,24 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+
       {
-        path: "manage directors",
-        element: <h1>Manage Directors</h1>,
+        path: "admin-tournaments",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminTournament />
+          </ProtectedRoute>
+        ),
+      },
+      // {
+      //   path: "manage directors",
+      //   element: <h1>Manage Directors</h1>,
+      // },
+
+      // ✅ เพิ่ม Route สำหรับ User สมัครการแข่งขัน
+      {
+        path: "user/dashboard",
+        element: <UserDashboard />,
       },
     ],
   },

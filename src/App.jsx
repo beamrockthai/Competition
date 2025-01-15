@@ -61,11 +61,11 @@ const App = () => {
       icon: <UserOutlined />,
       label: <Link to="/dashboard">Dashboard</Link>,
     },
-    {
-      key: "2",
-      icon: <TrophyOutlined />,
-      label: <Link to="/tournaments">Tournaments</Link>,
-    },
+    // {
+    //   key: "2",
+    //   icon: <TrophyOutlined />,
+    //   label: <Link to="/tournaments">Tournaments</Link>,
+    // },
     {
       key: "3",
       icon: <FileOutlined />,
@@ -87,6 +87,12 @@ const App = () => {
             key: "6",
             icon: <UserOutlined />,
             label: <Link to="/user-management">User Management</Link>,
+          },
+
+          {
+            key: "7",
+            icon: <TrophyOutlined />,
+            label: <Link to="/admin-tournaments">Add Tournaments</Link>,
           },
         ]
       : []),

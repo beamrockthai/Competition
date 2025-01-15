@@ -1,81 +1,79 @@
 import React, { useEffect, useState } from "react";
 import {
-  Table,
-  Button,
   Card,
   Row,
   Col,
   Typography,
-  message,
+  Button,
   Popconfirm,
+  message,
+  Spin,
 } from "antd";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { loadUsers, deleteUser } from "../../services/userFunctions";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadUsers();
+    loadUsers(setUsers, setLoading);
   }, []);
-
-  const loadUsers = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const usersList = querySnapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter((user) => user.role === "user"); // 🔹 แสดงเฉพาะ User ที่ไม่ใช่ Admin หรือ Director
-
-      setUsers(usersList);
-    } catch (error) {
-      console.error("Error loading users:", error);
-      message.error("Failed to load users.");
-    }
-  };
-
-  const handleDeleteUser = async (id) => {
-    try {
-      await deleteDoc(doc(db, "users", id)); // ลบ User ออกจาก Firestore
-      message.success("User deleted successfully!");
-      loadUsers(); // โหลดข้อมูลใหม่หลังจากลบ
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      message.error("Failed to delete user: " + error.message);
-    }
-  };
 
   return (
     <div style={{ padding: "20px" }}>
-      <Title level={2} style={{ textAlign: "center" }}>
-        User Management
+      <Title
+        level={2}
+        style={{
+          marginBottom: "20px",
+          color: "#1890ff",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Management User
       </Title>
 
-      {/* ✅ Responsive Card Layout */}
-      <Row gutter={[16, 16]} justify="center">
-        {users.map((user) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={user.id}>
-            <Card
-              title={user.email}
-              bordered={false}
-              style={{ textAlign: "center" }}
-            >
-              <Popconfirm
-                title="Are you sure to delete this user?"
-                onConfirm={() => handleDeleteUser(user.id)}
-                okText="Yes"
-                cancelText="No"
+      {loading ? (
+        <Spin
+          size="large"
+          style={{ display: "block", textAlign: "center", marginTop: 50 }}
+        />
+      ) : (
+        <Row gutter={[16, 16]} justify="center">
+          {users.map((user) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={user.id}>
+              <Card
+                title={<Text strong>{user.email}</Text>}
+                bordered={false}
+                style={{
+                  textAlign: "center",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
               >
-                <Button danger>Delete User</Button>
-              </Popconfirm>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                <p>
+                  <strong>Name:</strong> {user.firstName} {user.lastName}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {user.phone}
+                </p>
+
+                <Popconfirm
+                  title="Are you sure to delete this user?"
+                  onConfirm={() => deleteUser(user.id, setUsers, setLoading)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger>
+                    Delete User
+                  </Button>
+                </Popconfirm>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
     </div>
   );
 };

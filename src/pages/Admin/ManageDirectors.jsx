@@ -10,67 +10,23 @@ import {
   Col,
   Card,
 } from "antd";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { useUserAuth } from "../../Context/UserAuth";
-import { db } from "../../firebase";
+import {
+  loadDirectors,
+  addDirector,
+  deleteDirector,
+} from "../../services/directorFunctions";
 
 export const ManageDirectors = () => {
   const { signUpDirector } = useUserAuth();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [directors, setDirectors] = useState([]);
   const [passwords, setPasswords] = useState({});
   const [form] = Form.useForm();
 
   useEffect(() => {
-    loadDirectors();
+    loadDirectors(setDirectors);
   }, []);
-
-  // ✅ โหลดกรรมการจาก Firestore
-  const loadDirectors = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const directorsList = querySnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((user) => user.role === "director");
-
-      setDirectors(directorsList);
-    } catch (error) {
-      console.error("Error loading directors:", error);
-      message.error("Failed to load directors.");
-    }
-  };
-
-  // ✅ สมัครกรรมการใหม่
-  const onFinish = async (values) => {
-    setLoading(true);
-    try {
-      const newDirectorUID = await signUpDirector(
-        values.email,
-        values.password
-      );
-
-      setPasswords((prev) => ({ ...prev, [values.email]: values.password }));
-
-      message.success("Director created successfully!");
-      loadDirectors();
-      form.resetFields();
-    } catch (error) {
-      message.error("Failed to create director: " + error.message);
-    }
-    setLoading(false);
-  };
-
-  // ✅ ฟังก์ชันลบกรรมการ
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "users", id));
-      message.success("Director deleted successfully!");
-      loadDirectors();
-    } catch (error) {
-      console.error("Error deleting director:", error);
-      message.error("Failed to delete director: " + error.message);
-    }
-  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -82,7 +38,56 @@ export const ManageDirectors = () => {
       <Row justify="center">
         <Col xs={24} sm={18} md={14} lg={10}>
           <Card>
-            <Form layout="vertical" onFinish={onFinish} form={form}>
+            <Form
+              layout="vertical"
+              onFinish={(values) =>
+                addDirector(
+                  values,
+                  signUpDirector,
+                  setPasswords,
+                  setDirectors,
+                  form
+                )
+              }
+              form={form}
+            >
+              <Form.Item
+                name="firstName"
+                label="First Name"
+                rules={[
+                  { required: true, message: "Please enter first name!" },
+                ]}
+              >
+                <Input placeholder="Enter First Name" />
+              </Form.Item>
+
+              <Form.Item
+                name="lastName"
+                label="Last Name"
+                rules={[{ required: true, message: "Please enter last name!" }]}
+              >
+                <Input placeholder="Enter Last Name" />
+              </Form.Item>
+
+              <Form.Item
+                name="idCard"
+                label="ID Card Number"
+                rules={[
+                  { required: true, message: "Please enter ID card number!" },
+                  { len: 13, message: "ID card number must be 13 digits!" },
+                ]}
+              >
+                <Input placeholder="Enter ID Card Number" />
+              </Form.Item>
+
+              <Form.Item
+                name="address"
+                label="Address"
+                rules={[{ required: true, message: "Please enter address!" }]}
+              >
+                <Input.TextArea placeholder="Enter Address" rows={2} />
+              </Form.Item>
+
               <Form.Item
                 name="email"
                 label="Email"
@@ -96,6 +101,7 @@ export const ManageDirectors = () => {
               >
                 <Input placeholder="Enter Director Email" />
               </Form.Item>
+
               <Form.Item
                 name="password"
                 label="Password"
@@ -105,8 +111,9 @@ export const ManageDirectors = () => {
               >
                 <Input.Password placeholder="Enter Password" />
               </Form.Item>
+
               <Button type="primary" htmlType="submit" block loading={loading}>
-                สร้างกรรมการ
+                Create Director
               </Button>
             </Form>
           </Card>
@@ -118,11 +125,35 @@ export const ManageDirectors = () => {
         dataSource={directors}
         columns={[
           {
+            title: "First Name",
+            dataIndex: "firstName",
+            responsive: ["xs", "sm", "md", "lg"],
+          },
+          {
+            title: "Last Name",
+            dataIndex: "lastName",
+            responsive: ["xs", "sm", "md", "lg"],
+          },
+          {
+            title: "ID Card",
+            dataIndex: "idCard",
+            responsive: ["sm", "md", "lg"],
+          },
+          {
+            title: "Address",
+            dataIndex: "address",
+            responsive: ["md", "lg"],
+          },
+          {
             title: "Email",
             dataIndex: "email",
             responsive: ["xs", "sm", "md", "lg"],
           },
-          { title: "Role", dataIndex: "role", responsive: ["sm", "md", "lg"] },
+          {
+            title: "Role",
+            dataIndex: "role",
+            responsive: ["sm", "md", "lg"],
+          },
           {
             title: "Password",
             dataIndex: "email",
@@ -135,7 +166,7 @@ export const ManageDirectors = () => {
             render: (id) => (
               <Popconfirm
                 title="Are you sure to delete this director?"
-                onConfirm={() => handleDelete(id)}
+                onConfirm={() => deleteDirector(id, setDirectors)}
               >
                 <Button danger>Delete</Button>
               </Popconfirm>

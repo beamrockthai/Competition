@@ -7,11 +7,13 @@ import {
   updateDoc,
   doc,
   Timestamp,
+  getCountFromServer,
+  getDoc,
 } from "firebase/firestore";
 import { message } from "antd";
 import moment from "moment";
 
-// ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
+// 📌 ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
 export const fetchTournaments = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "tournaments"));
@@ -26,10 +28,11 @@ export const fetchTournaments = async () => {
   }
 };
 
-// เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
+// 📌 เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
 export const addTournament = async (form) => {
   try {
     const { tournamentName, description, startDate, endDate, maxRounds } = form;
+
     if (
       !tournamentName ||
       !description ||
@@ -41,14 +44,8 @@ export const addTournament = async (form) => {
       return false;
     }
 
-    const startTimestamp =
-      startDate instanceof moment
-        ? Timestamp.fromDate(startDate.toDate())
-        : Timestamp.fromDate(new Date(startDate));
-    const endTimestamp =
-      endDate instanceof moment
-        ? Timestamp.fromDate(endDate.toDate())
-        : Timestamp.fromDate(new Date(endDate));
+    const startTimestamp = Timestamp.fromDate(moment(startDate).toDate());
+    const endTimestamp = Timestamp.fromDate(moment(endDate).toDate());
 
     await addDoc(collection(db, "tournaments"), {
       tournamentName,
@@ -67,11 +64,10 @@ export const addTournament = async (form) => {
   }
 };
 
-// ลบทัวร์นาเมนต์จาก Firestore
+// 📌 ลบทัวร์นาเมนต์จาก Firestore
 export const deleteTournament = async (id) => {
   try {
-    const docRef = doc(db, "tournaments", id);
-    await deleteDoc(docRef);
+    await deleteDoc(doc(db, "tournaments", id));
     message.success("ลบข้อมูลเรียบร้อยแล้ว");
   } catch (err) {
     console.error("Error deleting document: ", err);
@@ -79,17 +75,32 @@ export const deleteTournament = async (id) => {
   }
 };
 
-// อัปเดตข้อมูลทัวร์นาเมนต์ใน Firestore
+// 📌 อัปเดตข้อมูลทัวร์นาเมนต์ใน Firestore (แก้ปัญหาการใช้ `.toDate()`)
 export const updateTournament = async (id, values) => {
   try {
     const { tournamentName, description, startDate, endDate, maxRounds } =
       values;
 
-    const startTimestamp = Timestamp.fromDate(startDate.toDate());
-    const endTimestamp = Timestamp.fromDate(endDate.toDate());
+    if (
+      !tournamentName ||
+      !description ||
+      !startDate ||
+      !endDate ||
+      !maxRounds
+    ) {
+      message.warning("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return false;
+    }
 
-    const docRef = doc(db, "tournaments", id);
-    await updateDoc(docRef, {
+    // ✅ ตรวจสอบค่า startDate และ endDate ก่อนใช้งาน
+    const startTimestamp = startDate
+      ? Timestamp.fromDate(moment(startDate).toDate())
+      : Timestamp.fromDate(new Date());
+    const endTimestamp = endDate
+      ? Timestamp.fromDate(moment(endDate).toDate())
+      : Timestamp.fromDate(new Date());
+
+    await updateDoc(doc(db, "tournaments", id), {
       tournamentName,
       description,
       startDate: startTimestamp,
@@ -103,5 +114,34 @@ export const updateTournament = async (id, values) => {
     console.error("Error updating document: ", err);
     message.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
     return false;
+  }
+};
+
+// 📌 ดึงจำนวนผู้สมัครของแต่ละทัวร์นาเมนต์
+export const getTournamentRegistrations = async (tournamentId) => {
+  try {
+    const snapshot = await getCountFromServer(
+      collection(db, `tournaments/${tournamentId}/registrations`)
+    );
+    return snapshot.data().count; // ดึงจำนวนผู้สมัคร
+  } catch (err) {
+    console.error("Error fetching registrations count:", err);
+    return 0;
+  }
+};
+
+// 📌 ดึงรายละเอียดทัวร์นาเมนต์ตาม ID
+export const getTournamentById = async (tournamentId) => {
+  try {
+    const docRef = doc(db, "tournaments", tournamentId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error("Error fetching tournament details:", err);
+    return null;
   }
 };

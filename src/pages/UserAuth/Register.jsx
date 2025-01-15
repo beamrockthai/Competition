@@ -7,7 +7,7 @@ const { Title } = Typography;
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
-  const { user, signUpUser } = useUserAuth(); // ✅ ใช้ signUpUser แทน
+  const { user, signUpUser } = useUserAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,22 +18,22 @@ export const Register = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
+    console.log("Registering user with values:", values);
     try {
-      await signUpUser(values.email, values.password);
+      const newUser = await signUpUser(
+        values.email,
+        values.password,
+        values.firstName,
+        values.lastName,
+        values.address,
+        values.phone
+      );
+      console.log("✅ User successfully created:", newUser);
       message.success("Register successful!");
       navigate("/");
     } catch (error) {
       console.log("Register error:", error.code, error.message);
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          message.error("This email is already in use!");
-          break;
-        case "auth/invalid-email":
-          message.error("Invalid email format!");
-          break;
-        default:
-          message.error("Register failed! " + error.message);
-      }
+      message.error("Register failed! " + error.message);
     }
     setLoading(false);
   };
@@ -57,6 +57,22 @@ export const Register = () => {
         onFinish={onFinish}
         layout="vertical"
       >
+        <Form.Item
+          name="firstName"
+          label="First Name"
+          rules={[{ required: true, message: "Please enter your first name!" }]}
+        >
+          <Input placeholder="firstName" />
+        </Form.Item>
+
+        <Form.Item
+          name="lastName"
+          label="Last Name"
+          rules={[{ required: true, message: "Please enter your last name!" }]}
+        >
+          <Input placeholder="lastName" />
+        </Form.Item>
+
         <Form.Item
           name="email"
           label="Email"
@@ -94,6 +110,26 @@ export const Register = () => {
           ]}
         >
           <Input.Password placeholder="Confirm Password" />
+        </Form.Item>
+
+        {/* ✅ เพิ่มช่องกรอก Phone Number */}
+        <Form.Item
+          name="phone"
+          label="Phone Number"
+          rules={[
+            { required: true, message: "Please enter your phone number!" },
+          ]}
+        >
+          <Input placeholder="Phone Number" />
+        </Form.Item>
+
+        {/* ✅ เพิ่มช่องกรอก Address */}
+        <Form.Item
+          name="address"
+          label="Address"
+          rules={[{ required: true, message: "Please enter your address!" }]}
+        >
+          <Input.TextArea placeholder="Address" />
         </Form.Item>
 
         <Form.Item>
