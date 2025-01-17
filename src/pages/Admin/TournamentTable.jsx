@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "antd"; // นำเข้า Button จาก Ant Design
-
+import moment from "moment";
 const TournamentTable = ({ handleEditTournament, handleDelete }) => {
   const columns = [
     {
@@ -11,15 +11,40 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
       title: "คำอธิบาย",
       dataIndex: "description",
     },
+
+    //เเปลงวันที่ก่อน
     {
       title: "วันเริ่มต้น",
       dataIndex: "startDate",
-      render: (date) => (date ? date : "-"),
+      render: (date) => {
+        console.log("Date value:", date);
+        if (date) {
+          // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+          if (date.toDate) {
+            return moment(date.toDate()).format("DD/MM/YYYY");
+          }
+          // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+          const parsedDate = moment(date);
+          return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+        }
+        return "-";
+      },
     },
     {
       title: "วันสิ้นสุด",
       dataIndex: "endDate",
-      render: (date) => (date ? date : "-"),
+      render: (date) => {
+        if (date) {
+          // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+          if (date.toDate) {
+            return moment(date.toDate()).format("DD/MM/YYYY");
+          }
+          // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+          const parsedDate = moment(date);
+          return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+        }
+        return "-";
+      },
     },
     {
       title: "จำนวนรอบสูงสุด",
