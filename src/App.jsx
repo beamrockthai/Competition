@@ -158,14 +158,13 @@ const App = () => {
             mode="inline"
             items={menuItems}
             className="custom-menu"
-            style={{ color: "#000" }}
           />
         </Sider>
       )}
 
       <Layout
         style={{
-          marginLeft: mobileView ? 0 : collapsed ? 80 : 200,
+          marginLeft: mobileView ? 0 : collapsed ? 80 : 200, // ปรับตำแหน่งของ Layout
           transition: "all 0.3s",
         }}
       >
@@ -173,9 +172,12 @@ const App = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            background: "#fff", // Or colorBgContainer if you have a theme color
+            background: "#fff",
             transition: "all 0.3s",
-            padding: mobileView ? "10px 20px" : "20px 40px", // Adjust padding for mobile
+            padding: mobileView ? "10px 20px" : "20px 40px", // ปรับ padding
+            // ทำให้ Header ติดอยู่ที่ด้านบน
+            top: 0, // ระบุตำแหน่งที่ต้องการให้ sticky
+            zIndex: 100, // ให้แน่ใจว่า Header อยู่ด้านหน้า Sider หรือ Content อื่น ๆ
           }}
         >
           {mobileView && (
@@ -188,7 +190,7 @@ const App = () => {
           )}
           <h2
             style={{
-              fontSize: mobileView ? "20px" : "27px", // Font size adjustment for mobile
+              fontSize: mobileView ? "20px" : "27px", // ปรับขนาดฟอนต์
               color: "#b12341",
               textAlign: "center",
               width: "100%",
@@ -213,8 +215,9 @@ const App = () => {
             margin: "24px 16px 0",
             display: "flex",
             flexDirection: "column",
-            minHeight: "100vh",
+            minHeight: "90vh",
             transition: "all 0.3s",
+            overflow: "auto", // เพิ่มการควบคุม overflow
           }}
         >
           <div
@@ -223,6 +226,7 @@ const App = () => {
               padding: 24,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
+              overflowY: "auto", // เพิ่มการ scroll เมื่อเนื้อหามีขนาดใหญ่เกิน
             }}
           >
             <Outlet />

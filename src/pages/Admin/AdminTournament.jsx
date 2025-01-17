@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
-  Table,
   Button,
   Modal,
   Form,
   Input,
   DatePicker,
   message,
-  Grid,
   Row,
   Col,
+  Table,
 } from "antd";
 import moment from "moment";
 import {
@@ -19,8 +18,8 @@ import {
   updateTournament,
   getTournamentRegistrations,
 } from "../../services/tournamentService";
-
-const { useBreakpoint } = Grid;
+import TournamentTable from "./TournamentTable";
+import TableComponent from "../../components/TableComponent"; // นำเข้า TableComponent
 
 const AdminTournament = () => {
   const [form] = Form.useForm();
@@ -30,7 +29,6 @@ const AdminTournament = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingTournament, setEditingTournament] = useState(null);
-  const screens = useBreakpoint();
 
   useEffect(() => {
     loadTournaments();
@@ -96,88 +94,35 @@ const AdminTournament = () => {
     loadTournaments();
   };
 
-  const columns = [
-    {
-      title: "ชื่อการแข่งขัน",
-      dataIndex: "tournamentName",
-      key: "tournamentName",
-    },
-    { title: "คำอธิบาย", dataIndex: "description", key: "description" },
-    {
-      title: "วันเริ่มต้น",
-      dataIndex: "startDate",
-      key: "startDate",
-      render: (date) =>
-        date && date.toDate ? moment(date.toDate()).format("YYYY-MM-DD") : "-",
-    },
-    {
-      title: "วันสิ้นสุด",
-      dataIndex: "endDate",
-      key: "endDate",
-      render: (date) =>
-        date && date.toDate ? moment(date.toDate()).format("YYYY-MM-DD") : "-",
-    },
-    {
-      title: "จำนวนรอบสูงสุด",
-      dataIndex: "maxRounds",
-      key: "maxRounds",
-    },
-    {
-      title: "จำนวนผู้สมัคร",
-      dataIndex: "registrationCount",
-      key: "registrationCount",
-    },
-    {
-      title: "การจัดการ",
-      key: "actions",
-      render: (_, record) => (
-        <>
-          <Button
-            type="primary"
-            size={screens.xs ? "small" : "middle"}
-            onClick={() => handleEditTournament(record)}
-          >
-            แก้ไข
-          </Button>
-          <Button
-            danger
-            size={screens.xs ? "small" : "middle"}
-            onClick={() => handleDelete(record.id)}
-            style={{ marginLeft: 8 }}
-          >
-            ลบ
-          </Button>
-        </>
-      ),
-    },
-  ];
+  const columns = TournamentTable({ handleEditTournament, handleDelete });
 
   return (
-    <div style={{ padding: screens.xs ? "10px" : "20px" }}>
+    <div style={{ padding: "20px" }}>
       <Row
         justify="space-between"
         align="middle"
         style={{ marginBottom: "20px" }}
       >
         <Col>
-          <h2 style={{ fontSize: screens.xs ? "18px" : "24px" }}>
-            จัดการการแข่งขัน
-          </h2>
+          <h2>จัดการการแข่งขัน</h2>
         </Col>
         <Col>
-          <Button type="primary" onClick={() => setModalVisible(true)}>
+          <Button
+            style={{ backgroundColor: "#b12341", borderColor: "#b12341" }}
+            type="primary"
+            onClick={() => setModalVisible(true)}
+          >
             สร้างการแข่งขัน
           </Button>
         </Col>
       </Row>
 
-      <Table
+      {/* ใช้ TableComponent แทน Table */}
+      <TableComponent
         dataSource={tournaments}
         columns={columns}
         rowKey="id"
         loading={loading}
-        pagination={{ responsive: true }}
-        scroll={{ x: "max-content" }}
       />
 
       {/* Modal สำหรับเพิ่มการแข่งขัน */}

@@ -1,59 +1,59 @@
 /* Custom sidebar */
 .custom-sidebar {
-  background-color: #fff; /* พื้นหลังของ sidebar */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* เปลี่ยนเฉพาะสีพื้นหลังและเงา */
-  box-shadow: none; /* ลบเงาของ sidebar */
+  background-color: #fff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: none;
 }
 
 /* เปลี่ยนฟอนต์ของ menu */
 .custom-menu {
-  font-family: "Prompt", sans-serif; /* ใช้ฟอนต์ Prompt */
-  background-color: #fff; /* พื้นหลังของ menu */
-  border: none; /* ลบเส้นขอบของ menu */
+  font-family: "Prompt", sans-serif;
+  background-color: #fff;
+  border: none;
 }
 
-/* สไตล์เมนูที่ถูกเลือก */
-.custom-menu .ant-menu-item-selected {
-  background-color: #b12341 !important; /* เปลี่ยนสีพื้นหลังของเมนูที่เลือก */
-  color: #fff !important; /* เปลี่ยนสีตัวหนังสือของเมนูที่เลือก */
-}
-
-/* เปลี่ยนสีพื้นหลังเมื่อ hover เมนูที่ถูกเลือก */
-.custom-menu .ant-menu-item-selected:hover {
-  background-color: #b12341 !important; /* สีพื้นหลังเมื่อ hover เมนูที่เลือก */
-  color: #fff !important; /* สีข้อความ */
-}
-
-/* สำหรับเมนูใน Sider และ Drawer */
-.custom-menu .ant-menu-item:hover {
-  background-color: #b12341 !important; /* เปลี่ยนสีพื้นหลังเมื่อ hover */
-  color: #fff; /* เปลี่ยนสีตัวอักษรเป็นขาวเมื่อ hover */
-}
-
-/* เปลี่ยนสีตัวอักษรเมนูใน Sidebar */
+/* เมนูปกติ */
 .custom-menu .ant-menu-item {
   color: #333; /* สีข้อความปกติ */
-  transition: color 0.3s ease; /* เพิ่มการเปลี่ยนแปลงสีตัวอักษรเมื่อ hover */
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* สไตล์ของ Header ใน Sidebar */
+/* เมื่อ hover เมนู (ที่ไม่ได้ถูกเลือก) */
+.custom-menu .ant-menu-item:hover:not(.ant-menu-item-selected) {
+  background-color: #b12341 !important;
+  color: #fff !important;
+}
+
+/* เมนูที่ถูกเลือก */
+.custom-menu .ant-menu-item-selected {
+  background-color: #b12341 !important;
+  color: #fff !important;
+}
+
+/* เมื่อ hover เมนูที่ถูกเลือก */
+.custom-menu .ant-menu-item-selected:hover {
+  background-color: #992335 !important; /* ใช้สีที่แตกต่างจาก selected */
+  color: #fff !important;
+}
+
+/* Header ใน Sidebar */
 .custom-header {
-  font-family: "Prompt", sans-serif; /* ใช้ฟอนต์ Prompt */
+  font-family: "Prompt", sans-serif;
   font-size: 18px;
-  color: #b12341; /* กำหนดสีข้อความใน Header */
+  color: #b12341;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s ease; /* ใช้เฉพาะ color ที่เปลี่ยน */
+  transition: color 0.3s ease;
 }
 
 /* เพิ่มเงาให้กับ Sidebar เมื่อยุบ */
 .custom-sidebar.collapsed {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* เมื่อ sidebar ยุบจะมีเงา */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* โลโก้ที่หมุน */
+/* โลโก้ */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -91,4 +91,17 @@
 /* เพิ่มสีให้ข้อความในส่วน read-the-docs */
 .read-the-docs {
   color: #888;
+}
+
+/* โหลดฟอนต์จาก Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap");
+
+/* กำหนดฟอนต์ให้กับทุกหน้า */
+body,
+html {
+  font-family: "Prompt", sans-serif;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

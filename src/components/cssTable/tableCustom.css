@@ -1,0 +1,51 @@
+/* เปลี่ยนสีพื้นหลังของทั้ง table */
+.ant-table {
+  background-color: #f5f5f5; /* สีพื้นหลังของตาราง */
+  border-radius: 8px; /* เพิ่มมุมโค้งมน */
+  overflow: hidden; /* ป้องกันการล้นของ table */
+}
+
+/* เปลี่ยนสี hover ของแถว */
+.ant-table-tbody > tr:hover > td {
+  background-color: #e2e1e1 !important; /* สีพื้นหลังเมื่อ hover */
+  color: rgb(0, 0, 0) !important; /* สีตัวอักษรเมื่อ hover */
+}
+
+/* สีพื้นหลังและตัวอักษรของหัวตาราง */
+.ant-table-thead > tr > th {
+  background-color: #001529; /* สีพื้นหลังของหัวตาราง */
+  color: #ffffff; /* สีตัวอักษร */
+  text-align: center; /* จัดให้อยู่ตรงกลาง */
+  font-weight: bold; /* ตัวหนา */
+  padding: 12px; /* ระยะห่างในหัวตาราง */
+  border-bottom: 1px solid #d9d9d9; /* ขอบล่าง */
+}
+
+/* เซลล์ของตาราง */
+.ant-table-tbody > tr > td {
+  text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+  padding: 8px 16px; /* เพิ่ม padding */
+}
+
+/* ขอบของ table */
+.ant-table {
+  border: 1px solid #d9d9d9; /* ขอบของตาราง */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+}
+
+/* เพิ่มคลาสสำหรับปรับสีพื้นหลังและขอบของ Search Bar */
+.custom-search-bar .ant-input {
+  background-color: #f7f7f7; /* สีพื้นหลัง */
+  border-color: #b12341; /* สีขอบ */
+  color: #b12341; /* สีข้อความ */
+}
+
+.custom-search-bar .ant-input-search-button {
+  background-color: #b12341; /* สีพื้นหลังของปุ่ม */
+  border-color: #b12341; /* สีขอบของปุ่ม */
+}
+
+.custom-search-bar .ant-input-search-button:hover {
+  background-color: #9a1e2a; /* สีพื้นหลังเมื่อ hover ปุ่ม */
+  border-color: #9a1e2a; /* สีขอบเมื่อ hover ปุ่ม */
+}
