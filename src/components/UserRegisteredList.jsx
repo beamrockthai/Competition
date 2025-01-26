@@ -59,9 +59,14 @@ const UserRegisteredList = () => {
                   {reg.teamType === "individual" ? "เดี่ยว" : "ทีม"}
                 </p>
                 {reg.teamType === "team" && (
-                  <p>
-                    <b>สมาชิก:</b> {reg.teamMembers.join(", ")}
-                  </p>
+                  <>
+                    <p>
+                      <b>ชื่อทีม:</b> {reg.teamName || "ไม่ได้ระบุ"}
+                    </p>
+                    <p>
+                      <b>สมาชิก:</b> {reg.teamMembers.join(", ")}
+                    </p>
+                  </>
                 )}
                 <Button
                   danger

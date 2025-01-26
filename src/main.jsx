@@ -43,9 +43,9 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        // เมื่อเข้ามาที่ "/" โดยตรงให้โชว์ Dashboard หรือหน้า Welcome ก็ได้
-        index: true,
-        element: <h1>Welcome to Dashboard</h1>,
+        // ✅ Default Route เมื่อเข้ามาที่ "/" โดยตรง ให้ไปหน้า "userdashboard"
+        index: true, // กำหนด Route นี้เป็นหน้า Default
+        element: <UserDashboard />, // เปลี่ยนไปหน้า Dashboard
       },
 
       {

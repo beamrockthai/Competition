@@ -59,12 +59,12 @@ const App = () => {
     {
       key: "1",
       icon: <UserOutlined />,
-      label: <Link to="/userdashboard">Dashboard</Link>,
+      label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
     },
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to="/userregisteredlist">ListMe</Link>,
+      label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
 
     {
@@ -75,25 +75,25 @@ const App = () => {
     {
       key: "4",
       icon: <SettingOutlined />,
-      label: <Link to="/setting">Setting</Link>,
+      label: <Link to="/setting">ตั้งค่า</Link>,
     },
     ...(role === "admin"
       ? [
           {
             key: "5",
             icon: <UserAddOutlined />,
-            label: <Link to="/manage-directors">Manage Directors</Link>,
+            label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
           },
           {
             key: "6",
             icon: <UserOutlined />,
-            label: <Link to="/user-management">User Management</Link>,
+            label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
 
           {
             key: "7",
             icon: <TrophyOutlined />,
-            label: <Link to="/admin-tournaments">Add Tournaments</Link>,
+            label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
           },
         ]
       : []),
@@ -102,30 +102,25 @@ const App = () => {
   // Dropdown เมนูสำหรับผู้ใช้งาน
   const userMenu = (
     <Menu>
-      <Menu.Item key="1" onClick={handleLogout} icon={<UserOutlined />}>
+      <Menu.Item key="1" icon={<UserOutlined />}>
         โปรไฟล์
       </Menu.Item>
-      <Menu.Item key="2" onClick={handleLogout} icon={<SettingOutlined />}>
+      <Menu.Item key="2" icon={<SettingOutlined />}>
         ตั้งค่า
       </Menu.Item>
-      <Menu.Item
-        key="3"
-        style={{ color: "#fe000" }}
-        onClick={handleLogout}
-        icon={<LogoutOutlined />}
-      >
+      <Menu.Item key="3" icon={<LogoutOutlined />} onClick={handleLogout}>
         ออกจากระบบ
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
+      {/* Sidebar Menu */}
       {mobileView ? (
         <Drawer
-          title="Menu"
           placement="left"
-          closable={true}
+          closable
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
         >
@@ -133,51 +128,45 @@ const App = () => {
             theme="light"
             mode="vertical"
             items={menuItems}
-            className="custom-menu"
             onClick={() => setDrawerVisible(false)}
           />
         </Drawer>
       ) : (
         <Sider
-          breakpoint="lg"
           collapsible
           collapsed={collapsed}
           onCollapse={setCollapsed}
+          width={250}
           style={{
-            position: "fixed",
-            top: 95,
-            left: 0,
-            bottom: 0,
-            backgroundColor: "#fff",
-            zIndex: 100,
-            transition: "all 0.3s",
+            height: "100vh",
+            overflow: "auto",
+            background: "#ffffff",
+            boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Menu
             theme="light"
             mode="inline"
             items={menuItems}
-            className="custom-menu"
+            style={{ borderRight: "none", marginTop: "16px" }}
           />
         </Sider>
       )}
 
-      <Layout
-        style={{
-          marginLeft: mobileView ? 0 : collapsed ? 80 : 200, // ปรับตำแหน่งของ Layout
-          transition: "all 0.3s",
-        }}
-      >
+      <Layout>
+        {/* Header */}
         <Header
           style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 100,
+            height: 64,
+            background: "#ffffff",
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            background: "#fff",
-            transition: "all 0.3s",
-            padding: mobileView ? "10px 20px" : "20px 40px", // ปรับ padding
-            // ทำให้ Header ติดอยู่ที่ด้านบน
-            top: 0, // ระบุตำแหน่งที่ต้องการให้ sticky
-            zIndex: 100, // ให้แน่ใจว่า Header อยู่ด้านหน้า Sider หรือ Content อื่น ๆ
+            padding: "0 16px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
           {mobileView && (
@@ -185,52 +174,36 @@ const App = () => {
               type="text"
               icon={<MenuOutlined />}
               onClick={() => setDrawerVisible(true)}
-              style={{ fontSize: "18px", marginLeft: "16px" }}
             />
           )}
           <h2
             style={{
-              fontSize: mobileView ? "20px" : "27px", // ปรับขนาดฟอนต์
-              color: "#b12341",
-              textAlign: "center",
-              width: "100%",
               margin: 0,
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "#b12341",
             }}
           >
-            <AppstoreOutlined />
-            COMP
+            <AppstoreOutlined /> COMP
           </h2>
-
-          {user && (
-            <Dropdown overlay={userMenu} trigger={["click"]}>
-              <Button icon={<UserOutlined />}>
-                ธัชนนท์ <DownOutlined />
-              </Button>
-            </Dropdown>
-          )}
+          <Dropdown overlay={userMenu} trigger={["click"]}>
+            <Button>
+              {user?.name || "ผู้ใช้งาน"} <DownOutlined />
+            </Button>
+          </Dropdown>
         </Header>
 
+        {/* Content */}
         <Content
           style={{
-            margin: "24px 16px 0",
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "90vh",
-            transition: "all 0.3s",
-            overflow: "auto", // เพิ่มการควบคุม overflow
+            margin: "16px",
+            padding: "24px",
+            background: "#ffffff",
+            borderRadius: "8px",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div
-            style={{
-              flex: 1,
-              padding: 24,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-              overflowY: "auto", // เพิ่มการ scroll เมื่อเนื้อหามีขนาดใหญ่เกิน
-            }}
-          >
-            <Outlet />
-          </div>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

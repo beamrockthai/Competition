@@ -7,7 +7,8 @@ export const registerTournament = async (
   tournamentId,
   userId,
   teamType,
-  teamMembers = []
+  teamMembers = [],
+  teamName // เพิ่ม teamName
 ) => {
   try {
     if (!tournamentId || !userId || !teamType) {
@@ -21,6 +22,7 @@ export const registerTournament = async (
       userId,
       teamType,
       teamMembers,
+      teamName, //เพิ่มมา
     });
 
     const registrationRef = collection(
@@ -29,9 +31,10 @@ export const registerTournament = async (
     );
     const newRegistration = {
       userId,
-      tournamentId, // ✅ บันทึก tournamentId
+      tournamentId, // บันทึก tournamentId
       teamType,
       teamMembers,
+      teamName, // บันทึก teamName
       registeredAt: Timestamp.now(),
     };
 
