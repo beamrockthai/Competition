@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, theme, Button, Drawer, Dropdown, Modal } from "antd";
 import {
+  UnorderedListOutlined,
   UserOutlined,
   TrophyOutlined,
   FileOutlined,
@@ -12,7 +13,7 @@ import {
   AppstoreOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
-import { useUserAuth } from "./Context/UserAuth"; // ดึงข้อมูลผู้ใช้จาก Context
+import { useUserAuth } from "./Context/UserAuth";
 import "./css/App.css";
 
 const { Header, Content, Sider } = Layout;
@@ -24,9 +25,9 @@ const App = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileView, setMobileView] = useState(window.innerWidth < 768);
-  const [drawerVisible, setDrawerVisible] = useState(false); // 🔹 เพิ่ม state สำหรับ Drawer
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
-  const { user, role, logOut } = useUserAuth(); // 🔹 เพิ่ม role เพื่อใช้ในการควบคุมเมนู
+  const { user, role, logOut } = useUserAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,15 +43,12 @@ const App = () => {
 
   const handleLogout = async () => {
     Modal.confirm({
-      title: "ต้องการออกจากระบบหรือไม่ ?",
+      title: "ต้องการออกจากระบบหรือไม่?",
       okText: "ตกลง",
       cancelText: "ยกเลิก",
       onOk: async () => {
-        await logOut(); // ออกจากระบบ
-        navigate("/login"); // เปลี่ยนหน้าไปที่หน้า Login
-      },
-      onCancel: () => {
-        console.log("Logout cancelled");
+        await logOut();
+        navigate("/login");
       },
     });
   };
@@ -58,7 +56,7 @@ const App = () => {
   const menuItems = [
     {
       key: "1",
-      icon: <UserOutlined />,
+      icon: <UnorderedListOutlined />,
       label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
     },
     {
@@ -66,57 +64,58 @@ const App = () => {
       icon: <UserOutlined />,
       label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
-
     {
       key: "3",
       icon: <FileOutlined />,
-      label: <Link to="/evaluation">Evaluation</Link>,
-    },
-    {
-      key: "4",
-      icon: <SettingOutlined />,
-      label: <Link to="/setting">ตั้งค่า</Link>,
+      label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
     },
     ...(role === "admin"
       ? [
           {
-            key: "5",
+            key: "4",
             icon: <UserAddOutlined />,
             label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
           },
           {
-            key: "6",
+            key: "5",
             icon: <UserOutlined />,
             label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
-
           {
-            key: "7",
+            key: "6",
             icon: <TrophyOutlined />,
             label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
           },
         ]
       : []),
+    {
+      key: "7",
+      icon: <SettingOutlined />,
+      label: <Link to="/setting">ตั้งค่า</Link>,
+    },
   ];
 
-  // Dropdown เมนูสำหรับผู้ใช้งาน
-  const userMenu = (
-    <Menu>
-      <Menu.Item key="1" icon={<UserOutlined />}>
-        โปรไฟล์
-      </Menu.Item>
-      <Menu.Item key="2" icon={<SettingOutlined />}>
-        ตั้งค่า
-      </Menu.Item>
-      <Menu.Item key="3" icon={<LogoutOutlined />} onClick={handleLogout}>
-        ออกจากระบบ
-      </Menu.Item>
-    </Menu>
-  );
+  const userMenuItems = [
+    {
+      key: "1",
+      label: "โปรไฟล์",
+      icon: <UserOutlined />,
+    },
+    {
+      key: "2",
+      label: "ตั้งค่า",
+      icon: <SettingOutlined />,
+    },
+    {
+      key: "3",
+      label: "ออกจากระบบ",
+      icon: <LogoutOutlined />,
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
-      {/* Sidebar Menu */}
       {mobileView ? (
         <Drawer
           placement="left"
@@ -154,7 +153,6 @@ const App = () => {
       )}
 
       <Layout>
-        {/* Header */}
         <Header
           style={{
             position: "sticky",
@@ -186,14 +184,13 @@ const App = () => {
           >
             <AppstoreOutlined /> COMP
           </h2>
-          <Dropdown overlay={userMenu} trigger={["click"]}>
+          <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
             <Button>
               {user?.name || "ผู้ใช้งาน"} <DownOutlined />
             </Button>
           </Dropdown>
         </Header>
 
-        {/* Content */}
         <Content
           style={{
             margin: "16px",

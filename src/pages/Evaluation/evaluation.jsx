@@ -1,425 +1,297 @@
-// components/Evaluation/Evaluation.js
 import React, { useState, useEffect } from "react";
+import { Button, Input, Modal, Form, Table, Space, Radio } from "antd";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
-  Table,
-  Input,
-  Button,
-  Modal,
-  Form,
-  DatePicker,
-  Row,
-  Col,
-  message,
-  Menu,
-} from "antd";
-import moment from "moment";
-import {
-  fetchEvaluation,
-  addEvaluation,
-  deleteEvaluation,
-  updateEvaluation,
-} from "../../services/evaluationService";
+  fetchForms,
+  addForm,
+  updateForm,
+  deleteForm,
+} from "../../services/evaluation";
 
 export const Evaluation = () => {
-  const [form, setForm] = useState({
-    playerName: "",
-    playerID: "",
-    round: "",
-    score: "",
-    comments: "",
-    startDate: null,
-    endDate: null,
-    judgeNameId: "",
-  });
-  const [data, setData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingRecord, setEditingRecord] = useState(null);
-  const [formEdit] = Form.useForm();
+  const [formName, setFormName] = useState("");
+  const [criteria, setCriteria] = useState([]);
+  const [evaluations, setEvaluations] = useState([
+    { id: Date.now(), label: "" },
+  ]);
+  const [forms, setForms] = useState([]);
+  const [editingForm, setEditingForm] = useState(null);
+  const [evaluationModalVisible, setEvaluationModalVisible] = useState(false);
+  const [selectedForm, setSelectedForm] = useState(null);
+  const [evaluationResults, setEvaluationResults] = useState({});
 
+  // Load forms from Firebase
   useEffect(() => {
-    loadData();
+    const loadForms = async () => {
+      const fetchedForms = await fetchForms();
+      setForms(fetchedForms);
+    };
+    loadForms();
   }, []);
 
-  // โหลดข้อมูล
-  const loadData = async () => {
-    const evaluation = await fetchEvaluation();
-    setData(evaluation);
-  };
-
-  // จัดการการเปลี่ยนค่าในฟอร์ม
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
-
-  // จัดการการเปลี่ยนวันที่
-  const handleDateChange = (date, dateString, name) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: dateString,
-    }));
-  };
-
-  // เพิ่มข้อมูล
-  const handleAddData = async () => {
-    if (await addEvaluation(form)) {
-      message.success("Evaluation added successfully");
-      loadData();
-      setForm({
-        playerName: "",
-        playerID: "",
-        round: "",
-        score: "",
-        comments: "",
-        startDate: null,
-        endDate: null,
-        judgeNameId: "",
-      });
-    } else {
-      message.error("Failed to add Evaluation");
+  const handleAddEvaluation = () => {
+    if (evaluations.length < 5) {
+      setEvaluations([...evaluations, { id: Date.now(), label: "" }]);
     }
   };
 
-  // ลบข้อมูล
-  const handleDelete = async (id) => {
-    await deleteEvaluation(id);
-    message.success("Evaluation deleted successfully");
-    loadData();
+  const handleDeleteEvaluation = (id) => {
+    setEvaluations(evaluations.filter((evaluation) => evaluation.id !== id));
   };
 
-  // เปิด modal สำหรับแก้ไขข้อมูล
-  const handleEdit = (record) => {
-    setEditingRecord(record);
-    formEdit.setFieldsValue({
-      playerName: record.playerName,
-      playerID: record.playerID,
-      round: record.round,
-      score: record.score,
-      comments: record.comments,
-      startDate: record.startDate ? moment(record.startDate.toDate()) : null,
-      endDate: record.endDate ? moment(record.endDate.toDate()) : null,
-      judgeNameId: record.judgeNameId,
-    });
+  const handleSaveForm = async () => {
+    if (formName.trim() && criteria.length > 0 && evaluations.length > 0) {
+      const newForm = { name: formName, criteria, evaluations };
+      if (editingForm) {
+        // Update form
+        await updateForm(editingForm, newForm);
+      } else {
+        // Add new form
+        await addForm(newForm);
+      }
+      resetFormState();
+      const fetchedForms = await fetchForms();
+      setForms(fetchedForms);
+    }
+  };
+
+  const handleEditForm = (form) => {
+    setFormName(form.name);
+    setCriteria(form.criteria || []); // ป้องกัน undefined
+    setEvaluations(form.evaluations || []); // ป้องกัน undefined
+    setEditingForm(form.id); // เก็บ id ของฟอร์มที่กำลังแก้ไข
     setIsModalVisible(true);
   };
 
-  // อัปเดตข้อมูล
-  const handleUpdate = async () => {
+  const handleDeleteForm = async (id) => {
     try {
-      const values = await formEdit.validateFields();
-      const updatedValues = {
-        ...values,
-        startDate: values.startDate, // ส่ง moment object
-        endDate: values.endDate, // ส่ง moment object
-      };
-      if (await updateEvaluation(editingRecord.id, updatedValues)) {
-        message.success("Evaluation updated successfully");
-        setIsModalVisible(false);
-        setEditingRecord(null);
-        loadData();
-      } else {
-        message.error("Failed to update Evaluation");
-      }
+      await deleteForm(id);
+      const fetchedForms = await fetchForms(); // ดึงข้อมูลใหม่หลังลบ
+      setForms(fetchedForms);
     } catch (error) {
-      message.error("Please complete the form correctly");
+      console.error("Error deleting form:", error);
     }
   };
 
-  // ยกเลิกการแก้ไข
-  const handleCancel = () => {
+  const resetFormState = () => {
+    setFormName("");
+    setCriteria([]);
+    setEvaluations([{ id: Date.now(), label: "" }]);
+    setEditingForm(null);
     setIsModalVisible(false);
-    setEditingRecord(null);
   };
 
-  // คอลัมน์ของตาราง
+  const handleEvaluateForm = (form) => {
+    setSelectedForm(form);
+
+    const initialResults = {};
+    form.criteria.forEach((criterion) => {
+      initialResults[criterion.id] = null;
+    });
+    setEvaluationResults(initialResults);
+
+    setEvaluationModalVisible(true);
+  };
+
+  const handleSaveEvaluation = () => {
+    console.log("Results saved:", evaluationResults);
+    setEvaluationModalVisible(false);
+  };
+
   const columns = [
     {
-      title: "Player Name",
-      dataIndex: "playerName",
-      key: "playerName",
-      responsive: ["xs", "sm", "md", "lg", "xl"],
+      title: "ชื่อแบบฟอร์ม",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "Player ID",
-      dataIndex: "playerID",
-      key: "playerID",
-      responsive: ["xs", "sm", "md", "lg", "xl"],
-    },
-    {
-      title: "Round",
-      dataIndex: "round",
-      key: "round",
-      responsive: ["sm", "md", "lg", "xl"],
-    },
-    {
-      title: "Score",
-      dataIndex: "score",
-      key: "score",
-      responsive: ["sm", "md", "lg", "xl"],
-    },
-    {
-      title: "Comments",
-      dataIndex: "comments",
-      key: "comments",
-      responsive: ["xs", "sm", "md", "lg", "xl"],
-    },
-    {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      render: (date) =>
-        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
-      responsive: ["md", "lg", "xl"],
-    },
-    {
-      title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
-      render: (date) =>
-        date ? moment(date.toDate()).format("YYYY-MM-DD") : "",
-      responsive: ["md", "lg", "xl"],
-    },
-    {
-      title: "Judge Name ID",
-      dataIndex: "judgeNameId",
-      key: "judgeNameId",
-      responsive: ["xs", "sm", "md", "lg", "xl"],
-    },
-    {
-      title: "Actions",
-      key: "actions",
+      title: "การจัดการ",
+      key: "action",
       render: (_, record) => (
-        <>
-          <Button
-            onClick={() => handleEdit(record)}
-            type="primary"
-            size="small"
-          >
-            Add
+        <Space>
+          <Button type="primary" onClick={() => handleEditForm(record)}>
+            แก้ไข
           </Button>
-          <Button
-            onClick={() => handleEdit(record)}
-            type="primary"
-            size="small"
-            style={{ marginLeft: 8 }}
-          >
-            Edit
+          <Button danger onClick={() => handleDeleteForm(record.id)}>
+            ลบ
           </Button>
-          <Button
-            onClick={() => handleDelete(record.id)}
-            danger
-            size="small"
-            style={{ marginLeft: 8 }}
-          >
-            Delete
+          <Button type="default" onClick={() => handleEvaluateForm(record)}>
+            ประเมิน
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
 
   return (
     <div style={{ padding: "20px" }}>
-      <Row
-        justify="space-between"
-        align="middle"
+      <h2>แบบประเมินการแข่งขัน</h2>
+
+      <Button
+        type="primary"
+        onClick={() => setIsModalVisible(true)}
         style={{ marginBottom: "20px" }}
       >
-        <Col>
-          <h2>สร้างใบประเมิน</h2>
-        </Col>
-        <Col>
-          <Button type="primary" onClick={handleAddData}>
-            เพิ่มใบประเมิน
-          </Button>
-        </Col>
-      </Row>
-      <Form layout="vertical">
-        <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Player Name" required>
-              <Input
-                name="playerName"
-                placeholder="Player Name"
-                value={form.playerName}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Player ID" required>
-              <Input
-                name="playerID"
-                placeholder="Player ID"
-                value={form.playerID}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Round" required>
-              <Input
-                name="round"
-                placeholder="Round"
-                value={form.round}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Score" required>
-              <Input
-                name="score"
-                placeholder="Score"
-                value={form.score}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Comments" required>
-              <Input
-                name="comments"
-                placeholder="Comments"
-                value={form.comments}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Start Date" required>
-              <DatePicker
-                style={{ width: "100%" }}
-                format="YYYY-MM-DD"
-                value={
-                  form.startDate ? moment(form.startDate, "YYYY-MM-DD") : null
-                }
-                onChange={(date, dateString) =>
-                  handleDateChange(date, dateString, "startDate")
-                }
-                placeholder="Start Date"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="End Date" required>
-              <DatePicker
-                style={{ width: "100%" }}
-                format="YYYY-MM-DD"
-                value={form.endDate ? moment(form.endDate, "YYYY-MM-DD") : null}
-                onChange={(date, dateString) =>
-                  handleDateChange(date, dateString, "endDate")
-                }
-                placeholder="End Date"
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Form.Item label="Judge Name ID" required>
-              <Input
-                name="judgeNameId"
-                placeholder="Judge Name ID"
-                value={form.judgeNameId}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-          <Col
-            xs={24}
-            sm={12}
-            md={8}
-            style={{ display: "flex", alignItems: "flex-end" }}
-          ></Col>
-        </Row>
-      </Form>
-      <hr />
+        สร้างแบบประเมิน
+      </Button>
+
       <Table
-        dataSource={data}
+        dataSource={forms.map((form) => ({ ...form, key: form.id }))}
         columns={columns}
-        rowKey="id"
-        pagination={{ responsive: true }}
-        scroll={{ x: "max-content" }}
+        pagination={false}
       />
 
-      {/* Edit Modal */}
       <Modal
-        title="แก้ไขข้อมูลการสร้างใบประเมิน"
+        title={editingForm ? "แก้ไขแบบฟอร์ม" : "สร้างแบบฟอร์ม"}
         open={isModalVisible}
-        onOk={handleUpdate}
-        onCancel={handleCancel}
+        onCancel={resetFormState}
+        onOk={handleSaveForm}
         okText="บันทึก"
         cancelText="ยกเลิก"
       >
-        <Form form={formEdit} layout="vertical">
-          <Form.Item
-            name="playerName"
-            label="Player Name"
-            rules={[{ required: true, message: "กรุณากรอกรายชื่อผู้เล่น" }]}
-          >
-            <Input />
+        <Form layout="vertical">
+          <Form.Item label="ชื่อแบบฟอร์ม">
+            <Input
+              placeholder="ใส่ชื่อแบบฟอร์ม"
+              value={formName}
+              onChange={(e) => setFormName(e.target.value)}
+            />
           </Form.Item>
 
-          <Form.Item
-            name="playerID"
-            label="Player ID"
-            rules={[{ required: true, message: "กรุณากรอก ID ผู้เล่น" }]}
-          >
-            <Input />
+          <Form.Item label="เกณฑ์">
+            <Space direction="vertical" style={{ width: "100%" }}>
+              {criteria.map((criterion, index) => (
+                <Space key={criterion.id} style={{ width: "100%" }}>
+                  <Input
+                    placeholder={`แถวที่ ${index + 1}`}
+                    value={criterion.name}
+                    onChange={(e) => {
+                      const newCriteria = [...criteria];
+                      newCriteria[index].name = e.target.value;
+                      setCriteria(newCriteria);
+                    }}
+                    style={{ flex: 1 }}
+                  />
+                  <Button
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() =>
+                      setCriteria(criteria.filter((c) => c.id !== criterion.id))
+                    }
+                  >
+                    ลบ
+                  </Button>
+                </Space>
+              ))}
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() =>
+                  setCriteria([...criteria, { id: Date.now(), name: "" }])
+                }
+              >
+                เพิ่มแถว
+              </Button>
+            </Space>
           </Form.Item>
 
-          <Form.Item
-            name="round"
-            label="Round"
-            rules={[{ required: true, message: "กรุณากรอกรอกรอบ" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="score"
-            label="Score"
-            rules={[{ required: true, message: "กรุณากรอกคะแนน" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="comments"
-            label="Comments"
-            rules={[{ required: true, message: "กรุณาคอมเมนต์" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="startDate"
-            label="Start Date"
-            rules={[{ required: true, message: "กรุณาเลือกวันที่เริ่มต้น" }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
-
-          <Form.Item
-            name="endDate"
-            label="End Date"
-            rules={[{ required: true, message: "กรุณาเลือกวันที่สิ้นสุด" }]}
-          >
-            <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
-
-          <Form.Item
-            name="judgeNameId"
-            label="Judge Name ID"
-            rules={[{ required: true, message: "กรุณาใส่ ID กรรมการ" }]}
-          >
-            <Input />
+          <Form.Item label="ระดับการประเมิน (สูงสุด 5 ระดับ)">
+            <Space direction="vertical" style={{ width: "100%" }}>
+              {evaluations.map((evaluation, index) => (
+                <Space key={evaluation.id} style={{ width: "100%" }}>
+                  <Input
+                    placeholder={`ระดับที่ ${index + 1}`}
+                    value={evaluation.label}
+                    onChange={(e) => {
+                      const newEvaluations = [...evaluations];
+                      newEvaluations[index].label = e.target.value;
+                      setEvaluations(newEvaluations);
+                    }}
+                    style={{ flex: 1 }}
+                  />
+                  <Button
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDeleteEvaluation(evaluation.id)}
+                    disabled={evaluations.length <= 1}
+                  >
+                    ลบ
+                  </Button>
+                </Space>
+              ))}
+              {evaluations.length < 5 && (
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={handleAddEvaluation}
+                >
+                  เพิ่มระดับ
+                </Button>
+              )}
+            </Space>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title={`ประเมินแบบฟอร์ม: ${selectedForm?.name || ""}`}
+        open={evaluationModalVisible}
+        onCancel={() => setEvaluationModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setEvaluationModalVisible(false)}>
+            ยกเลิก
+          </Button>,
+          <Button
+            key="save"
+            type="primary"
+            onClick={handleSaveEvaluation}
+            disabled={
+              !Object.values(evaluationResults).every((val) => val !== null)
+            }
+          >
+            บันทึก
+          </Button>,
+        ]}
+        width="800px"
+      >
+        <Table
+          dataSource={
+            selectedForm?.criteria?.map((criterion) => ({
+              key: criterion.id,
+              criterion: criterion.name,
+            })) || []
+          }
+          columns={[
+            {
+              title: "เกณฑ์การประเมิน",
+              dataIndex: "criterion",
+              key: "criterion",
+            },
+            {
+              title: "ระดับการประเมิน",
+              key: "evaluation",
+              render: (_, record) => (
+                <Radio.Group
+                  onChange={(e) => {
+                    setEvaluationResults({
+                      ...evaluationResults,
+                      [record.key]: e.target.value,
+                    });
+                  }}
+                  value={evaluationResults[record.key] || null}
+                >
+                  {selectedForm?.evaluations?.map((evaluation) => (
+                    <Radio key={evaluation.id} value={evaluation.label}>
+                      {evaluation.label}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              ),
+            },
+          ]}
+          pagination={false}
+        />
       </Modal>
     </div>
   );

@@ -92,16 +92,3 @@
 .read-the-docs {
   color: #888;
 }
-
-/* โหลดฟอนต์จาก Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap");
-
-/* กำหนดฟอนต์ให้กับทุกหน้า */
-body,
-html {
-  font-family: "Prompt", sans-serif;
-  font-size: 14px;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
