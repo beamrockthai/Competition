@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Modal, Form, Table, Space, Radio } from "antd";
+import {
+  Button,
+  Input,
+  Modal,
+  Form,
+  Table,
+  Space,
+  Radio,
+  Checkbox,
+} from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   fetchForms,
   addForm,
   updateForm,
   deleteForm,
+  fetchDirectors,
+  assignForm,
 } from "../../services/evaluation";
 
 export const Evaluation = () => {
@@ -20,6 +31,10 @@ export const Evaluation = () => {
   const [evaluationModalVisible, setEvaluationModalVisible] = useState(false);
   const [selectedForm, setSelectedForm] = useState(null);
   const [evaluationResults, setEvaluationResults] = useState({});
+  const [directors, setDirectors] = useState([]); // ✅ เก็บรายชื่อกรรมการ
+
+  const [isAssignModalVisible, setIsAssignModalVisible] = useState(false); // ✅ state เปิด/ปิด Modal มอบหมาย
+  const [selectedDirectors, setSelectedDirectors] = useState([]); // ✅ state เก็บ ID กรรมการที่เลือก
 
   // Load forms from Firebase
   useEffect(() => {
@@ -27,7 +42,14 @@ export const Evaluation = () => {
       const fetchedForms = await fetchForms();
       setForms(fetchedForms);
     };
+
+    const loadDirectors = async () => {
+      const fetchedDirectors = await fetchDirectors();
+      fetchDirectors(fetchedDirectors);
+    };
+
     loadForms();
+    loadDirectors();
   }, []);
 
   const handleAddEvaluation = () => {
@@ -99,6 +121,46 @@ export const Evaluation = () => {
     setEvaluationModalVisible(false);
   };
 
+  // ✅ เปิด Modal มอบหมายแบบฟอร์ม
+  const handleOpenAssignModal = (form) => {
+    setSelectedForm(form);
+    setSelectedDirectors([]); // รีเซ็ตค่าที่เลือก
+    setIsAssignModalVisible(true); // ✅ เปิด Modal มอบหมาย
+  };
+
+  // ✅ เมื่อมีการเลือก/ยกเลิกกรรมการ
+  const handleCheckboxChange = (id) => {
+    setSelectedDirectors((prev) =>
+      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
+    );
+  };
+
+  // โหลดข้อมูลแบบฟอร์มจากฐานข้อมูล
+  useEffect(() => {
+    const loadForms = async () => {
+      const fetchedForms = await fetchForms();
+      setForms(fetchedForms);
+    };
+    loadForms();
+  }, []);
+
+  // ✅ โหลดรายชื่อกรรมการจากฐานข้อมูล
+  useEffect(() => {
+    const loadDirectors = async () => {
+      const fetchedDirectors = await fetchDirectors();
+      setDirectors(fetchedDirectors); // ✅ แก้จาก fetchDirectors(fetchedDirectors);
+    };
+    loadDirectors();
+  }, []);
+
+  // ✅ มอบหมายแบบฟอร์มให้กรรมการ
+  const handleAssignForm = async () => {
+    if (selectedForm && selectedDirectors.length > 0) {
+      await assignForm(selectedForm.id, selectedDirectors);
+      setIsAssignModalVisible(false);
+    }
+  };
+
   const columns = [
     {
       title: "ชื่อแบบฟอร์ม",
@@ -118,6 +180,9 @@ export const Evaluation = () => {
           </Button>
           <Button type="default" onClick={() => handleEvaluateForm(record)}>
             ประเมิน
+          </Button>
+          <Button type="default" onClick={() => handleOpenAssignModal(record)}>
+            มอบหมาย
           </Button>
         </Space>
       ),
@@ -233,7 +298,32 @@ export const Evaluation = () => {
           </Form.Item>
         </Form>
       </Modal>
-
+      <Modal
+        title={`มอบหมายแบบฟอร์ม: ${selectedForm?.name || ""}`}
+        visible={isAssignModalVisible}
+        onCancel={() => setIsAssignModalVisible(false)}
+        onOk={handleAssignForm}
+        okText="มอบหมาย"
+        cancelText="ยกเลิก"
+      >
+        <h3>เลือกกรรมการที่ต้องการมอบหมาย</h3>
+        {directors.length > 0 ? (
+          <Checkbox.Group style={{ display: "flex", flexDirection: "column" }}>
+            {directors.map((director) => (
+              <Checkbox
+                key={director.id}
+                value={director.id}
+                checked={selectedDirectors.includes(director.id)}
+                onChange={() => handleCheckboxChange(director.id)}
+              >
+                {director.firstName} {director.lastName} ({director.email})
+              </Checkbox>
+            ))}
+          </Checkbox.Group>
+        ) : (
+          <p>ไม่มีกรรมการให้เลือก</p>
+        )}
+      </Modal>
       <Modal
         title={`ประเมินแบบฟอร์ม: ${selectedForm?.name || ""}`}
         open={evaluationModalVisible}
@@ -255,6 +345,8 @@ export const Evaluation = () => {
         ]}
         width="800px"
       >
+        {/* ✅ Modal สำหรับเลือกกรรมการ */}
+
         <Table
           dataSource={
             selectedForm?.criteria?.map((criterion) => ({
