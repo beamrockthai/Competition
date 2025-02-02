@@ -156,8 +156,23 @@ export const Evaluation = () => {
   // ✅ มอบหมายแบบฟอร์มให้กรรมการ
   const handleAssignForm = async () => {
     if (selectedForm && selectedDirectors.length > 0) {
-      await assignForm(selectedForm.id, selectedDirectors);
-      setIsAssignModalVisible(false);
+      try {
+        // เรียกใช้ฟังก์ชัน assignForm เพื่อบันทึกข้อมูล
+        await assignForm(selectedForm.id, selectedDirectors);
+
+        // ปิด Modal หลังจากบันทึกสำเร็จ
+        setIsAssignModalVisible(false);
+
+        // รีเฟรชข้อมูลฟอร์มจาก Firestore
+        const fetchedForms = await fetchForms();
+        setForms(fetchedForms);
+
+        console.log("Form assigned successfully!");
+      } catch (error) {
+        console.error("Error assigning form:", error);
+      }
+    } else {
+      alert("กรุณาเลือกกรรมการก่อนมอบหมาย");
     }
   };
 
@@ -308,14 +323,13 @@ export const Evaluation = () => {
       >
         <h3>เลือกกรรมการที่ต้องการมอบหมาย</h3>
         {directors.length > 0 ? (
-          <Checkbox.Group style={{ display: "flex", flexDirection: "column" }}>
+          <Checkbox.Group
+            style={{ display: "flex", flexDirection: "column" }}
+            value={selectedDirectors}
+            onChange={(checkedValues) => setSelectedDirectors(checkedValues)} // อัปเดตค่าที่เลือก
+          >
             {directors.map((director) => (
-              <Checkbox
-                key={director.id}
-                value={director.id}
-                checked={selectedDirectors.includes(director.id)}
-                onChange={() => handleCheckboxChange(director.id)}
-              >
+              <Checkbox key={director.id} value={director.id}>
                 {director.firstName} {director.lastName} ({director.email})
               </Checkbox>
             ))}
@@ -324,6 +338,7 @@ export const Evaluation = () => {
           <p>ไม่มีกรรมการให้เลือก</p>
         )}
       </Modal>
+
       <Modal
         title={`ประเมินแบบฟอร์ม: ${selectedForm?.name || ""}`}
         open={evaluationModalVisible}
