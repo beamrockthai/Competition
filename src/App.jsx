@@ -86,10 +86,15 @@ const App = () => {
             icon: <TrophyOutlined />,
             label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
           },
+          {
+            key: "7",
+            icon: <TrophyOutlined />,
+            label: <Link to="/director-form">รายการต้องประเมิน</Link>,
+          },
         ]
       : []),
     {
-      key: "7",
+      key: "8",
       icon: <SettingOutlined />,
       label: <Link to="/setting">ตั้งค่า</Link>,
     },

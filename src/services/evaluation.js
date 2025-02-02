@@ -36,7 +36,7 @@ export const deleteForm = async (id) => {
   await deleteDoc(formDoc);
 };
 
-// Fetch all directors from the database
+// สำหรับดึงข้อมูลกรรมการมาใช้งานจาก firestore
 export const fetchDirectors = async () => {
   const snapshot = await getDocs(collection(db, "users"));
   return snapshot.docs
@@ -44,7 +44,7 @@ export const fetchDirectors = async () => {
     .filter((user) => user.role === "director");
 };
 
-// Assign a form to selected directors
+// เลือกฟอร์มให้กรรมการ
 export const assignForm = async (formId, directorIds) => {
   try {
     const formDoc = doc(db, "evaluations", formId);
@@ -53,4 +53,15 @@ export const assignForm = async (formId, directorIds) => {
   } catch (error) {
     console.error("Error assigning form:", error);
   }
+};
+
+// Fetch forms assigned to a specific director
+export const fetchDirecForm = async (userId) => {
+  const snapshot = await getDocs(formsCollection);
+  const forms = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  return forms.filter((form) => form.assignedTo?.includes(userId));
 };
