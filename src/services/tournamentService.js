@@ -20,6 +20,7 @@ export const fetchTournaments = async () => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
+      status: doc.data().status || false, // กำหนดค่าเริ่มต้นเป็น false ถ้าไม่มีค่า
     }));
   } catch (err) {
     console.error("Error loading data: ", err);
@@ -31,14 +32,22 @@ export const fetchTournaments = async () => {
 // 📌 เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
 export const addTournament = async (form) => {
   try {
-    const { tournamentName, description, startDate, endDate, maxRounds } = form;
+    const {
+      tournamentName,
+      description,
+      startDate,
+      endDate,
+      maxRounds,
+      status,
+    } = form;
 
     if (
       !tournamentName ||
       !description ||
       !startDate ||
       !endDate ||
-      !maxRounds
+      !maxRounds ||
+      status === undefined // ✅ แก้ไขจาก `!status` เป็น `status === undefined`
     ) {
       message.warning("กรุณากรอกข้อมูลให้ครบถ้วน");
       return false;
@@ -53,6 +62,7 @@ export const addTournament = async (form) => {
       startDate: startTimestamp,
       endDate: endTimestamp,
       maxRounds: parseInt(maxRounds, 10),
+      status: status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ค่าเริ่มต้น `false`
     });
 
     message.success("เพิ่มข้อมูลเรียบร้อยแล้ว");
@@ -75,30 +85,32 @@ export const deleteTournament = async (id) => {
   }
 };
 
-// 📌 อัปเดตข้อมูลทัวร์นาเมนต์ใน Firestore (แก้ปัญหาการใช้ `.toDate()`)
+// 📌 อัปเดตข้อมูลทัวร์นาเมนต์ใน Firestore
 export const updateTournament = async (id, values) => {
   try {
-    const { tournamentName, description, startDate, endDate, maxRounds } =
-      values;
+    const {
+      tournamentName,
+      description,
+      startDate,
+      endDate,
+      maxRounds,
+      status,
+    } = values;
 
     if (
       !tournamentName ||
       !description ||
       !startDate ||
       !endDate ||
-      !maxRounds
+      !maxRounds ||
+      status === undefined // ✅ แก้ไขจาก `!status` เป็น `status === undefined`
     ) {
       message.warning("กรุณากรอกข้อมูลให้ครบถ้วน");
       return false;
     }
 
-    // ✅ ตรวจสอบค่า startDate และ endDate ก่อนใช้งาน
-    const startTimestamp = startDate
-      ? Timestamp.fromDate(moment(startDate).toDate())
-      : Timestamp.fromDate(new Date());
-    const endTimestamp = endDate
-      ? Timestamp.fromDate(moment(endDate).toDate())
-      : Timestamp.fromDate(new Date());
+    const startTimestamp = Timestamp.fromDate(moment(startDate).toDate());
+    const endTimestamp = Timestamp.fromDate(moment(endDate).toDate());
 
     await updateDoc(doc(db, "tournaments", id), {
       tournamentName,
@@ -106,6 +118,7 @@ export const updateTournament = async (id, values) => {
       startDate: startTimestamp,
       endDate: endTimestamp,
       maxRounds: parseInt(maxRounds, 10),
+      status: status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ค่าเริ่มต้น `false`
     });
 
     message.success("แก้ไขข้อมูลเรียบร้อยแล้ว");

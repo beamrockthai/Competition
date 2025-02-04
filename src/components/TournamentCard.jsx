@@ -14,6 +14,7 @@ const TournamentCard = ({ tournament, onRegister }) => {
         description={tournament.description}
       />
       <Button
+        danger
         type="primary"
         style={{ marginTop: 10, width: "100%" }}
         onClick={() => onRegister(tournament)}

@@ -19,8 +19,9 @@ import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
 import { UserManagement } from "./pages/Admin/UserManagement";
 import AdminTournament from "./pages/Admin/AdminTournament"; // หน้าสร้างการแข่งขัน
-import UserDashboard from "./pages/Dashboard/UserDashboard"; // หน้า User สมัครแข่งขัน
+import UserTouranments from "./pages/Dashboard/UserTouranments"; // หน้า User สมัครแข่งขัน
 import UserRegisteredList from "./components/UserRegisteredList";
+import DashboardMain from "./pages/Dashboard/DashboardMain";
 import MyForm from "./pages/Assigned/MyForm";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
@@ -46,12 +47,17 @@ const router = createBrowserRouter([
       {
         // ✅ Default Route เมื่อเข้ามาที่ "/" โดยตรง ให้ไปหน้า "userdashboard"
         index: true, // กำหนด Route นี้เป็นหน้า Default
-        element: <UserDashboard />, // เปลี่ยนไปหน้า Dashboard
+        element: <DashboardMain />, // เปลี่ยนไปหน้า Dashboard
+      },
+
+      {
+        path: "userdashboardmain",
+        element: <DashboardMain />,
       },
 
       {
         path: "userdashboard",
-        element: <UserDashboard />,
+        element: <UserTouranments />,
       },
 
       {
@@ -111,7 +117,7 @@ const router = createBrowserRouter([
       // ✅ เพิ่ม Route สำหรับ User สมัครการแข่งขัน
       {
         path: "user/dashboard",
-        element: <UserDashboard />,
+        element: <UserTouranments />,
       },
     ],
   },

@@ -11,6 +11,8 @@ import {
   LogoutOutlined,
   DownOutlined,
   AppstoreOutlined,
+  FormOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth";
@@ -56,45 +58,51 @@ const App = () => {
   const menuItems = [
     {
       key: "1",
+      icon: <HomeOutlined />,
+      label: <Link to="/userdashboardmain">หน้าหลัก</Link>,
+    },
+
+    {
+      key: "2",
       icon: <UnorderedListOutlined />,
       label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
     },
     {
-      key: "2",
+      key: "3",
       icon: <UserOutlined />,
       label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
     {
-      key: "3",
-      icon: <FileOutlined />,
+      key: "4",
+      icon: <FormOutlined />,
       label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
     },
     ...(role === "admin"
       ? [
           {
-            key: "4",
+            key: "5",
             icon: <UserAddOutlined />,
             label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
           },
           {
-            key: "5",
+            key: "6",
             icon: <UserOutlined />,
             label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
           {
-            key: "6",
+            key: "7",
             icon: <TrophyOutlined />,
             label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
           },
           {
-            key: "7",
+            key: "8",
             icon: <TrophyOutlined />,
             label: <Link to="/director-form">รายการต้องประเมิน</Link>,
           },
         ]
       : []),
     {
-      key: "8",
+      key: "9",
       icon: <SettingOutlined />,
       label: <Link to="/setting">ตั้งค่า</Link>,
     },
@@ -143,8 +151,11 @@ const App = () => {
           width={250}
           style={{
             height: "100vh",
-            overflow: "auto",
             background: "#ffffff",
+            position: "fixed", // ทำให้เมนูคงที่
+            top: 0,
+            left: 0,
+            zIndex: 100,
             boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
           }}
         >
@@ -157,7 +168,7 @@ const App = () => {
         </Sider>
       )}
 
-      <Layout>
+      <Layout style={{ marginLeft: mobileView ? 0 : collapsed ? 80 : 250 }}>
         <Header
           style={{
             position: "sticky",

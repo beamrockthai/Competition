@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd"; // นำเข้า Button จาก Ant Design
+import { Button, Tag } from "antd"; // นำเข้า Button จาก Ant Design
 import moment from "moment";
 
 const TournamentTable = ({ handleEditTournament, handleDelete }) => {
@@ -51,10 +51,23 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
       title: "จำนวนรอบสูงสุด",
       dataIndex: "maxRounds",
     },
+
     {
       title: "จำนวนผู้สมัคร",
       dataIndex: "registrationCount",
     },
+
+    {
+      title: "สถานะ",
+      dataIndex: "status",
+      width: 120,
+      render: (status) => (
+        <Tag color={status ? "green" : "red"}>
+          {status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}
+        </Tag>
+      ),
+    },
+
     {
       title: "การจัดการ",
       key: "actions",

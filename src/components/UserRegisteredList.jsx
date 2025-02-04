@@ -64,8 +64,15 @@ const UserRegisteredList = () => {
                       <b>ชื่อทีม:</b> {reg.teamName || "ไม่ได้ระบุ"}
                     </p>
                     <p>
-                      <b>สมาชิก:</b> {reg.teamMembers.join(", ")}
+                      <b>สมาชิก:</b>
                     </p>
+                    <ul style={{ paddingLeft: "20px" }}>
+                      {reg.teamMembers.map((member, index) => (
+                        <li key={index}>
+                          {index + 1}. {member}
+                        </li>
+                      ))}
+                    </ul>
                   </>
                 )}
                 <Button

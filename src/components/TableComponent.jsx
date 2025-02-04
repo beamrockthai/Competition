@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Table, Input, Space, Button } from "antd";
+import { Table, Input, Grid } from "antd"; // ✅ ใช้ Grid สำหรับ Responsive
 import { SearchOutlined } from "@ant-design/icons";
 import "./cssTable/tableCustom.css";
+
+const { useBreakpoint } = Grid;
 
 const TableComponent = ({
   columns,
@@ -14,7 +16,7 @@ const TableComponent = ({
   onChange,
 }) => {
   const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
+  const screens = useBreakpoint(); // ✅ ตรวจสอบขนาดหน้าจอ
 
   // ฟังก์ชันค้นหาข้อมูลในตาราง
   const handleSearch = (value) => {
@@ -47,15 +49,23 @@ const TableComponent = ({
 
   return (
     <div>
-      {/* Search Bar ที่อยู่ซ้ายสุด */}
-      <div style={{ marginBottom: "16px", textAlign: "left" }}>
+      {/* Search Bar */}
+      <div
+        style={{
+          marginBottom: "16px",
+          textAlign: screens.xs ? "center" : "left",
+        }}
+      >
         <Input.Search
-          className="custom-search-bar" // ใช้คลาสที่เราเพิ่ม
+          className="custom-search-bar"
           placeholder="ค้นหาข้อมูล..."
           enterButton={<SearchOutlined />}
           value={searchText}
           onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 300 }}
+          style={{
+            width: screens.xs ? "100%" : 300, // ✅ ยืดเต็มจอในหน้าจอเล็ก
+            maxWidth: "100%", // ✅ ป้องกันล้นกรอบ
+          }}
         />
       </div>
 
@@ -66,7 +76,7 @@ const TableComponent = ({
         pagination={pagination}
         dataSource={filteredDataSource}
         columns={enhancedColumns}
-        scroll={{ x: "max-content" }}
+        scroll={{ x: "max-content" }} // ✅ รองรับการเลื่อนในหน้าจอเล็ก
         locale={{ emptyText: "ไม่พบข้อมูล" }}
         onChange={onChange}
         size="small"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Radio, Button, message } from "antd";
+import { Modal, Form, Input, Radio, Button, message, Space } from "antd";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { registerTournament } from "../services/registrationService";
 
 const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
@@ -15,7 +16,6 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
 
   const handleRegister = async () => {
     try {
-      // ดึงค่าจากฟอร์ม
       const values = await form.validateFields();
 
       if (!tournament || !tournament.id) {
@@ -23,20 +23,15 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
         return;
       }
 
-      // ดึงค่า teamName และ teamMembers
-      const teamName = values.teamName || ""; // ดึงชื่อทีม กรณี teamType === 'team'
-      const teamMembers =
-        teamType === "team" && values.teamMembers
-          ? values.teamMembers.split(",").map((name) => name.trim())
-          : [];
+      const teamName = values.teamName || "";
+      const teamMembers = values.teamMembers || [];
 
-      // ตรวจสอบข้อมูลสุดท้าย
       console.log("🟢 Final Data:", {
         tournamentId: tournament.id,
         userId,
         teamType,
         teamMembers,
-        teamName, // แสดงค่า teamName
+        teamName,
       });
 
       setLoading(true);
@@ -45,12 +40,12 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
         userId,
         teamType,
         teamMembers,
-        teamName // ส่งชื่อทีมเข้าไป
+        teamName
       );
 
       message.success("สมัครแข่งขันสำเร็จ!");
-      form.resetFields(); // ล้างฟอร์ม
-      onClose(); // ปิด Modal
+      form.resetFields();
+      onClose();
     } catch (error) {
       console.error("❌ Error registering for tournament:", error);
       message.error("เกิดข้อผิดพลาดในการสมัคร");
@@ -81,20 +76,56 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
               name="teamName"
               rules={[{ required: true, message: "กรุณากรอกชื่อทีม" }]}
             >
-              <Input placeholder="เช่น ทีมสุดแกร่ง" />
+              <Input placeholder="เช่น ทีมตําบล" />
             </Form.Item>
-            <Form.Item
-              label="ชื่อสมาชิกในทีม (คั่นด้วย ,)"
-              name="teamMembers"
-              rules={[{ required: true, message: "กรุณากรอกชื่อสมาชิก" }]}
-            >
-              <Input.TextArea rows={3} placeholder="เช่น สมชาย, สมศรี, สมปอง" />
-            </Form.Item>
+
+            <Form.List name="teamMembers" initialValue={[""]}>
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, fieldKey, ...restField }) => (
+                    <Space
+                      key={key}
+                      style={{ display: "flex", marginBottom: "8px" }}
+                      align="baseline"
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={name}
+                        fieldKey={fieldKey}
+                        rules={[
+                          { required: true, message: "กรุณากรอกชื่อสมาชิก" },
+                        ]}
+                      >
+                        <Input placeholder="ชื่อสมาชิก เช่น นาย ธัชนนท์ รอดวงษ์" />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </Space>
+                  ))}
+
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      เพิ่มสมาชิก
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
           </>
         )}
 
         {/* ปุ่มสมัคร */}
-        <Button type="primary" onClick={handleRegister} loading={loading} block>
+        <Button
+          danger
+          type="primary"
+          onClick={handleRegister}
+          loading={loading}
+          block
+        >
           สมัครแข่งขัน
         </Button>
       </Form>

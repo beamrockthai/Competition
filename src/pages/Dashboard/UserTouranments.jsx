@@ -46,14 +46,14 @@ const UserDashboard = () => {
 
   return (
     <Layout
-      style={{ background: "#f0f2f5", minHeight: "100vh", padding: "20px" }}
+      style={{ background: "#ffffff", minHeight: "100vh", padding: "20px" }}
     >
       <Content style={{ maxWidth: "1200px", margin: "auto" }}>
         <Typography.Title
           level={2}
           style={{ textAlign: "center", color: "#2C3E50" }}
         >
-          🏆 สมัครการแข่งขัน
+          รายการเเข่งขันกีฬาทุกรายการ
         </Typography.Title>
 
         <Divider />

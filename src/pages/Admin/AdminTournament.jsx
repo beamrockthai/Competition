@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Table,
+  Select,
 } from "antd";
 import moment from "moment";
 import {
@@ -53,7 +54,7 @@ const AdminTournament = () => {
   };
 
   const handleAddTournament = async (values) => {
-    await addTournament(values);
+    await addTournament({ ...values, status: values.status || false }); // เพิ่มค่า status
     setModalVisible(false);
     form.resetFields();
     loadTournaments();
@@ -67,6 +68,7 @@ const AdminTournament = () => {
       startDate: record.startDate ? moment(record.startDate.toDate()) : null,
       endDate: record.endDate ? moment(record.endDate.toDate()) : null,
       maxRounds: record.maxRounds,
+      status: record.status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ `false` แทน
     });
     setEditModalVisible(true);
   };
@@ -78,6 +80,7 @@ const AdminTournament = () => {
         ...values,
         startDate: values.startDate ? values.startDate.toDate() : null,
         endDate: values.endDate ? values.endDate.toDate() : null,
+        status: values.status, // อัปเดตค่า status
       };
       await updateTournament(editingTournament.id, updatedTournament);
       message.success("อัปเดตข้อมูลเรียบร้อยแล้ว");
@@ -170,6 +173,12 @@ const AdminTournament = () => {
           >
             <Input type="number" />
           </Form.Item>
+          <Form.Item name="status" label="สถานะ" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value={true}>เปิดรับสมัคร</Select.Option>
+              <Select.Option value={false}>ปิดรับสมัคร</Select.Option>
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
 
@@ -217,6 +226,12 @@ const AdminTournament = () => {
             rules={[{ required: true }]}
           >
             <Input type="number" />
+          </Form.Item>
+          <Form.Item name="status" label="สถานะ" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value={true}>เปิดรับสมัคร</Select.Option>
+              <Select.Option value={false}>ปิดรับสมัคร</Select.Option>
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
