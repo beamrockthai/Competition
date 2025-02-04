@@ -73,27 +73,28 @@ const App = () => {
       icon: <UserOutlined />,
       label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
-    {
-      key: "4",
-      icon: <FormOutlined />,
-      label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
-    },
+
     ...(role === "admin"
       ? [
           {
-            key: "5",
+            key: "4",
             icon: <UserAddOutlined />,
             label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
           },
           {
-            key: "6",
+            key: "5",
             icon: <UserOutlined />,
             label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
           {
-            key: "7",
+            key: "6",
             icon: <TrophyOutlined />,
             label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
+          },
+          {
+            key: "7",
+            icon: <FormOutlined />,
+            label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
           },
         ]
       : []),
