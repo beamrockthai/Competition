@@ -9,9 +9,20 @@ export function useAuthState() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
       if (currentUser) {
+        // เพิ่มฟิลด์ name โดยอิงจาก displayName หรือ email
+        const userData = {
+          id: currentUser.uid,
+          name: currentUser.displayName || currentUser.email, // ใช้ displayName ถ้ามี
+          email: currentUser.email,
+        };
+        setUser(userData);
+
+        // ดึง role จาก getUserRole
         await getUserRole(currentUser.uid, setRole);
+      } else {
+        setUser(null);
+        setRole(null);
       }
     });
     return () => unsubscribe();

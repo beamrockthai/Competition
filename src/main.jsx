@@ -104,7 +104,7 @@ const router = createBrowserRouter([
       {
         path: "director-form",
         element: (
-          <ProtectedRoute allowedRoles={["admin"]}>
+          <ProtectedRoute allowedRoles={["director"]}>
             <MyForm />
           </ProtectedRoute>
         ),

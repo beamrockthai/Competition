@@ -95,6 +95,10 @@ const App = () => {
             icon: <TrophyOutlined />,
             label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
           },
+        ]
+      : []),
+    ...(role === "director"
+      ? [
           {
             key: "8",
             icon: <SelectOutlined />,
@@ -203,7 +207,7 @@ const App = () => {
           </h2>
           <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
             <Button>
-              {user?.name || "ผู้ใช้งาน"} <DownOutlined />
+              {user?.firstName || "ผู้ใช้งาน"} <DownOutlined />
             </Button>
           </Dropdown>
         </Header>
