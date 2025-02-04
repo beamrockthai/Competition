@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Typography } from "antd";
+import { Row, Col, Card, Typography, Table, Tag } from "antd";
 import {
   UserOutlined,
   TrophyOutlined,
   CalendarOutlined,
-  DashboardOutlined,
   BarChartOutlined,
 } from "@ant-design/icons";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 import moment from "moment";
-import "moment/locale/th"; // นำเข้าภาษาไทย
+import "moment/locale/th";
 
 const { Title } = Typography;
 
@@ -18,8 +17,8 @@ const Dashboard = () => {
   const [competitorCount, setCompetitorCount] = useState(0); // จำนวนผู้เข้าแข่งขัน
   const [directorCount, setDirectorCount] = useState(0); // จำนวนกรรมการ
   const [tournamentCount, setTournamentCount] = useState(0); // จำนวนกีฬา
+  const [users, setUsers] = useState([]); // รายชื่อผู้ใช้ (เฉพาะ role user)
 
-  // ✅ อัปเดต locale ภาษาไทยด้วย `updateLocale`
   useEffect(() => {
     moment.updateLocale("th", {
       months: [
@@ -48,25 +47,24 @@ const Dashboard = () => {
     });
   }, []);
 
-  const todayDate = moment().format("D MMMM YYYY"); // ✅ วันที่ปัจจุบัน เช่น "4 กุมภาพันธ์ 2566"
+  const todayDate = moment().format("D MMMM YYYY");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ดึงข้อมูล Users
         const userQuerySnapshot = await getDocs(collection(db, "users"));
-        const users = userQuerySnapshot.docs.map((doc) => ({
+        const usersData = userQuerySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
-        // กรองข้อมูล
-        setCompetitorCount(users.filter((user) => user.role === "user").length);
+        const filteredUsers = usersData.filter((user) => user.role === "user");
+        setUsers(filteredUsers); // ✅ แสดงเฉพาะ role user ในตาราง
+        setCompetitorCount(filteredUsers.length); // นับจำนวนเฉพาะ role user
         setDirectorCount(
-          users.filter((user) => user.role === "director").length
+          usersData.filter((user) => user.role === "director").length
         );
 
-        // ดึงข้อมูล Tournaments
         const tournamentQuerySnapshot = await getDocs(
           collection(db, "tournaments")
         );
@@ -82,27 +80,48 @@ const Dashboard = () => {
   const statistics = [
     {
       title: "วันที่",
-      value: todayDate, // ✅ วันที่ในภาษาไทย
+      value: todayDate,
       icon: <CalendarOutlined />,
-      color: "#00bcd4", // สีพื้นหลัง
+      color: "#00bcd4",
     },
     {
       title: "จํานวนผู้เข้าเเข่งขัน",
-      value: competitorCount, // จำนวนผู้เข้าแข่งขัน
+      value: competitorCount,
       icon: <UserOutlined />,
       color: "#1890ff",
     },
     {
       title: "จํานวนกีฬา",
-      value: tournamentCount, // จำนวนกีฬา
+      value: tournamentCount,
       icon: <TrophyOutlined />,
       color: "#52c41a",
     },
     {
       title: "จํานวนกรรมการ",
-      value: directorCount, // จำนวนกรรมการ
+      value: directorCount,
       icon: <UserOutlined />,
       color: "#faad14",
+    },
+  ];
+
+  const columns = [
+    {
+      title: "ผู้เข้าเเข่งขัน",
+      dataIndex: "firstName",
+      key: "firstName",
+      render: (text, record) => `${record.firstName} ${record.lastName}`,
+    },
+    {
+      title: "วันที่สมัครเข้าสู่ระบบ",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) =>
+        createdAt ? moment(createdAt.toDate()).format("DD-MM-YYYY") : "N/A",
+    },
+    {
+      title: "Status",
+      key: "status",
+      render: () => <Tag color="blue">User</Tag>,
     },
   ];
 
@@ -158,6 +177,19 @@ const Dashboard = () => {
             </Card>
           </Col>
         ))}
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+        <Col span={24}>
+          <Card title="รายชื่อผู้เข้าเเข่งขัน" bordered={false}>
+            <Table
+              dataSource={users}
+              columns={columns}
+              rowKey="id"
+              pagination={{ pageSize: 5 }}
+            />
+          </Card>
+        </Col>
       </Row>
     </div>
   );

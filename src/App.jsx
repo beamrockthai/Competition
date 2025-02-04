@@ -13,6 +13,7 @@ import {
   AppstoreOutlined,
   FormOutlined,
   HomeOutlined,
+  SelectOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth";
@@ -96,7 +97,7 @@ const App = () => {
           },
           {
             key: "8",
-            icon: <TrophyOutlined />,
+            icon: <SelectOutlined />,
             label: <Link to="/director-form">รายการต้องประเมิน</Link>,
           },
         ]
