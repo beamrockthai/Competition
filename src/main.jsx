@@ -22,6 +22,7 @@ import AdminTournament from "./pages/Admin/AdminTournament"; // หน้าส�
 import UserTouranments from "./pages/Dashboard/UserTouranments"; // หน้า User สมัครแข่งขัน
 import UserRegisteredList from "./components/UserRegisteredList";
 import DashboardMain from "./pages/Dashboard/DashboardMain";
+import EvaluationAdmin from "./pages/Admin/EvaluationAdmin";
 import MyForm from "./pages/Assigned/MyForm";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
@@ -106,6 +107,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["director"]}>
             <MyForm />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "evaluation-admin",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <EvaluationAdmin />
           </ProtectedRoute>
         ),
       },

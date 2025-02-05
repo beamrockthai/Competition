@@ -4,7 +4,6 @@ import {
   UnorderedListOutlined,
   UserOutlined,
   TrophyOutlined,
-  FileOutlined,
   MenuOutlined,
   SettingOutlined,
   UserAddOutlined,
@@ -96,19 +95,24 @@ const App = () => {
             icon: <FormOutlined />,
             label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
           },
+          {
+            key: "8",
+            icon: <FormOutlined />,
+            label: <Link to="/evaluation-admin">ผลการประเมิน</Link>,
+          },
         ]
       : []),
     ...(role === "director"
       ? [
           {
-            key: "8",
+            key: "9",
             icon: <SelectOutlined />,
             label: <Link to="/director-form">รายการต้องประเมิน</Link>,
           },
         ]
       : []),
     {
-      key: "9",
+      key: "10",
       icon: <SettingOutlined />,
       label: <Link to="/setting">ตั้งค่า</Link>,
     },
