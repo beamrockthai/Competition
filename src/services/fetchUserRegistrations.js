@@ -4,6 +4,11 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 // 📌 ดึงรายการการแข่งขันที่ User สมัครไว้
 export const fetchUserRegistrations = async (userId) => {
   try {
+    if (!userId) {
+      console.error("❌ Error: userId is undefined");
+      return [];
+    }
+
     console.log("🟢 Fetching Registrations for User:", userId);
 
     const tournamentsRef = collection(db, "tournaments");
@@ -25,6 +30,9 @@ export const fetchUserRegistrations = async (userId) => {
           id: doc.id,
           tournamentId: tournament.id,
           tournamentName: tournament.tournamentName || "ไม่มีชื่อ",
+          teamType: doc.data().teamType || "individual",
+          teamName: doc.data().teamName || "",
+          teamMembers: doc.data().teamMembers || [],
           ...doc.data(),
         });
       });

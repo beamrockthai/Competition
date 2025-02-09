@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Row, Col, message, Spin } from "antd";
+import { Card, Button, Row, Col, message, Spin, Typography } from "antd";
 import { fetchUserRegistrations } from "../services/fetchUserRegistrations";
 import { cancelRegistration } from "../services/cancelRegistration";
-import { useUserAuth } from "../Context/UserAuth"; // ใช้เพื่อดึง user ID
+import { useUserAuth } from "../Context/UserAuth";
+
+const { Title, Text } = Typography; // ใช้ Typography จาก Ant Design
 
 const UserRegisteredList = () => {
-  const { user } = useUserAuth();
+  const { userId } = useUserAuth();
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
+    if (userId) {
       loadRegistrations();
     }
-  }, [user]);
+  }, [userId]);
 
   const loadRegistrations = async () => {
+    if (!userId) {
+      message.error("ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await fetchUserRegistrations(user.uid);
+      const data = await fetchUserRegistrations(userId);
       setRegistrations(data);
     } catch (error) {
       message.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
@@ -38,40 +45,56 @@ const UserRegisteredList = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>รายการที่คุณลงทะเบียนไว้</h2>
+    <div style={{ padding: "20px", maxWidth: "1200px", margin: "auto" }}>
+      <Title level={2} style={{ textAlign: "center", color: "#1890ff" }}>
+        รายการที่คุณลงทะเบียนไว้
+      </Title>
 
       {loading ? (
-        <Spin size="large" />
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Spin size="large" />
+        </div>
       ) : registrations.length === 0 ? (
-        <p>ยังไม่มีการแข่งขันที่คุณสมัคร</p>
+        <p style={{ textAlign: "center", color: "#888", fontSize: "16px" }}>
+          ❌ ยังไม่มีการแข่งขันที่คุณสมัคร
+        </p>
       ) : (
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 16]} justify="center">
           {registrations.map((reg) => (
             <Col key={reg.id} xs={24} sm={12} md={8} lg={6}>
               <Card
-                title={reg.tournamentName}
-                bordered={false}
-                style={{ width: "100%" }}
+                title={
+                  <Title level={5} style={{ margin: 0, color: "#722ed1" }}>
+                    {reg.tournamentName}
+                  </Title>
+                }
+                bordered={true}
+                style={{
+                  borderRadius: "10px",
+                  background: "#fafafa",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  textAlign: "center",
+                }}
               >
-                <p>
-                  <b>ประเภท:</b>{" "}
-                  {reg.teamType === "individual" ? "เดี่ยว" : "ทีม"}
-                </p>
+                <Text strong>ประเภท:</Text>{" "}
+                <Text>{reg.teamType === "individual" ? "เดี่ยว" : "ทีม"}</Text>
+                <br />
                 {reg.teamType === "team" && (
                   <>
-                    <p>
-                      <b>ชื่อทีม:</b> {reg.teamName || "ไม่ได้ระบุ"}
-                    </p>
-                    <p>
-                      <b>สมาชิก:</b>
-                    </p>
-                    <ul style={{ paddingLeft: "20px" }}>
-                      {reg.teamMembers.map((member, index) => (
-                        <li key={index}>
-                          {index + 1}. {member}
-                        </li>
-                      ))}
+                    <Text strong>ชื่อทีม:</Text>{" "}
+                    <Text>{reg.teamName || "ไม่ได้ระบุ"}</Text>
+                    <br />
+                    <Text strong>สมาชิกในทีม:</Text>
+                    <ul style={{ paddingLeft: "20px", textAlign: "left" }}>
+                      {reg.teamMembers && reg.teamMembers.length > 0 ? (
+                        reg.teamMembers.map((member, index) => (
+                          <li key={index}>
+                            {index + 1}. {member}
+                          </li>
+                        ))
+                      ) : (
+                        <Text type="secondary">ไม่มีสมาชิกในทีม</Text>
+                      )}
                     </ul>
                   </>
                 )}
@@ -79,6 +102,14 @@ const UserRegisteredList = () => {
                   danger
                   block
                   onClick={() => handleCancel(reg.id, reg.tournamentId)}
+                  style={{
+                    marginTop: "10px",
+                    backgroundColor: "#ff4d4f",
+                    borderColor: "#ff4d4f",
+                    color: "#fff",
+                    fontWeight: "bold",
+                  }}
+                  size="large"
                 >
                   ยกเลิกการสมัคร
                 </Button>

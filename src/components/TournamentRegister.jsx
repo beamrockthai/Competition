@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Radio, Button, message, Space } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { registerTournament } from "../services/registrationService";
+import { useUserAuth } from "../Context/UserAuth"; // ดึง Context ของผู้ใช้
 
-const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
+const TournamentRegister = ({ visible, onClose, tournament }) => {
+  const { user, userId } = useUserAuth(); // ✅ ดึง userId จาก Context
   const [form] = Form.useForm();
   const [teamType, setTeamType] = useState("individual");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (visible) {
-      form.resetFields(); // รีเซ็ตฟอร์มทุกครั้งที่ Modal แสดงผล
+      form.resetFields();
     }
   }, [visible]);
 
@@ -19,16 +21,26 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
       const values = await form.validateFields();
 
       if (!tournament || !tournament.id) {
-        message.error("ไม่พบข้อมูลการแข่งขัน");
+        message.error(
+          "ไม่พบข้อมูลการแข่งขัน กรุณารีเฟรชหน้าเว็บแล้วลองอีกครั้ง"
+        );
+        console.error("❌ Missing tournament data");
         return;
       }
 
+      if (!userId) {
+        message.error("เกิดข้อผิดพลาด: ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
+        console.error("❌ Missing userId - user object:", user);
+        return;
+      }
+
+      const tournamentId = tournament.id;
       const teamName = values.teamName || "";
       const teamMembers = values.teamMembers || [];
 
-      console.log("🟢 Final Data:", {
-        tournamentId: tournament.id,
-        userId,
+      console.log("🟢 Final Data before sending to registerTournament:", {
+        tournamentId,
+        userId, // ✅ ใช้ userId ที่แก้ไขแล้ว
         teamType,
         teamMembers,
         teamName,
@@ -36,7 +48,7 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
 
       setLoading(true);
       await registerTournament(
-        tournament.id,
+        tournamentId,
         userId,
         teamType,
         teamMembers,
@@ -48,7 +60,7 @@ const TournamentRegister = ({ visible, onClose, tournament, userId }) => {
       onClose();
     } catch (error) {
       console.error("❌ Error registering for tournament:", error);
-      message.error("เกิดข้อผิดพลาดในการสมัคร");
+      message.error("เกิดข้อผิดพลาดในการสมัคร กรุณาลองใหม่อีกครั้ง");
     } finally {
       setLoading(false);
     }

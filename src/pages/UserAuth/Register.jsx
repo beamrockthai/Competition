@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, message, Typography } from "antd";
+import { Form, Input, Button, message, Typography, Modal } from "antd";
 import { useUserAuth } from "../../Context/UserAuth";
 
 const { Title } = Typography;
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // ✅ เพิ่ม state สำหรับ Modal
+  const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนส่ง
   const { user, signUpUser } = useUserAuth();
   const navigate = useNavigate();
 
@@ -16,25 +18,35 @@ export const Register = () => {
     }
   }, [user, navigate]);
 
-  const onFinish = async (values) => {
+  // ✅ เปิด Popup ยืนยันก่อนสมัคร
+  const showConfirmModal = (values) => {
+    setFormValues(values); // เก็บค่ากรอกฟอร์มไว้ใช้ตอนสมัคร
+    setIsModalOpen(true);
+  };
+
+  // ✅ ดำเนินการสมัครเมื่อกด "ยืนยัน"
+  const handleConfirmRegister = async () => {
     setLoading(true);
-    console.log("Registering user with values:", values);
+    setIsModalOpen(false); // ปิด popup
+
     try {
+      console.log("Registering user with values:", formValues);
       const newUser = await signUpUser(
-        values.email,
-        values.password,
-        values.firstName,
-        values.lastName,
-        values.address,
-        values.phone
+        formValues.email,
+        formValues.password,
+        formValues.firstName,
+        formValues.lastName,
+        formValues.address,
+        formValues.phone
       );
       console.log("✅ User successfully created:", newUser);
-      message.success("Register successful!");
+      message.success("สมัครสมาชิกสำเร็จ!");
       navigate("/");
     } catch (error) {
       console.log("Register error:", error.code, error.message);
-      message.error("Register failed! " + error.message);
+      message.error("สมัครสมาชิกไม่สำเร็จ: " + error.message);
     }
+
     setLoading(false);
   };
 
@@ -49,95 +61,118 @@ export const Register = () => {
       }}
     >
       <Title level={3} style={{ textAlign: "center", color: "#1890ff" }}>
-        Register
+        สมัครสมาชิก
       </Title>
+
       <Form
         name="register"
         initialValues={{ remember: true }}
-        onFinish={onFinish}
+        onFinish={showConfirmModal} // ✅ เรียก popup แทนการสมัครทันที
         layout="vertical"
       >
         <Form.Item
           name="firstName"
-          label="First Name"
-          rules={[{ required: true, message: "Please enter your first name!" }]}
+          label="ชื่อ"
+          rules={[{ required: true, message: "กรุณากรอกชื่อ!" }]}
         >
-          <Input placeholder="firstName" />
+          <Input placeholder="ชื่อ" />
         </Form.Item>
 
         <Form.Item
           name="lastName"
-          label="Last Name"
-          rules={[{ required: true, message: "Please enter your last name!" }]}
+          label="นามสกุล"
+          rules={[{ required: true, message: "กรุณากรอกนามสกุล!" }]}
         >
-          <Input placeholder="lastName" />
+          <Input placeholder="นามสกุล" />
         </Form.Item>
 
         <Form.Item
           name="email"
-          label="Email"
+          label="อีเมล"
           rules={[
-            { required: true, message: "Please input your Email!" },
-            { type: "email", message: "Please enter a valid email!" },
+            { required: true, message: "กรุณากรอกอีเมล!" },
+            { type: "email", message: "กรุณากรอกอีเมลให้ถูกต้อง!" },
           ]}
         >
-          <Input placeholder="Email" />
+          <Input placeholder="อีเมล" />
         </Form.Item>
 
         <Form.Item
           name="password"
-          label="Password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
+          label="รหัสผ่าน"
+          rules={[{ required: true, message: "กรุณากรอกรหัสผ่าน!" }]}
         >
-          <Input.Password placeholder="Password" />
+          <Input.Password placeholder="รหัสผ่าน" />
         </Form.Item>
 
         <Form.Item
           name="confirm"
-          label="Confirm Password"
+          label="ยืนยันรหัสผ่าน"
           dependencies={["password"]}
           hasFeedback
           rules={[
-            { required: true, message: "Please confirm your Password!" },
+            { required: true, message: "กรุณายืนยันรหัสผ่าน!" },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error("Passwords do not match!"));
+                return Promise.reject(new Error("รหัสผ่านไม่ตรงกัน!"));
               },
             }),
           ]}
         >
-          <Input.Password placeholder="Confirm Password" />
+          <Input.Password placeholder="ยืนยันรหัสผ่าน" />
         </Form.Item>
 
-        {/* ✅ เพิ่มช่องกรอก Phone Number */}
         <Form.Item
           name="phone"
-          label="Phone Number"
-          rules={[
-            { required: true, message: "Please enter your phone number!" },
-          ]}
+          label="เบอร์โทร"
+          rules={[{ required: true, message: "กรุณากรอกเบอร์โทรศัพท์!" }]}
         >
-          <Input placeholder="Phone Number" />
+          <Input placeholder="เบอร์โทร" />
         </Form.Item>
 
-        {/* ✅ เพิ่มช่องกรอก Address */}
         <Form.Item
           name="address"
-          label="Address"
-          rules={[{ required: true, message: "Please enter your address!" }]}
+          label="ที่อยู่"
+          rules={[{ required: true, message: "กรุณากรอกที่อยู่!" }]}
         >
-          <Input.TextArea placeholder="Address" />
+          <Input.TextArea placeholder="ที่อยู่" />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
-            Register
+            สมัครสมาชิก
           </Button>
         </Form.Item>
       </Form>
+
+      {/* ✅ Modal Popup ยืนยันการสมัคร */}
+      <Modal
+        title="ยืนยันข้อมูล"
+        open={isModalOpen}
+        onOk={handleConfirmRegister} // ✅ กด "ยืนยัน" แล้วสมัครเลย
+        onCancel={() => setIsModalOpen(false)}
+        okText="ยืนยัน"
+        cancelText="ยกเลิก"
+      >
+        <p>โปรดตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันสมัครสมาชิก</p>
+        <ul>
+          <li>
+            <b>ชื่อ:</b> {formValues?.firstName} {formValues?.lastName}
+          </li>
+          <li>
+            <b>อีเมล:</b> {formValues?.email}
+          </li>
+          <li>
+            <b>เบอร์โทร:</b> {formValues?.phone}
+          </li>
+          <li>
+            <b>ที่อยู่:</b> {formValues?.address}
+          </li>
+        </ul>
+      </Modal>
     </div>
   );
 };

@@ -8,22 +8,23 @@ export const registerTournament = async (
   userId,
   teamType,
   teamMembers = [],
-  teamName // เพิ่ม teamName
+  teamName
 ) => {
   try {
-    if (!tournamentId || !userId || !teamType) {
-      message.error("ข้อมูลไม่ครบถ้วน กรุณาตรวจสอบการสมัคร");
-      console.log("❌ Missing Data:", { tournamentId, userId, teamType });
-      return;
-    }
-
-    console.log("🟢 Registering Data:", {
+    // ✅ เพิ่ม log เช็คข้อมูลที่ได้รับก่อนทำงาน
+    console.log("🟢 Received Data in registerTournament:", {
       tournamentId,
       userId,
       teamType,
       teamMembers,
-      teamName, //เพิ่มมา
+      teamName,
     });
+
+    if (!tournamentId || !userId || !teamType) {
+      message.error("ข้อมูลไม่ครบถ้วน กรุณาตรวจสอบการสมัคร");
+      console.error("❌ Missing Data:", { tournamentId, userId, teamType });
+      return;
+    }
 
     const registrationRef = collection(
       db,
@@ -31,15 +32,15 @@ export const registerTournament = async (
     );
     const newRegistration = {
       userId,
-      tournamentId, // บันทึก tournamentId
+      tournamentId,
       teamType,
       teamMembers,
-      teamName, // บันทึก teamName
+      teamName,
       registeredAt: Timestamp.now(),
     };
 
     await addDoc(registrationRef, newRegistration);
-    message.success("สมัครแข่งขันสำเร็จ!");
+    // message.success("สมัครแข่งขันสำเร็จ!");
   } catch (error) {
     console.error("❌ Error registering for tournament:", error);
     message.error("เกิดข้อผิดพลาดในการสมัคร กรุณาลองใหม่อีกครั้ง");

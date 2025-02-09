@@ -8,7 +8,7 @@ import {
   Modal,
   message,
   Popconfirm,
-} from "antd"; // เพิ่ม Popconfirm ที่นี่
+} from "antd";
 import { useUserAuth } from "../../Context/UserAuth";
 import {
   loadDirectors,
@@ -16,7 +16,7 @@ import {
   deleteDirector,
 } from "../../services/directorFunctions";
 import { useNavigate } from "react-router-dom";
-import TableComponent from "../../components/TableComponent"; // นำเข้า TableComponent
+import TableComponent from "../../components/TableComponent";
 
 export const ManageDirectors = () => {
   const { signUpDirector } = useUserAuth();
@@ -25,18 +25,28 @@ export const ManageDirectors = () => {
   const [passwords, setPasswords] = useState({});
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนสมัคร
   const navigate = useNavigate();
 
   useEffect(() => {
     loadDirectors(setDirectors);
   }, []);
 
-  const handleAddDirector = async (values) => {
+  // ✅ เปิด Popup ยืนยันก่อนสมัคร
+  const showConfirmModal = (values) => {
+    setFormValues(values);
+    setIsConfirmModalOpen(true);
+  };
+
+  // ✅ ยืนยันสมัครกรรมการ
+  const handleConfirmRegister = async () => {
     setLoading(true);
+    setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
+
     try {
       await addDirector(
-        values,
+        formValues,
         signUpDirector,
         setPasswords,
         setDirectors,
@@ -75,7 +85,7 @@ export const ManageDirectors = () => {
         </Col>
       </Row>
 
-      {/* เรียกใช้ table componet ตรงนี้นะ */}
+      {/* TableComponent */}
       <TableComponent
         columns={[
           { title: "First Name", dataIndex: "firstName" },
@@ -106,8 +116,8 @@ export const ManageDirectors = () => {
         bordered={true}
         loading={loading}
         pagination={{ pageSize: 5 }}
-        rowKey="id" // เพิ่ม rowKey ที่ใช้ค่า id เป็น key
-        onRowClick={(record) => console.log(record)} // Example of row click handling
+        rowKey="id"
+        onRowClick={(record) => console.log(record)}
       />
 
       {/* Modal for Adding Director */}
@@ -117,10 +127,10 @@ export const ManageDirectors = () => {
         onCancel={() => setIsModalOpen(false)}
         footer={null}
       >
-        <Form layout="vertical" onFinish={handleAddDirector} form={form}>
+        <Form layout="vertical" onFinish={showConfirmModal} form={form}>
           <Form.Item
             name="firstName"
-            label="First Name"
+            label="ชื่อ"
             rules={[{ required: true, message: "Please enter first name!" }]}
           >
             <Input placeholder="Enter First Name" />
@@ -128,7 +138,7 @@ export const ManageDirectors = () => {
 
           <Form.Item
             name="lastName"
-            label="Last Name"
+            label="นามสกุล"
             rules={[{ required: true, message: "Please enter last name!" }]}
           >
             <Input placeholder="Enter Last Name" />
@@ -136,7 +146,7 @@ export const ManageDirectors = () => {
 
           <Form.Item
             name="idCard"
-            label="ID Card Number"
+            label="บัตรประชาชน"
             rules={[
               { required: true, message: "Please enter ID card number!" },
               { len: 13, message: "ID card number must be 13 digits!" },
@@ -147,7 +157,7 @@ export const ManageDirectors = () => {
 
           <Form.Item
             name="address"
-            label="Address"
+            label="ที่อยู่"
             rules={[{ required: true, message: "Please enter address!" }]}
           >
             <Input.TextArea placeholder="Enter Address" rows={2} />
@@ -155,7 +165,7 @@ export const ManageDirectors = () => {
 
           <Form.Item
             name="email"
-            label="Email"
+            label="อีเมล"
             rules={[
               {
                 required: true,
@@ -169,7 +179,7 @@ export const ManageDirectors = () => {
 
           <Form.Item
             name="password"
-            label="Password"
+            label="รหัสผ่าน"
             rules={[{ required: true, message: "Please enter a password!" }]}
           >
             <Input.Password placeholder="Enter Password" />
@@ -179,6 +189,32 @@ export const ManageDirectors = () => {
             เพิ่มกรรมการ
           </Button>
         </Form>
+      </Modal>
+
+      {/* ✅ Modal Popup ยืนยันการสมัคร */}
+      <Modal
+        title="ยืนยันข้อมูล"
+        open={isConfirmModalOpen}
+        onOk={handleConfirmRegister}
+        onCancel={() => setIsConfirmModalOpen(false)}
+        okText="ยืนยัน"
+        cancelText="ยกเลิก"
+      >
+        <p>โปรดตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันการเพิ่มกรรมการ</p>
+        <ul>
+          <li>
+            <b>ชื่อ:</b> {formValues?.firstName} {formValues?.lastName}
+          </li>
+          <li>
+            <b>บัตรประชาชน:</b> {formValues?.idCard}
+          </li>
+          <li>
+            <b>ที่อยู่:</b> {formValues?.address}
+          </li>
+          <li>
+            <b>อีเมล:</b> {formValues?.email}
+          </li>
+        </ul>
       </Modal>
     </div>
   );

@@ -85,13 +85,13 @@ const Dashboard = () => {
       color: "#00bcd4",
     },
     {
-      title: "จํานวนผู้เข้าเเข่งขัน",
+      title: "จํานวนทีมเเข่งขัน",
       value: competitorCount,
       icon: <UserOutlined />,
       color: "#1890ff",
     },
     {
-      title: "จํานวนกีฬา",
+      title: "รายการเเข่งขัน",
       value: tournamentCount,
       icon: <TrophyOutlined />,
       color: "#52c41a",
