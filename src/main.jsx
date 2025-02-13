@@ -24,6 +24,7 @@ import UserRegisteredList from "./components/UserRegisteredList";
 import DashboardMain from "./pages/Dashboard/DashboardMain";
 import EvaluationAdmin from "./pages/Admin/EvaluationAdmin";
 import MyForm from "./pages/Assigned/MyForm";
+import ProfileSetting from "./pages/ProfileSettings/ProfileSettingsUi";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
   {
@@ -70,10 +71,13 @@ const router = createBrowserRouter([
         path: "evaluation",
         element: <Evaluation />,
       },
+
       {
+        // เส้นทางสำหรับการตั้งค่าข้อมูลส่วนตัว
         path: "setting",
-        element: <h1>Setting</h1>,
+        element: <ProfileSetting />,
       },
+
       // ✅ เพิ่ม Route สำหรับ Admin สร้างการแข่งขัน
       {
         path: "manage-directors",

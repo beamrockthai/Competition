@@ -119,16 +119,16 @@ const App = () => {
   ];
 
   const userMenuItems = [
-    {
-      key: "1",
-      label: "โปรไฟล์",
-      icon: <UserOutlined />,
-    },
-    {
-      key: "2",
-      label: "ตั้งค่า",
-      icon: <SettingOutlined />,
-    },
+    // {
+    //   key: "1",
+    //   label: "โปรไฟล์",
+    //   icon: <UserOutlined />,
+    // },
+    // {
+    //   key: "2",
+    //   label: "ตั้งค่า",
+    //   icon: <SettingOutlined />,
+    // },
     {
       key: "3",
       label: "ออกจากระบบ",
@@ -212,7 +212,7 @@ const App = () => {
           </h2>
           <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
             <Button>
-              {user?.firstName || "ผู้ใช้งาน"} <DownOutlined />
+              {user ? user.name : "ผู้ใช้งาน"} <DownOutlined />
             </Button>
           </Dropdown>
         </Header>
