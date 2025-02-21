@@ -11,7 +11,7 @@ const TableComponent = ({
   dataSource,
   pagination = true,
   bordered = true,
-  loading = true,
+  loading = false,
   onRowClick,
   onChange,
 }) => {

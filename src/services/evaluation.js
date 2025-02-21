@@ -5,6 +5,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -64,4 +66,34 @@ export const fetchDirecForm = async (userId) => {
   }));
 
   return forms.filter((form) => form.assignedTo?.includes(userId));
+};
+
+// ดึงข้อมูลการแข่งขันจาก Firestore
+export const fetchTournaments = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "tournaments"));
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error fetching tournaments:", error);
+    return [];
+  }
+};
+
+// ดึงข้อมูลผู้เข้าแข่งขันจาก Firestore (users ที่มี role: "user")
+export const fetchUsers = async () => {
+  try {
+    const q = query(collection(db, "users"), where("role", "==", "user"));
+    const querySnapshot = await getDocs(q);
+    const users = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    console.log("Fetched Users:", users); // ✅ ตรวจสอบว่าข้อมูลถูกดึงมาหรือไม่
+
+    return users;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
 };

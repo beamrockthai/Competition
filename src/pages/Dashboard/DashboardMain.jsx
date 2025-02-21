@@ -161,7 +161,6 @@ const Dashboard = () => {
                 color: "#fff",
                 borderRadius: "8px",
               }}
-              bodyStyle={{ padding: "20px" }}
             >
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ fontSize: "40px", marginRight: "10px" }}>
