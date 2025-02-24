@@ -6,6 +6,7 @@ import {
   fetchEvaluations,
 } from "../../services/MyForm";
 import { useUserAuth } from "../../Context/UserAuth";
+import { fetchDirectorForm } from "../../services/directorwithformeithteam";
 
 const MyForm = () => {
   const [forms, setForms] = useState([]);
@@ -21,7 +22,7 @@ const MyForm = () => {
       if (user) {
         try {
           setLoading(true);
-          const formsData = await fetchDirecForm(user.id);
+          const formsData = await fetchDirectorForm(user.id);
           setForms(formsData);
           const evaluations = await fetchEvaluations();
           const evaluationsMap = evaluations.reduce((acc, evaluation) => {
@@ -104,7 +105,7 @@ const MyForm = () => {
               unEvaluatedForms.map((form) => (
                 <Card key={form.id} title={form.name} style={{ width: 300 }}>
                   <p>
-                    <strong>Title:</strong> {form.title}
+                    <strong>Title:</strong> {form.name}
                   </p>
                   <p>
                     <strong>Description:</strong> {form.description}

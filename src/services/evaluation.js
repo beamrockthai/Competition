@@ -1,6 +1,7 @@
 import {
   collection,
   addDoc,
+  getDoc,
   getDocs,
   updateDoc,
   deleteDoc,
@@ -19,6 +20,31 @@ export const fetchForms = async () => {
     id: doc.id,
     ...doc.data(),
   }));
+};
+
+export const getFormsById = async (formId) => {
+  if (!formId) {
+    console.error("Form ID is required");
+    return null;
+  }
+
+  try {
+    const formRef = doc(db, "evaluations", formId); // ✅ เปลี่ยนเป็นดึงข้อมูลจาก ID เดียว
+    const formSnap = await getDoc(formRef);
+
+    if (!formSnap.exists()) {
+      console.error(`Form with ID ${formId} not found`);
+      return null;
+    }
+
+    return {
+      id: formSnap.id,
+      ...formSnap.data(),
+    };
+  } catch (error) {
+    console.error("Error fetching form by ID:", error);
+    return null;
+  }
 };
 
 // Add a new form
@@ -95,5 +121,21 @@ export const fetchUsers = async () => {
   } catch (error) {
     console.error("Error fetching users:", error);
     return [];
+  }
+};
+
+export const getUsersById = async (userid) => {
+  console.log("userid", userid);
+
+  const userRef = doc(db, "users", userid); // ใช้ doc() แทน query()
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    const userData = { id: userSnap.id, ...userSnap.data() };
+    console.log("ByFetched User:", userData);
+    return userData;
+  } else {
+    console.log("No user found");
+    return {};
   }
 };

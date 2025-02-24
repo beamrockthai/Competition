@@ -65,7 +65,6 @@ export const addTournament = async (form) => {
       status: status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ค่าเริ่มต้น `false`
     });
 
-    message.success("เพิ่มข้อมูลเรียบร้อยแล้ว");
     return true;
   } catch (err) {
     console.error("Error adding document: ", err);
