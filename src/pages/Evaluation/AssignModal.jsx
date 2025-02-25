@@ -39,6 +39,11 @@ const AssignModal = ({
     }
   };
 
+  const onParticipantChange = (e) => {
+    console.log(e);
+
+    setSelectedParticipant(e);
+  };
   // const loadParticipants = async () => {
   //   try {
   //     const fetchedParticipants = await fetchUsers();
@@ -55,11 +60,13 @@ const AssignModal = ({
       !selectedForm ||
       selectedDirectors.length === 0 ||
       !selectedTournament ||
+      !selectedParticipant ||
       !selectedParticipant
     )
-      return;
+      return window.alert("No", selectedParticipant);
     try {
       await assignFormToDirectorwithTournament({
+        registerId: selectedParticipant,
         evaformId: selectedForm.id,
         directorId: selectedDirectors,
         tournamentId: selectedTournament,
@@ -130,7 +137,7 @@ const AssignModal = ({
         <Select
           style={{ width: "100%" }}
           placeholder="เลือกผู้เข้าแข่งขัน"
-          onChange={setSelectedParticipant}
+          onChange={onParticipantChange}
           value={selectedParticipant}
         >
           {participants?.map((e) => (
