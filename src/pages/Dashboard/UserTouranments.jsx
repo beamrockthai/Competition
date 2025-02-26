@@ -16,7 +16,7 @@ import { fetchTournaments } from "../../services/tournamentService";
 const { Content } = Layout;
 
 const UserDashboard = () => {
-  const [tournaments, setTournaments] = useState([]);
+  const [tournaments, setTournaments] = useState();
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,9 @@ const UserDashboard = () => {
 
   const loadTournaments = async () => {
     const data = await fetchTournaments();
-    setTournaments(data);
+    console.log("loadTournaments", data);
+
+    setTournaments(data.data);
     setLoading(false);
   };
 
@@ -48,7 +50,7 @@ const UserDashboard = () => {
     <Layout
       style={{ background: "#ffffff", minHeight: "100vh", padding: "20px" }}
     >
-      <Content style={{ maxWidth: "1200px", margin: "auto" }}>
+      <Content style={{ maxWidth: "100%" }}>
         <Typography.Title
           level={2}
           style={{ textAlign: "center", color: "#2C3E50" }}

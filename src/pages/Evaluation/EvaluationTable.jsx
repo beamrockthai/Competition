@@ -6,8 +6,8 @@ const EvaluationTable = ({ forms, loading, onEdit, onDelete, onAssign }) => {
   const columns = [
     {
       title: "ชื่อแบบฟอร์ม",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "Name",
+      key: "Name",
     },
     {
       title: "การจัดการ",
@@ -29,11 +29,13 @@ const EvaluationTable = ({ forms, loading, onEdit, onDelete, onAssign }) => {
   ];
 
   return (
-    <TableComponent
-      dataSource={(forms || []).map((form) => ({ ...form, key: form.id }))}
-      columns={columns}
-      loading={loading}
-    />
+    <>
+      <TableComponent
+        dataSource={(forms || []).map((form) => ({ ...form, key: form.id }))}
+        columns={columns}
+        loading={loading}
+      />
+    </>
   );
 };
 

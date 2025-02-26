@@ -36,3 +36,4 @@ export const deleteUser = async (id, setUsers, setLoading) => {
     message.error("Failed to delete user: " + error.message);
   }
 };
+export const updateUser = async () => {};

@@ -10,6 +10,7 @@ import {
   Col,
   Table,
   Select,
+  Tag,
 } from "antd";
 import moment from "moment";
 import {
@@ -39,13 +40,13 @@ const AdminTournament = () => {
     setLoading(true);
     try {
       const data = await fetchTournaments();
-      const tournamentsWithCount = await Promise.all(
-        data.map(async (tournament) => {
-          const count = await getTournamentRegistrations(tournament.id);
-          return { ...tournament, registrationCount: count };
-        })
-      );
-      setTournaments(tournamentsWithCount);
+      // const tournamentsWithCount = await Promise.all(
+      //   data.map(async (tournament) => {
+      //     const count = await getTournamentRegistrations(tournament.id);
+      //     return { ...tournament, registrationCount: count };
+      //   })
+      // );
+      setTournaments(data.data);
     } catch (error) {
       message.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
     } finally {
@@ -63,8 +64,8 @@ const AdminTournament = () => {
   const handleEditTournament = (record) => {
     setEditingTournament(record);
     formEdit.setFieldsValue({
-      tournamentName: record.tournamentName,
-      description: record.description,
+      CompetitionTypeName: record.CompetitionTypeName,
+      EventDetials: record.CompetitionTypeName,
       startDate: record.startDate ? moment(record.startDate.toDate()) : null,
       endDate: record.endDate ? moment(record.endDate.toDate()) : null,
       maxRounds: record.maxRounds,
@@ -98,7 +99,90 @@ const AdminTournament = () => {
   };
 
   const columns = TournamentTable({ handleEditTournament, handleDelete });
+  // const columns = [
+  //   {
+  //     title: "ชื่อการแข่งขัน",
+  //     dataIndex: "CompetitionTypeName",
+  //   },
+  //   {
+  //     title: "คำอธิบาย",
+  //     dataIndex: "Details",
+  //   },
 
+  //   //เเปลงวันที่ก่อน
+  //   {
+  //     title: "วันเริ่มต้น",
+  //     dataIndex: "startDate",
+  //     render: (date) => {
+  //       console.log("Date value:", date);
+  //       if (date) {
+  //         // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+  //         if (date.toDate) {
+  //           return moment(date.toDate()).format("DD/MM/YYYY");
+  //         }
+  //         // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+  //         const parsedDate = moment(date);
+  //         return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+  //       }
+  //       return "-";
+  //     },
+  //   },
+  //   {
+  //     title: "วันสิ้นสุด",
+  //     dataIndex: "endDate",
+  //     render: (date) => {
+  //       if (date) {
+  //         // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+  //         if (date.toDate) {
+  //           return moment(date.toDate()).format("DD/MM/YYYY");
+  //         }
+  //         // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+  //         const parsedDate = moment(date);
+  //         return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+  //       }
+  //       return "-";
+  //     },
+  //   },
+  //   {
+  //     title: "จำนวนรอบสูงสุด",
+  //     dataIndex: "maxRounds",
+  //   },
+
+  //   {
+  //     title: "จำนวนผู้สมัคร",
+  //     dataIndex: "registrationCount",
+  //   },
+
+  //   {
+  //     title: "สถานะ",
+  //     dataIndex: "status",
+  //     width: 120,
+  //     render: (status) => (
+  //       <Tag color={status ? "green" : "red"}>
+  //         {status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}
+  //       </Tag>
+  //     ),
+  //   },
+
+  //   {
+  //     title: "การจัดการ",
+  //     key: "actions",
+  //     render: (_, record) => (
+  //       <>
+  //         <Button type="primary" onClick={() => handleEditTournament(record)}>
+  //           แก้ไข
+  //         </Button>
+  //         <Button
+  //           danger
+  //           onClick={() => handleDelete(record.id)}
+  //           style={{ marginLeft: 8 }}
+  //         >
+  //           ลบ
+  //         </Button>
+  //       </>
+  //     ),
+  //   },
+  // ];
   return (
     <div style={{ padding: "20px" }}>
       <Row
@@ -119,15 +203,20 @@ const AdminTournament = () => {
           </Button>
         </Col>
       </Row>
-
       {/* ใช้ TableComponent แทน Table */}
-      <TableComponent
+      {/* <TableComponent
         dataSource={tournaments}
         columns={columns}
         rowKey="id"
         loading={loading}
+      /> */}
+      {"ต้องมีหน้าจัดการฟอร์มในนี้"}
+      <Table
+        dataSource={tournaments}
+        columns={columns}
+        loading={loading}
+        rowKey="id"
       />
-
       {/* Modal สำหรับเพิ่มการแข่งขัน */}
       <Modal
         title="เพิ่มการแข่งขัน"
@@ -139,14 +228,14 @@ const AdminTournament = () => {
       >
         <Form form={form} layout="vertical" onFinish={handleAddTournament}>
           <Form.Item
-            name="tournamentName"
+            name="CompetitionTypeName"
             label="ชื่อการแข่งขัน"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="description"
+            name="Details"
             label="รายละเอียด"
             rules={[{ required: true }]}
           >
@@ -181,7 +270,6 @@ const AdminTournament = () => {
           </Form.Item>
         </Form>
       </Modal>
-
       {/* Modal สำหรับแก้ไขการแข่งขัน */}
       <Modal
         title="แก้ไขการแข่งขัน"
@@ -193,14 +281,14 @@ const AdminTournament = () => {
       >
         <Form form={formEdit} layout="vertical">
           <Form.Item
-            name="tournamentName"
+            name="CompetitionTypeName"
             label="ชื่อการแข่งขัน"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="description"
+            name="Details"
             label="รายละเอียด"
             rules={[{ required: true }]}
           >

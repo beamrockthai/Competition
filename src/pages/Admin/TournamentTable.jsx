@@ -6,11 +6,11 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
   const columns = [
     {
       title: "ชื่อการแข่งขัน",
-      dataIndex: "tournamentName",
+      dataIndex: "CompetitionTypeName",
     },
     {
       title: "คำอธิบาย",
-      dataIndex: "description",
+      dataIndex: "Details",
     },
 
     //เเปลงวันที่ก่อน

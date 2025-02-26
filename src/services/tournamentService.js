@@ -12,29 +12,35 @@ import {
 } from "firebase/firestore";
 import { message } from "antd";
 import moment from "moment";
+import axios from "axios";
+import { PATH_API } from "../constrant";
 
 // 📌 ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
 export const fetchTournaments = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, "tournaments"));
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      status: doc.data().status || false, // กำหนดค่าเริ่มต้นเป็น false ถ้าไม่มีค่า
-    }));
-  } catch (err) {
-    console.error("Error loading data: ", err);
-    message.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
-    return [];
-  }
+  // try {
+  //   const querySnapshot = await getDocs(collection(db, "tournaments"));
+  //   return querySnapshot.docs.map((doc) => ({
+  //     id: doc.id,
+  //     ...doc.data(),
+  //     status: doc.data().status || false, // กำหนดค่าเริ่มต้นเป็น false ถ้าไม่มีค่า
+  //   }));
+  // } catch (err) {
+  //   console.error("Error loading data: ", err);
+  //   message.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+  //   return [];
+  // }
+  const data = await axios.get(PATH_API + "/competition_types/get");
+  console.log("fetchTournaments", data.data);
+
+  return data;
 };
 
 // 📌 เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
 export const addTournament = async (form) => {
   try {
     const {
-      tournamentName,
-      description,
+      CompetitionTypeName,
+      Details,
       startDate,
       endDate,
       maxRounds,
@@ -42,8 +48,8 @@ export const addTournament = async (form) => {
     } = form;
 
     if (
-      !tournamentName ||
-      !description ||
+      !CompetitionTypeName ||
+      !Details ||
       !startDate ||
       !endDate ||
       !maxRounds ||
@@ -56,14 +62,16 @@ export const addTournament = async (form) => {
     const startTimestamp = Timestamp.fromDate(moment(startDate).toDate());
     const endTimestamp = Timestamp.fromDate(moment(endDate).toDate());
 
-    await addDoc(collection(db, "tournaments"), {
-      tournamentName,
-      description,
+    const rawdata = {
+      CompetitionTypeName,
+      Details,
       startDate: startTimestamp,
       endDate: endTimestamp,
       maxRounds: parseInt(maxRounds, 10),
       status: status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ค่าเริ่มต้น `false`
-    });
+    };
+    const data = await axios.post(PATH_API + "events/create", rawdata);
+    console.log("addTournament", data);
 
     message.success("เพิ่มข้อมูลเรียบร้อยแล้ว");
     return true;
@@ -77,7 +85,7 @@ export const addTournament = async (form) => {
 // 📌 ลบทัวร์นาเมนต์จาก Firestore
 export const deleteTournament = async (id) => {
   try {
-    await deleteDoc(doc(db, "tournaments", id));
+    await axios.post(PATH_API + `/competition_types/delete/${id}`);
     message.success("ลบข้อมูลเรียบร้อยแล้ว");
   } catch (err) {
     console.error("Error deleting document: ", err);
@@ -112,16 +120,19 @@ export const updateTournament = async (id, values) => {
     const startTimestamp = Timestamp.fromDate(moment(startDate).toDate());
     const endTimestamp = Timestamp.fromDate(moment(endDate).toDate());
 
-    await updateDoc(doc(db, "tournaments", id), {
+    const rawdata = {
       tournamentName,
       description,
       startDate: startTimestamp,
       endDate: endTimestamp,
       maxRounds: parseInt(maxRounds, 10),
       status: status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ค่าเริ่มต้น `false`
-    });
+    };
+    const data = await axios.post(PATH_API + "events/update", rawdata);
+    console.log("updateTournament", data);
 
     message.success("แก้ไขข้อมูลเรียบร้อยแล้ว");
+
     return true;
   } catch (err) {
     console.error("Error updating document: ", err);

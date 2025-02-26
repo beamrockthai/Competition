@@ -9,23 +9,36 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import axios from "axios";
+import { PATH_API } from "../constrant";
 
 const formsCollection = collection(db, "evaluations");
 
 // Fetch all forms
 export const fetchForms = async () => {
-  const snapshot = await getDocs(formsCollection);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  // const snapshot = await getDocs(formsCollection);
+  // return snapshot.docs.map((doc) => ({
+  //   id: doc.id,
+  //   ...doc.data(),
+  // }));
+  const data = await axios.get(PATH_API + `/evaluation_forms/get`);
+  return data.data;
 };
 
 // Add a new form
 export const addForm = async (form) => {
-  await addDoc(formsCollection, form);
+  const data = await axios.post(
+    PATH_API + (`evaluation_forms/create`, form.name)
+  );
+  return data.data;
 };
-
+export const addCriteria = async (criteria) => {
+  const data = await axios.post(
+    PATH_API + `evaluation_questions/create`,
+    criteria
+  );
+  return data.data;
+};
 // Update an existing form
 export const updateForm = async (id, form) => {
   const formDoc = doc(db, "evaluations", id);

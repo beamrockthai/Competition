@@ -8,6 +8,8 @@ import {
 import FormModal from "./FormModal";
 import AssignModal from "./AssignModal";
 import EvaluationTable from "./EvaluationTable";
+import axios from "axios";
+import { PATH_API } from "../../constrant";
 
 export const Evaluation = () => {
   const [forms, setForms] = useState([]);
@@ -45,9 +47,11 @@ export const Evaluation = () => {
   };
 
   const handleDeleteForm = async (id) => {
+    console.log("handleDeleteForm", id);
+
     setLoading(true);
     try {
-      await deleteForm(id);
+      await axios.post(PATH_API + `/evaluation_forms/delete/${id}`);
       loadForms();
     } catch (error) {
       console.error("Error deleting form:", error);
