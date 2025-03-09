@@ -35,6 +35,8 @@ export const ManageDirectors = () => {
 
   // ✅ เปิด Popup ยืนยันก่อนสมัคร
   const showConfirmModal = (values) => {
+    console.log("showConfirmModal", values);
+
     setFormValues(values);
     setIsConfirmModalOpen(true);
   };
@@ -44,23 +46,23 @@ export const ManageDirectors = () => {
     setLoading(true);
     setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
 
-    try {
-      await addDirector(
-        formValues,
-        signUpDirector,
-        setPasswords,
-        setDirectors,
-        form
-      );
-      message.success("กรรมการถูกเพิ่มเรียบร้อยแล้ว");
-      setIsModalOpen(false);
-      form.resetFields();
-      navigate("/manage-directors");
-    } catch (error) {
-      message.error("เกิดข้อผิดพลาดในการเพิ่มกรรมการ");
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   await addDirector(
+    //     formValues,
+    //     signUpDirector,
+    //     setPasswords,
+    //     setDirectors,
+    //     form
+    //   );
+    //   message.success("กรรมการถูกเพิ่มเรียบร้อยแล้ว");
+    //   setIsModalOpen(false);
+    //   form.resetFields();
+    //   navigate("/manage-directors");
+    // } catch (error) {
+    //   message.error("เกิดข้อผิดพลาดในการเพิ่มกรรมการ");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -88,12 +90,12 @@ export const ManageDirectors = () => {
       {/* TableComponent */}
       <TableComponent
         columns={[
-          { title: "First Name", dataIndex: "firstName" },
-          { title: "Last Name", dataIndex: "lastName" },
-          { title: "ID Card", dataIndex: "idCard" },
-          { title: "Address", dataIndex: "address" },
-          { title: "Email", dataIndex: "email" },
-          { title: "Role", dataIndex: "role" },
+          { title: "First Name", dataIndex: "FirstName" },
+          { title: "Last Name", dataIndex: "LastName" },
+          { title: "ID Card", dataIndex: "NationalId" },
+          { title: "Address", dataIndex: "Address1" },
+          { title: "Email", dataIndex: "Email" },
+          { title: "Role", dataIndex: "Role" },
           {
             title: "Password",
             dataIndex: "email",
@@ -129,7 +131,7 @@ export const ManageDirectors = () => {
       >
         <Form layout="vertical" onFinish={showConfirmModal} form={form}>
           <Form.Item
-            name="firstName"
+            name="FirstName"
             label="ชื่อ"
             rules={[{ required: true, message: "Please enter first name!" }]}
           >
@@ -137,7 +139,7 @@ export const ManageDirectors = () => {
           </Form.Item>
 
           <Form.Item
-            name="lastName"
+            name="LastName"
             label="นามสกุล"
             rules={[{ required: true, message: "Please enter last name!" }]}
           >
@@ -145,7 +147,7 @@ export const ManageDirectors = () => {
           </Form.Item>
 
           <Form.Item
-            name="idCard"
+            name="NationalId"
             label="บัตรประชาชน"
             rules={[
               { required: true, message: "Please enter ID card number!" },
@@ -156,7 +158,7 @@ export const ManageDirectors = () => {
           </Form.Item>
 
           <Form.Item
-            name="address"
+            name="Address1"
             label="ที่อยู่"
             rules={[{ required: true, message: "Please enter address!" }]}
           >
@@ -164,7 +166,7 @@ export const ManageDirectors = () => {
           </Form.Item>
 
           <Form.Item
-            name="email"
+            name="Email"
             label="อีเมล"
             rules={[
               {
@@ -178,7 +180,7 @@ export const ManageDirectors = () => {
           </Form.Item>
 
           <Form.Item
-            name="password"
+            name="Password"
             label="รหัสผ่าน"
             rules={[{ required: true, message: "Please enter a password!" }]}
           >
@@ -203,16 +205,16 @@ export const ManageDirectors = () => {
         <p>โปรดตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันการเพิ่มกรรมการ</p>
         <ul>
           <li>
-            <b>ชื่อ:</b> {formValues?.firstName} {formValues?.lastName}
+            <b>ชื่อ:</b> {formValues?.FirstName} {formValues?.LastName}
           </li>
           <li>
-            <b>บัตรประชาชน:</b> {formValues?.idCard}
+            <b>บัตรประชาชน:</b> {formValues?.NationalId}
           </li>
           <li>
-            <b>ที่อยู่:</b> {formValues?.address}
+            <b>ที่อยู่:</b> {formValues?.Address1}
           </li>
           <li>
-            <b>อีเมล:</b> {formValues?.email}
+            <b>อีเมล:</b> {formValues?.Email}
           </li>
         </ul>
       </Modal>

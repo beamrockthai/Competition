@@ -17,7 +17,7 @@ import { Login } from "./pages/UserAuth/Login";
 import { Register } from "./pages/UserAuth/Register";
 import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
-import { UserManagement } from "./pages/Admin/UserManagement";
+import { UserManagementPage } from "./pages/Admin/UserManagement";
 import AdminTournament from "./pages/Admin/AdminTournament"; // หน้าสร้างการแข่งขัน
 import UserTouranments from "./pages/Dashboard/UserTouranments"; // หน้า User สมัครแข่งขัน
 import UserRegisteredList from "./components/UserRegisteredList";
@@ -25,6 +25,10 @@ import DashboardMain from "./pages/Dashboard/DashboardMain";
 import EvaluationAdmin from "./pages/Admin/EvaluationAdmin";
 import MyForm from "./pages/Assigned/MyForm";
 import ProfileSetting from "./pages/ProfileSettings/ProfileSettingsUi";
+import { CurrentRoundPage } from "./pages/Admin/RoundConfig/CurrentRound";
+import { UserLoginPage } from "./pages/UserAuth/UserLogin";
+import { TeamManagementPage } from "./pages/Admin/TeamMangement/TeamManagement";
+import { DirectorHomePage } from "./pages/Director/DirectorHome";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
   {
@@ -92,7 +96,7 @@ const router = createBrowserRouter([
         path: "user-management",
         element: (
           <ProtectedRoute allowedRoles={["admin"]}>
-            <UserManagement />
+            <UserManagementPage />
           </ProtectedRoute>
         ),
       },
@@ -119,6 +123,30 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["admin"]}>
             <EvaluationAdmin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "roundconfig",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <CurrentRoundPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "teammanagement",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <TeamManagementPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "director",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <DirectorHomePage />
           </ProtectedRoute>
         ),
       },

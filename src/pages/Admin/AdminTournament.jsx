@@ -66,10 +66,10 @@ const AdminTournament = () => {
     formEdit.setFieldsValue({
       CompetitionTypeName: record.CompetitionTypeName,
       EventDetials: record.CompetitionTypeName,
-      startDate: record.startDate ? moment(record.startDate.toDate()) : null,
-      endDate: record.endDate ? moment(record.endDate.toDate()) : null,
-      maxRounds: record.maxRounds,
-      status: record.status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ `false` แทน
+      // startDate: record.startDate ? moment(record.startDate.toDate()) : null,
+      // endDate: record.endDate ? moment(record.endDate.toDate()) : null,
+      // maxRounds: record.maxRounds,
+      IsOpened: record.IsOpened ?? "No", // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ `false` แทน
     });
     setEditModalVisible(true);
   };
@@ -79,9 +79,9 @@ const AdminTournament = () => {
       const values = await formEdit.validateFields();
       const updatedTournament = {
         ...values,
-        startDate: values.startDate ? values.startDate.toDate() : null,
-        endDate: values.endDate ? values.endDate.toDate() : null,
-        status: values.status, // อัปเดตค่า status
+        // startDate: values.startDate ? values.startDate.toDate() : null,
+        // endDate: values.endDate ? values.endDate.toDate() : null,
+        IsOpened: values.IsOpened, // อัปเดตค่า status
       };
       await updateTournament(editingTournament.id, updatedTournament);
       message.success("อัปเดตข้อมูลเรียบร้อยแล้ว");
@@ -241,7 +241,7 @@ const AdminTournament = () => {
           >
             <Input.TextArea />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="startDate"
             label="วันเริ่มต้น"
             rules={[{ required: true }]}
@@ -254,18 +254,18 @@ const AdminTournament = () => {
             rules={[{ required: true }]}
           >
             <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
+          </Form.Item> */}
+          {/* <Form.Item
             name="maxRounds"
             label="จำนวนรอบสูงสุด"
             rules={[{ required: true }]}
           >
             <Input type="number" />
-          </Form.Item>
-          <Form.Item name="status" label="สถานะ" rules={[{ required: true }]}>
+          </Form.Item> */}
+          <Form.Item name="IsOpened" label="สถานะ" rules={[{ required: true }]}>
             <Select>
-              <Select.Option value={true}>เปิดรับสมัคร</Select.Option>
-              <Select.Option value={false}>ปิดรับสมัคร</Select.Option>
+              <Select.Option value={"Yes"}>เปิดรับสมัคร</Select.Option>
+              <Select.Option value={"No"}>ปิดรับสมัคร</Select.Option>
             </Select>
           </Form.Item>
         </Form>
@@ -294,7 +294,7 @@ const AdminTournament = () => {
           >
             <Input.TextArea />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="startDate"
             label="วันเริ่มต้น"
             rules={[{ required: true }]}
@@ -314,11 +314,11 @@ const AdminTournament = () => {
             rules={[{ required: true }]}
           >
             <Input type="number" />
-          </Form.Item>
-          <Form.Item name="status" label="สถานะ" rules={[{ required: true }]}>
+          </Form.Item> */}
+          <Form.Item name="IsOpened" label="สถานะ" rules={[{ required: true }]}>
             <Select>
-              <Select.Option value={true}>เปิดรับสมัคร</Select.Option>
-              <Select.Option value={false}>ปิดรับสมัคร</Select.Option>
+              <Select.Option value={"Yes"}>เปิดรับสมัคร</Select.Option>
+              <Select.Option value={"No"}>ปิดรับสมัคร</Select.Option>
             </Select>
           </Form.Item>
         </Form>

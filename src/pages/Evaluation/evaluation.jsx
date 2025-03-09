@@ -83,7 +83,7 @@ export const Evaluation = () => {
           setSelectedForm(form);
           setIsAssignModalVisible(true);
         }}
-      />
+      ></EvaluationTable>
 
       <FormModal
         visible={isFormModalVisible}
@@ -98,7 +98,10 @@ export const Evaluation = () => {
         selectedForm={selectedForm}
         directors={directors}
         onAssignSuccess={loadForms}
-      />
+      >
+        {" "}
+        {JSON.stringify(selectedForm)}
+      </AssignModal>
     </div>
   );
 };

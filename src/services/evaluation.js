@@ -83,13 +83,16 @@ export const fetchDirecForm = async (userId) => {
 
 // ดึงข้อมูลการแข่งขันจาก Firestore
 export const fetchTournaments = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, "tournaments"));
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error("Error fetching tournaments:", error);
-    return [];
-  }
+  // try {
+  //   const querySnapshot = await getDocs(collection(db, "tournaments"));
+  //   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  // } catch (error) {
+  //   console.error("Error fetching tournaments:", error);
+  //   return [];
+  // }
+  const data = await axios.get(PATH_API + `/competition_types/get`);
+  console.log("fetchTournaments", data);
+  return data.data;
 };
 
 // ดึงข้อมูลผู้เข้าแข่งขันจาก Firestore (users ที่มี role: "user")

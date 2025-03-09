@@ -1,27 +1,33 @@
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { message } from "antd";
+import axios from "axios";
+import { PATH_API } from "../constrant";
 
 // ✅ โหลด Users จาก Firestore
 export const loadUsers = async (setUsers, setLoading) => {
   setLoading(true);
-  try {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    const usersList = querySnapshot.docs
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
-      .filter((user) => user.role === "user"); // ✅ กรองเฉพาะผู้ใช้ทั่วไป
+  // try {
+  //   const querySnapshot = await getDocs(collection(db, "users"));
+  //   const usersList = querySnapshot.docs
+  //     .map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }))
+  //     .filter((user) => user.role === "user"); // ✅ กรองเฉพาะผู้ใช้ทั่วไป
 
-    console.log("Loaded Users:", usersList);
-    setUsers(usersList);
-  } catch (error) {
-    console.error("Error loading users:", error);
-    message.error("Failed to load users.");
-  } finally {
-    setLoading(false);
-  }
+  //   console.log("Loaded Users:", usersList);
+  //   setUsers(usersList);
+  // } catch (error) {
+  //   console.error("Error loading users:", error);
+  //   message.error("Failed to load users.");
+  // } finally {
+  //   setLoading(false);
+  // }
+  const data = await axios.get(PATH_API + `/users/get`);
+  console.log(data.data);
+
+  return data.data;
 };
 
 // ✅ ฟังก์ชันลบ Users

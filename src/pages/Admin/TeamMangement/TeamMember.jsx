@@ -1,158 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   Card,
-//   Row,
-//   Col,
-//   Typography,
-//   Button,
-//   Popconfirm,
-//   message,
-//   Spin,
-//   Modal,
-//   Form,
-//   Input,
-//   DatePicker,
-//   Select,
-//   Table,
-// } from "antd";
-// import {
-//   loadUsers,
-//   deleteUser,
-//   updateUser,
-// } from "../../services/userFunctions";
-// import { UserTable } from "../../components/UserTable";
-// import moment from "moment";
-
-// const { Title, Text } = Typography;
-
-// export const UserManagement = () => {
-//   const [form] = Form.useForm();
-//   const [formEdit] = Form.useForm();
-//   const [users, setUsers] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [editModalVisible, setEditModalVisible] = useState(false);
-//   const [editingUser, setEditingUser] = useState(null);
-
-//   useEffect(() => {
-//     loadUsers(setUsers, setLoading);
-//   }, []);
-//   const handleEditUser = (record) => {
-//     setEditingUser(record);
-//     formEdit.setFieldsValue(record);
-//     setEditModalVisible(true);
-//   };
-
-//   const handleUpdateUser = async () => {
-//     try {
-//       const values = await formEdit.validateFields();
-//       const updatedUsers = {
-//         ...values,
-//         startDate: values.startDate ? values.startDate.toDate() : null,
-//         endDate: values.endDate ? values.endDate.toDate() : null,
-//         status: values.status, // อัปเดตค่า status
-//       };
-//       await updateUser(editingUser.id, updatedUsers);
-//       message.success("อัปเดตข้อมูลเรียบร้อยแล้ว");
-//       setEditModalVisible(false);
-//       setEditingUser(null);
-//       loadUsers();
-//     } catch (error) {
-//       message.error("เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
-//     }
-//   };
-//   const handleDelete = async (id) => {
-//     await deleteUser(id);
-//     loadUsers();
-//   };
-//   const columns = UserTable({ handleEditUser, handleDelete });
-//   return (
-//     <div style={{ padding: "20px" }}>
-//       {JSON.stringify(users)}
-//       <Title
-//         level={2}
-//         style={{
-//           marginBottom: "20px",
-//           color: "#1890ff",
-//           fontWeight: "bold",
-//           textAlign: "center",
-//         }}
-//       >
-//         Management User
-//       </Title>
-
-//       {loading ? (
-//         <Spin
-//           size="large"
-//           style={{ display: "block", textAlign: "center", marginTop: 50 }}
-//         />
-//       ) : (
-//         <div>
-//           <Table
-//             dataSource={users}
-//             columns={columns}
-//             rowKey="id"
-//             loading={loading}
-//           />
-//           {/* {users.map((user) => (
-//             <Col xs={24} sm={12} md={8} lg={6} key={user.id}>
-//               <Card
-//                 title={<Text strong>{user.email}</Text>}
-//                 bordered={false}
-//                 style={{
-//                   textAlign: "center",
-//                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-//                 }}
-//               >
-//                 <p>
-//                   <strong>Name:</strong> {user.firstName} {user.lastName}
-//                 </p>
-//                 <p>
-//                   <strong>Phone:</strong> {user.phone}
-//                 </p>
-
-//                 <Popconfirm
-//                   title="Are you sure to delete this user?"
-//                   onConfirm={() => deleteUser(user.id, setUsers, setLoading)}
-//                   okText="Yes"
-//                   cancelText="No"
-//                 >
-//                   <Button type="primary" danger>
-//                     Delete User
-//                   </Button>
-//                 </Popconfirm>
-//               </Card>
-//             </Col>
-//           ))} */}
-//         </div>
-//       )}
-//       <Modal
-//         title="แก้ไขผู้ใช้"
-//         open={editModalVisible}
-//         onCancel={() => setEditModalVisible(false)}
-//         onOk={handleUpdateUser}
-//         okText="อัปเดต"
-//         cancelText="ยกเลิก"
-//       >
-//         <Form form={formEdit} layout="vertical">
-//           <Form.Item name="firstName" label="ชื่อ" rules={[{ required: true }]}>
-//             <Input />
-//           </Form.Item>
-//           <Form.Item
-//             name="lastName"
-//             label="นามสกุล"
-//             rules={[{ required: true }]}
-//           >
-//             <Input />
-//           </Form.Item>
-
-//           <Form.Item name="phone" label="เบอร์โทร" rules={[{ required: true }]}>
-//             <Input type="number" />
-//           </Form.Item>
-//         </Form>
-//       </Modal>
-//     </div>
-//   );
-// };
 import {
   Button,
   Card,
@@ -166,14 +11,13 @@ import {
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
-
+import { authUser, PATH_API } from "../../../constrant";
 import { useEffect, useRef, useState } from "react";
-import { authUser, PATH_API } from "../../constrant";
-export const UserManagementPage = (props) => {
+export const TeamMemberPage = (props) => {
   const dataFetchedRef = useRef(false);
-  const presidentData = props.data;
+  const teamid = props.data;
   const [form] = Form.useForm();
-  const [usersData, setUsersData] = useState();
+  const [teamData, setTeamData] = useState();
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
     console.log("PAONN", values);
@@ -194,6 +38,7 @@ export const UserManagementPage = (props) => {
   const cancel = (e) => {
     console.log(e);
     message.error("Click on No");
+    setTeamData(null);
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -222,25 +67,31 @@ export const UserManagementPage = (props) => {
         });
     }
   };
-  const getUser = async () => {
-    await axios.get(PATH_API + `/users/get`).then((res) => {
-      console.log("getUser", res.data);
+  const getMyTeam = () => {
+    axios.get(PATH_API + `/groups/getbyteamid/${teamid}`).then((res) => {
+      console.log(res.data);
 
-      setUsersData(res.data);
-      form.setFieldValue("items", res.data);
+      setTeamData(res.data);
+      axios
+        .get(PATH_API + `/users/getteammembers/${res.data.id}`)
+        .then((res) => {
+          console.log("getteammembers", res);
+
+          form.setFieldValue("items", res.data);
+        });
     });
   };
   useEffect(() => {
-    if (dataFetchedRef.current) return;
-    dataFetchedRef.current = true;
-    getUser();
-    // getTeamMembers();
-  }, []);
+    if (!teamid) return; // ถ้า teamid ไม่มีค่า ไม่ต้องโหลด
+    getMyTeam();
+  }, [teamid]); // เมื่อ teamid เปลี่ยน ให้เรียก API ใหม่
   return (
     <>
-      {usersData ? (
-        <>
-          <h1>ข้อมูลผู้ใช้ทั้งระบบ</h1>
+      {teamid}
+      {JSON.stringify(teamData)}
+      {teamData ? (
+        <Card>
+          <h1>ข้อมูลสมาชิกในทีม</h1>
           <Form
             labelCol={{
               span: 6,
@@ -272,21 +123,21 @@ export const UserManagementPage = (props) => {
                   {fields.map((field) => (
                     <Card
                       size="small"
-                      title={(() => {
-                        const memberId = form.getFieldValue([
-                          "items",
-                          field.name,
-                          "id",
-                        ]); // ดึง id จากฟอร์ม
-                        const isPresident = presidentData
-                          ? memberId === presidentData.id &&
-                            presidentData.IsPresident === "Yes"
-                            ? "หัวหน้าทีม"
-                            : "สมาชิก"
-                          : null;
+                      // title={(() => {
+                      //   const memberId = form.getFieldValue([
+                      //     "items",
+                      //     field.name,
+                      //     "id",
+                      //   ]); // ดึง id จากฟอร์ม
+                      //   const isPresident = presidentData
+                      //     ? memberId === presidentData.id &&
+                      //       presidentData.IsPresident === "Yes"
+                      //       ? "หัวหน้าทีม"
+                      //       : "สมาชิก"
+                      //     : null;
 
-                        return isPresident;
-                      })()}
+                      //   return isPresident;
+                      // })()}
                       key={field.key}
                       extra={
                         <CloseOutlined
@@ -453,7 +304,7 @@ export const UserManagementPage = (props) => {
               </Button>
             </Form.Item>
           </Form>
-        </>
+        </Card>
       ) : (
         <Card>
           <Spin tip=" กำลังรับข้อมูล..." />

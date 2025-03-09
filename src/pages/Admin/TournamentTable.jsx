@@ -14,43 +14,43 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
     },
 
     //เเปลงวันที่ก่อน
-    {
-      title: "วันเริ่มต้น",
-      dataIndex: "startDate",
-      render: (date) => {
-        console.log("Date value:", date);
-        if (date) {
-          // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
-          if (date.toDate) {
-            return moment(date.toDate()).format("DD/MM/YYYY");
-          }
-          // ใช้ moment กับค่าที่เป็น String หรือ Date Object
-          const parsedDate = moment(date);
-          return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
-        }
-        return "-";
-      },
-    },
-    {
-      title: "วันสิ้นสุด",
-      dataIndex: "endDate",
-      render: (date) => {
-        if (date) {
-          // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
-          if (date.toDate) {
-            return moment(date.toDate()).format("DD/MM/YYYY");
-          }
-          // ใช้ moment กับค่าที่เป็น String หรือ Date Object
-          const parsedDate = moment(date);
-          return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
-        }
-        return "-";
-      },
-    },
-    {
-      title: "จำนวนรอบสูงสุด",
-      dataIndex: "maxRounds",
-    },
+    // {
+    //   title: "วันเริ่มต้น",
+    //   dataIndex: "startDate",
+    //   render: (date) => {
+    //     console.log("Date value:", date);
+    //     if (date) {
+    //       // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+    //       if (date.toDate) {
+    //         return moment(date.toDate()).format("DD/MM/YYYY");
+    //       }
+    //       // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+    //       const parsedDate = moment(date);
+    //       return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+    //     }
+    //     return "-";
+    //   },
+    // },
+    // {
+    //   title: "วันสิ้นสุด",
+    //   dataIndex: "endDate",
+    //   render: (date) => {
+    //     if (date) {
+    //       // ตรวจสอบว่าเป็น Firebase Timestamp หรือไม่
+    //       if (date.toDate) {
+    //         return moment(date.toDate()).format("DD/MM/YYYY");
+    //       }
+    //       // ใช้ moment กับค่าที่เป็น String หรือ Date Object
+    //       const parsedDate = moment(date);
+    //       return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : "-";
+    //     }
+    //     return "-";
+    //   },
+    // },
+    // {
+    //   title: "จำนวนรอบสูงสุด",
+    //   dataIndex: "maxRounds",
+    // },
 
     {
       title: "จำนวนผู้สมัคร",
@@ -59,11 +59,19 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
 
     {
       title: "สถานะ",
-      dataIndex: "status",
+      dataIndex: "IsOpened",
       width: 120,
-      render: (status) => (
-        <Tag color={status ? "green" : "red"}>
-          {status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}
+      render: (IsOpened) => (
+        <Tag
+          color={
+            IsOpened === "Yes" ? "green" : IsOpened === "No" ? "red" : null
+          }
+        >
+          {IsOpened === "Yes"
+            ? "เปิดรับสมัคร"
+            : IsOpened === "No"
+            ? "ปิดรับสมัคร"
+            : null}
         </Tag>
       ),
     },
@@ -83,6 +91,7 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
           >
             ลบ
           </Button>
+          <Button>ประเมิน</Button>
         </>
       ),
     },
