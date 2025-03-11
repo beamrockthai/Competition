@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, Radio } from "antd";
-export const EvaluationPage = () => {
+export const EvaluationForm = () => {
   const onFinish = (values) => {
     console.log("Success:", values);
   };

@@ -11,7 +11,7 @@ import EvaluationTable from "./EvaluationTable";
 import axios from "axios";
 import { PATH_API } from "../../constrant";
 
-export const Evaluation = () => {
+export const EvaluationPage = () => {
   const [forms, setForms] = useState([]);
   const [directors, setDirectors] = useState([]);
   const [isFormModalVisible, setIsFormModalVisible] = useState(false);

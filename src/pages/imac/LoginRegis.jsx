@@ -7,49 +7,37 @@ import {
   Form,
   Input,
   message,
+  notification,
   Row,
 } from "antd";
 import axios from "axios";
-// import { authUser, PATH_API } from "../../constrant";
-import { useEffect, useState } from "react";
-import { authUser, PATH_API } from "../../constrant";
+import { PATH_API } from "../../constrant";
 
-export const UserLoginPage = () => {
-  const [loadings, setLoadings] = useState(false);
+export const LoginRegisPage = () => {
   const onFinish = (values) => {
-    setLoadings(true);
+    console.log("ggggggg");
     console.log("Success:", values);
-    axios.post(PATH_API + `/users/login`, values).then((res) => {
-      // window.location = "/team";
-      if (res.status === 200) {
-        localStorage.setItem("user", JSON.stringify(res.data));
-        // setLoadings(false);
-        message.success(`Welcome ${res.data.FirstName} ${res.data.LastName}`);
-
-        setTimeout(() => window.location.assign("/"), 1000);
+    axios.post(PATH_API + `/users/register`, values).then((res) => {
+      console.log("ฟฟฟฟฟฟ");
+      if (res.status === 409) {
+        message.error("ข้อมูลซ้ำหรืออาจเคยลงทะเบียนแล้ว");
       }
 
-      if (res.status === 203) {
-        message.error(res.data.message);
-        setLoadings(false);
-      }
-      console.log(res);
+      window.location = "/userlogin";
+      console.log("ggggggg");
     });
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  // useEffect(() => {
-  //   if (authUser) {
-  //     window.location.assign("/");
-  //   }
-  // }, []);
   return (
     <div className="body">
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-          <h1>Login</h1>
-          <h4>Sign in to continue</h4>
+          <h1>Create New Account</h1>
+          <h4>
+            Already registered? <a href="/userlogin">Login</a>
+          </h4>
           <Divider />
           <h4>Why is password protection important?</h4>
           <p>
@@ -64,7 +52,7 @@ export const UserLoginPage = () => {
 
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <Card>
-            <h1>Sign in</h1>
+            <h1>Sign Up</h1>
             <Form
               name="basic"
               labelCol={{
@@ -108,10 +96,46 @@ export const UserLoginPage = () => {
               >
                 <Input.Password />
               </Form.Item>
+              <Form.Item
+                label="Confirm Password"
+                name="Password2"
+                dependencies={["Password"]}
+                rules={[
+                  {
+                    required: true,
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("Password") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(
+                          "The new password that you entered do not match!"
+                        )
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="เบอร์โทรศัพท์"
+                name="Phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Email!",
+                  },
+                ]}
+              >
+                <Input inputMode="numeric" />
+              </Form.Item>
 
               <Form.Item label={null}>
-                <Button loading={loadings} type="primary" htmlType="submit">
-                  Login
+                <Button type="primary" htmlType="submit">
+                  Sign Up
                 </Button>
               </Form.Item>
             </Form>

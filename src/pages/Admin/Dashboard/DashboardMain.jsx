@@ -7,13 +7,13 @@ import {
   BarChartOutlined,
 } from "@ant-design/icons";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../../firebase";
 import moment from "moment";
 import "moment/locale/th";
 
 const { Title } = Typography;
 
-const Dashboard = () => {
+export const DashboardMainPage = () => {
   const [competitorCount, setCompetitorCount] = useState(0); // จำนวนผู้เข้าแข่งขัน
   const [directorCount, setDirectorCount] = useState(0); // จำนวนกรรมการ
   const [tournamentCount, setTournamentCount] = useState(0); // จำนวนกีฬา
@@ -193,5 +193,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;

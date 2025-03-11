@@ -1,6 +1,7 @@
 import { Button, Modal, Table } from "antd";
 import { useState } from "react";
-import { EvaluationPage } from "./Evaluation";
+import { EvaluationForm } from "./EvaluationForm";
+
 
 export const DirectorHomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,7 +59,7 @@ export const DirectorHomePage = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <EvaluationPage />
+        <EvaluationForm />
       </Modal>
     </>
   );

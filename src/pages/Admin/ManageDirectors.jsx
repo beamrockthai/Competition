@@ -9,17 +9,17 @@ import {
   message,
   Popconfirm,
 } from "antd";
-import { useUserAuth } from "../../Context/UserAuth";
-import {
-  loadDirectors,
-  addDirector,
-  deleteDirector,
-} from "../../services/directorFunctions";
+// import { useUserAuth } from "../../Context/UserAuth";
+// import {
+//   loadDirectors,
+//   addDirector,
+//   deleteDirector,
+// } from "../../services/directorFunctions";
 import { useNavigate } from "react-router-dom";
 import TableComponent from "../../components/TableComponent";
 
-export const ManageDirectors = () => {
-  const { signUpDirector } = useUserAuth();
+export const ManageDirectorsPage = () => {
+  // const { signUpDirector } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [directors, setDirectors] = useState([]);
   const [passwords, setPasswords] = useState({});
@@ -30,7 +30,7 @@ export const ManageDirectors = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadDirectors(setDirectors);
+    // loadDirectors(setDirectors);
   }, []);
 
   // ✅ เปิด Popup ยืนยันก่อนสมัคร

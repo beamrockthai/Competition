@@ -23,7 +23,7 @@ import {
 import TournamentTable from "./TournamentTable";
 import TableComponent from "../../components/TableComponent"; // นำเข้า TableComponent
 
-const AdminTournament = () => {
+export const AdminTournamentPage = () => {
   const [form] = Form.useForm();
   const [formEdit] = Form.useForm();
   const [tournaments, setTournaments] = useState([]);
@@ -327,4 +327,3 @@ const AdminTournament = () => {
   );
 };
 
-export default AdminTournament;

@@ -10,9 +10,8 @@ import {
   Row,
 } from "antd";
 import axios from "axios";
-// import { authUser, PATH_API } from "../../constrant";
-import { useEffect, useState } from "react";
 import { authUser, PATH_API } from "../../constrant";
+import { useEffect, useState } from "react";
 
 export const UserLoginPage = () => {
   const [loadings, setLoadings] = useState(false);
@@ -39,11 +38,11 @@ export const UserLoginPage = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  // useEffect(() => {
-  //   if (authUser) {
-  //     window.location.assign("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (authUser) {
+      window.location.assign("/team");
+    }
+  }, []);
   return (
     <div className="body">
       <Row>
