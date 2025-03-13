@@ -97,7 +97,7 @@
   background-color: black;
   color: white;
 }.home-h1 {
-  font-size: 30px;
+  font-size: 50px;
   line-height: 0.8;
 }
 
@@ -106,5 +106,5 @@
   color: white;
 }
 .orange {
-  color: orange; /* เปลี่ยนสีตัวอักษรเป็นสีส้ม */
+  color: #ff6100; /* เปลี่ยนสีตัวอักษรเป็นสีส้ม */
 }

@@ -86,14 +86,15 @@ export const Home = () => {
               <h3 style={contentStyle}>4</h3>
             </div>
           </Carousel> */}
-          <iframe
+          {/* <iframe
             width={"100%"}
             height={"500px"}
             loading="lazy"
             src="https://www.canva.com/design/DAGcyyBgSEQ/3-wTsX3V_8h1KQeJhZz6lA/watch?embed"
             allowfullscreen="allowfullscreen"
             allow="fullscreen"
-          ></iframe>
+          ></iframe> */}
+          <img src="/src/assets/Screenshohome.png" width={"90%"}/>
         </Col>
       </Row>
     </div>
