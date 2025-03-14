@@ -100,6 +100,12 @@ export const AdminLayout = (props) => {
             <span style={{ fontWeight: "bold" }}>กำหนดรอบแข่งขัน</span>
           </Menu.Item>
           <Menu.Item
+            key="/admin/tournament"
+            icon={<AppstoreAddOutlined />}
+          >
+            <span style={{ fontWeight: "bold" }}>ประเภทแข่งขัน</span>
+          </Menu.Item>
+          <Menu.Item
             key="/admin/managedirector"
             icon={<AppstoreAddOutlined />}
           >

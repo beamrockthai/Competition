@@ -22,6 +22,8 @@ import {
 } from "../../services/tournamentService";
 import TournamentTable from "./TournamentTable";
 import TableComponent from "../../components/TableComponent"; // นำเข้า TableComponent
+import axios from "axios";
+import { PATH_API } from "../../constrant";
 
 export const AdminTournamentPage = () => {
   const [form] = Form.useForm();
@@ -55,7 +57,11 @@ export const AdminTournamentPage = () => {
   };
 
   const handleAddTournament = async (values) => {
-    await addTournament({ ...values, status: values.status || false }); // เพิ่มค่า status
+    console.log(values);
+    
+   const data = await axios.post(PATH_API+`/competition_types/create`,values)
+   console.log("handleAddTournament",data);
+   
     setModalVisible(false);
     form.resetFields();
     loadTournaments();
@@ -65,7 +71,7 @@ export const AdminTournamentPage = () => {
     setEditingTournament(record);
     formEdit.setFieldsValue({
       CompetitionTypeName: record.CompetitionTypeName,
-      EventDetials: record.CompetitionTypeName,
+      Details: record.Details,
       // startDate: record.startDate ? moment(record.startDate.toDate()) : null,
       // endDate: record.endDate ? moment(record.endDate.toDate()) : null,
       // maxRounds: record.maxRounds,

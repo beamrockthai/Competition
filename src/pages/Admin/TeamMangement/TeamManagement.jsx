@@ -21,7 +21,7 @@ export const TeamManagementPage = () => {
     },
     {
       title: "ชื่อผลงาน",
-      dataIndex: '"WorkName"',
+      dataIndex: 'WorkName',
       key: "WorkName",
     },
     {

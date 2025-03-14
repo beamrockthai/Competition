@@ -136,6 +136,12 @@ export const router = createBrowserRouter([
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamManagementPage />,
       },
+      {
+        path: "tournament",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <AdminTournamentPage />,
+      },
     ],
   },
   {

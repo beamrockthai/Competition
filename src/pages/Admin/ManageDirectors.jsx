@@ -8,7 +8,12 @@ import {
   Modal,
   message,
   Popconfirm,
+  Table,
+  Space,
+  Select,
 } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+
 // import { useUserAuth } from "../../Context/UserAuth";
 // import {
 //   loadDirectors,
@@ -17,6 +22,8 @@ import {
 // } from "../../services/directorFunctions";
 import { useNavigate } from "react-router-dom";
 import TableComponent from "../../components/TableComponent";
+import axios from "axios";
+import { PATH_API } from "../../constrant";
 
 export const ManageDirectorsPage = () => {
   // const { signUpDirector } = useUserAuth();
@@ -27,18 +34,34 @@ export const ManageDirectorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนสมัคร
+  const [data,setData]= useState([])
   const navigate = useNavigate();
 
   useEffect(() => {
     // loadDirectors(setDirectors);
+    getUserDirector()
+    getUserNotDirector()
   }, []);
-
+  const getUserDirector = async()=>{
+    const data = await axios.get(PATH_API+`/users/getbyrole/3`)
+    console.log(data);
+    setDirectors(data.data);
+  }
+  const getUserNotDirector = async()=>{
+    const data = await axios.get(PATH_API+`/users/getnotdirector`)
+    console.log(data);
+    setData(data.data);
+   
+  }
   // ✅ เปิด Popup ยืนยันก่อนสมัคร
   const showConfirmModal = (values) => {
-    console.log("showConfirmModal", values);
+    console.log("showConfirmModal", values.director[0].Director);
+    for(var i=0;i<values.director.length;i++){
+axios.patch(PATH_API+`/users/update`,{Role:3,id:values.director[i].Director})
+    }
 
     setFormValues(values);
-    setIsConfirmModalOpen(true);
+    setIsConfirmModalOpen(false);
   };
 
   // ✅ ยืนยันสมัครกรรมการ
@@ -64,7 +87,13 @@ export const ManageDirectorsPage = () => {
     //   setLoading(false);
     // }
   };
-
+const deleteDirector=(values)=>{
+  
+  console.log("deleteDirector",values);
+  
+  axios.patch(PATH_API+`/users/update`,{Role:"4",id:values})
+  getUserDirector()
+}
   return (
     <div style={{ padding: "20px" }}>
       {/* Header Section */}
@@ -88,7 +117,7 @@ export const ManageDirectorsPage = () => {
       </Row>
 
       {/* TableComponent */}
-      <TableComponent
+      <Table
         columns={[
           { title: "First Name", dataIndex: "FirstName" },
           { title: "Last Name", dataIndex: "LastName" },
@@ -107,7 +136,7 @@ export const ManageDirectorsPage = () => {
             render: (id) => (
               <Popconfirm
                 title="คุณแน่ใจหรือไม่ว่าต้องการลบ ?"
-                onConfirm={() => deleteDirector(id, setDirectors)}
+                onConfirm={() => deleteDirector(id)}
               >
                 <Button danger>ลบ</Button>
               </Popconfirm>
@@ -117,7 +146,7 @@ export const ManageDirectorsPage = () => {
         dataSource={directors}
         bordered={true}
         loading={loading}
-        pagination={{ pageSize: 5 }}
+        // pagination={{ pageSize: 5 }}
         rowKey="id"
         onRowClick={(record) => console.log(record)}
       />
@@ -130,63 +159,52 @@ export const ManageDirectorsPage = () => {
         footer={null}
       >
         <Form layout="vertical" onFinish={showConfirmModal} form={form}>
-          <Form.Item
-            name="FirstName"
-            label="ชื่อ"
-            rules={[{ required: true, message: "Please enter first name!" }]}
-          >
-            <Input placeholder="Enter First Name" />
-          </Form.Item>
+          
 
-          <Form.Item
-            name="LastName"
-            label="นามสกุล"
-            rules={[{ required: true, message: "Please enter last name!" }]}
-          >
-            <Input placeholder="Enter Last Name" />
+        <Form.List name="director">
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map(({ key, name, ...restField }) => (
+            <Space
+              key={key}
+              style={{
+                display: 'flex',
+                marginBottom: 8,
+              }}
+              align="baseline"
+            >
+              <Form.Item
+              layout="horizontal"
+                {...restField}
+                label={"กรรมการ"}
+                name={[name, 'Director']}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Missing first name',
+                  },
+                ]}
+              >
+                <Select placeholder="Director" >
+                {data.map((e) => (
+            <Select.Option key={e.id} value={e.id}>
+              {e.FirstName} {e.LastName}
+            </Select.Option>
+          ))}
+                </Select>
+              </Form.Item>
+              
+              <MinusCircleOutlined onClick={() => remove(name)} />
+            </Space>
+          ))}
+          <Form.Item>
+            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+              Add field
+            </Button>
           </Form.Item>
-
-          <Form.Item
-            name="NationalId"
-            label="บัตรประชาชน"
-            rules={[
-              { required: true, message: "Please enter ID card number!" },
-              { len: 13, message: "ID card number must be 13 digits!" },
-            ]}
-          >
-            <Input placeholder="Enter ID Card Number" />
-          </Form.Item>
-
-          <Form.Item
-            name="Address1"
-            label="ที่อยู่"
-            rules={[{ required: true, message: "Please enter address!" }]}
-          >
-            <Input.TextArea placeholder="Enter Address" rows={2} />
-          </Form.Item>
-
-          <Form.Item
-            name="Email"
-            label="อีเมล"
-            rules={[
-              {
-                required: true,
-                type: "email",
-                message: "Please enter a valid email!",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Director Email" />
-          </Form.Item>
-
-          <Form.Item
-            name="Password"
-            label="รหัสผ่าน"
-            rules={[{ required: true, message: "Please enter a password!" }]}
-          >
-            <Input.Password placeholder="Enter Password" />
-          </Form.Item>
-
+        </>
+      )}
+    </Form.List>
           <Button type="primary" htmlType="submit" block loading={loading}>
             เพิ่มกรรมการ
           </Button>
@@ -194,7 +212,7 @@ export const ManageDirectorsPage = () => {
       </Modal>
 
       {/* ✅ Modal Popup ยืนยันการสมัคร */}
-      <Modal
+      {/* <Modal
         title="ยืนยันข้อมูล"
         open={isConfirmModalOpen}
         onOk={handleConfirmRegister}
@@ -217,7 +235,7 @@ export const ManageDirectorsPage = () => {
             <b>อีเมล:</b> {formValues?.Email}
           </li>
         </ul>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

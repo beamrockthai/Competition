@@ -91,7 +91,7 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
           >
             ลบ
           </Button>
-          <Button>ประเมิน</Button>
+          
         </>
       ),
     },

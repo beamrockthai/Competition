@@ -211,8 +211,12 @@ export const TeamDirectorPage = (props) => {
     const data = await axios.get(
       PATH_API + `/director_with_groups/getbyteam/${teamData.id}/${roundId}`
     );
-    form.setFieldValue("users", data.data);
-    console.log("getDirectorwithGroup", data);
+    const mapData = data.data.map((e)=>({
+      ...e,
+      DirectorName:e.user.FirstName+" "+ e.user.LastName
+  }))
+    form.setFieldValue("users", mapData);
+    console.log("getDirectorwithGroup", mapData);
   };
 
   const onGetRoundOptions = async () => {
@@ -335,7 +339,7 @@ export const TeamDirectorPage = (props) => {
                   >
                     <Form.Item
                       {...restField}
-                      name={[name, "DirectorId"]}
+                      name={[name, "DirectorName"]}
                       rules={[{ required: true, message: "กรุณาเลือกกรรมการ" }]}
                     >
                       <Select
