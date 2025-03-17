@@ -89,11 +89,11 @@ export const UserLoginPage = () => {
                   {
                     required: true,
                     message: "Please input your Email!",
-                    type: 'email',
+                    type: "email",
                   },
                 ]}
               >
-                <Input  />
+                <Input />
               </Form.Item>
 
               <Form.Item
@@ -103,7 +103,6 @@ export const UserLoginPage = () => {
                   {
                     required: true,
                     message: "Please input your password!",
-                    
                   },
                 ]}
               >
