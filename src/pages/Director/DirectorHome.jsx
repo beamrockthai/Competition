@@ -21,7 +21,7 @@ export const DirectorHomePage = () => {
     setSelectedRound(value);
     setData(null);
     const data = await axios.get(
-      PATH_API + `/director_with_groups/getdirector/57/${value}`
+      PATH_API + `/director_with_groups/getdirector/53/${value}`
     );
     console.log(data);
 
@@ -32,6 +32,7 @@ export const DirectorHomePage = () => {
       CompetitionRound: e.competition_round.Details,
       CompetitionTypeId: e.CompetitionTypeId,
       CompetitionType: e.competition_type.CompetitionTypeName,
+      Status: e.Status,
     }));
     setData(adata);
     setLoadings(false);

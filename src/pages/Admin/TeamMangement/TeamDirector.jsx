@@ -211,12 +211,14 @@ export const TeamDirectorPage = (props) => {
     const data = await axios.get(
       PATH_API + `/director_with_groups/getbyteam/${teamData.id}/${roundId}`
     );
-    const mapData = data.data.map((e)=>({
+    console.log("data", data);
+
+    const mapData = data.data.map((e) => ({
       ...e,
-      DirectorName:e.user.FirstName+" "+ e.user.LastName
-  }))
+      DirectorName: e.user.FirstName + " " + e.user.LastName,
+    }));
     form.setFieldValue("users", mapData);
-    console.log("getDirectorwithGroup", mapData);
+    console.log("getDirectorwithGroup2", mapData);
   };
 
   const onGetRoundOptions = async () => {
@@ -240,16 +242,16 @@ export const TeamDirectorPage = (props) => {
   };
 
   const onFinish = async (values) => {
-    console.log(values);
+    console.log("finish1", values);
 
     for (var i = 0; i < values.users.length; i++) {
-      console.log(values.users[i]);
+      console.log("finish2", values.users[i]);
 
       await axios
         .post(PATH_API + `/director_with_groups/create`, {
-          DirectorId: values.users[i].DirectorId,
+          DirectorId: values.users[i].DirectorName,
           CompetitionRoundId: values.CompetitionRoundId,
-          CompetitionTypeId: values.CompetitionTypeId,
+          CompetitionTypeId: teamData.CompetitionType,
           GroupId: teamData.id,
         })
         .then((res) => {
@@ -298,7 +300,7 @@ export const TeamDirectorPage = (props) => {
 
   return (
     <>
-      {JSON.stringify(selectedRound)}
+      {JSON.stringify(teamData.CompetitionType)}
       <Form
         form={form} // ใช้ form instance
         name="dynamic_form_nest_item"

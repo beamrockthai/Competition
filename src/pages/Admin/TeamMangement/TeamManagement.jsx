@@ -21,7 +21,7 @@ export const TeamManagementPage = () => {
     },
     {
       title: "ชื่อผลงาน",
-      dataIndex: 'WorkName',
+      dataIndex: "WorkName",
       key: "WorkName",
     },
     {
@@ -62,6 +62,8 @@ export const TeamManagementPage = () => {
   const showModal2 = (e) => {
     setIsModalOpen2(true);
     setModalData(e.id);
+    console.log("Ehaa", e);
+
     setDirectorData(e);
   };
   const handleOk2 = () => {
@@ -75,6 +77,8 @@ export const TeamManagementPage = () => {
   const getTeam = async () => {
     setLoadings(true);
     const data = await axios.get(PATH_API + `/groups/get`);
+    console.log("getTeam", data);
+
     setTeamData(data.data);
     setLoadings(false);
   };
@@ -101,6 +105,7 @@ export const TeamManagementPage = () => {
         onOk={handleOk2}
         onCancel={handleCancel2}
       >
+        {/* {JSON.stringify(directorData)} */}
         <TeamDirectorPage data={directorData} />
       </Modal>
     </>

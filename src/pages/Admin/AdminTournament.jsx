@@ -58,10 +58,13 @@ export const AdminTournamentPage = () => {
 
   const handleAddTournament = async (values) => {
     console.log(values);
-    
-   const data = await axios.post(PATH_API+`/competition_types/create`,values)
-   console.log("handleAddTournament",data);
-   
+
+    const data = await axios.post(
+      PATH_API + `/competition_types/create`,
+      values
+    );
+    console.log("handleAddTournament", data);
+
     setModalVisible(false);
     form.resetFields();
     loadTournaments();
@@ -85,11 +88,20 @@ export const AdminTournamentPage = () => {
       const values = await formEdit.validateFields();
       const updatedTournament = {
         ...values,
+        id: editingTournament.id,
         // startDate: values.startDate ? values.startDate.toDate() : null,
         // endDate: values.endDate ? values.endDate.toDate() : null,
         IsOpened: values.IsOpened, // อัปเดตค่า status
       };
-      await updateTournament(editingTournament.id, updatedTournament);
+      console.log("hwwwww", updatedTournament);
+
+      // await updateTournament(editingTournament.id, updatedTournament);
+      const data = await axios.patch(
+        PATH_API + `/competition_types/update`,
+        updatedTournament
+      );
+      console.log("handleUpdateTournament", data);
+
       message.success("อัปเดตข้อมูลเรียบร้อยแล้ว");
       setEditModalVisible(false);
       setEditingTournament(null);
@@ -332,4 +344,3 @@ export const AdminTournamentPage = () => {
     </div>
   );
 };
-

@@ -12,13 +12,14 @@ export const EvaluationHistoryPage = (props) => {
   };
   const [evaluationAnswer, setEvaluationAnswer] = useState();
   const getEvaluationAnswer = async () => {
-    const data = await axios.get(
-      PATH_API + `/evaluation_answers/getbyteam/20/52/1/1`
+    const ansdata = await axios.get(
+      PATH_API +
+        `/evaluation_answers/getbyteam/${data.GroupId}/55/${data.CompetitionTypeId}/${data.CompetitionRoundId}`
     );
     console.log("getEvaluationAnswer", data);
     setEvaluationAnswer(data.data);
 
-    const mapData = data.data.map((e) => ({
+    const mapData = ansdata.data.map((e) => ({
       Question: e.evaluation_question.Question,
       Score: e.Score,
       MinScore: e.evaluation_question.MinScore,
@@ -32,7 +33,7 @@ export const EvaluationHistoryPage = (props) => {
   }, []);
   return (
     <>
-      {/* {JSON.stringify(data)} */}
+      {JSON.stringify(data)}
       <Form
         form={form}
         name="evaluation_form"
