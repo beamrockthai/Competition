@@ -17,9 +17,9 @@ export const DirectorHomePage = () => {
   const [data, setData] = useState();
 
   const getMyEvaluationList = async (value) => {
-    setLoadings(true)
+    setLoadings(true);
     setSelectedRound(value);
-    setData(null)
+    setData(null);
     const data = await axios.get(
       PATH_API + `/director_with_groups/getdirector/57/${value}`
     );
@@ -34,7 +34,7 @@ export const DirectorHomePage = () => {
       CompetitionType: e.competition_type.CompetitionTypeName,
     }));
     setData(adata);
-    setLoadings(false)
+    setLoadings(false);
 
     return data.data;
   };
@@ -78,7 +78,7 @@ export const DirectorHomePage = () => {
       key: "actions",
       render: (_, record) => (
         <>
-          {/* {record.Status === "No" ? (
+          {record.Status === "No" ? (
             <Button type="primary" onClick={() => showModal(record)}>
               ประเมิน
             </Button>
@@ -86,10 +86,10 @@ export const DirectorHomePage = () => {
             <Button type="default" onClick={() => showHistory(record)}>
               ประวัติประเมิน
             </Button>
-          )} */}
-          <Button type="primary" onClick={() => showModal(record)}>
+          )}
+          {/* <Button type="primary" onClick={() => showModal(record)}>
               ประเมิน
-            </Button>
+            </Button> */}
         </>
       ),
     },
@@ -103,7 +103,7 @@ export const DirectorHomePage = () => {
     console.log("เปิดประวัติของ", record);
     setModalData(record);
 
-    setIsModalOpen2(true)
+    setIsModalOpen2(true);
     // สามารถเพิ่ม Modal หรือ Redirect ไปยังหน้าประวัติได้
   };
   const handleOk2 = () => {
@@ -113,6 +113,8 @@ export const DirectorHomePage = () => {
   const handleCancel2 = () => {
     setIsModalOpen2(false);
     setModalData(null);
+    onGetRoundOptions();
+    getMyEvaluationList();
   };
   const handleOk = () => {
     setIsModalOpen(false);
@@ -154,7 +156,7 @@ export const DirectorHomePage = () => {
           </Select.Option>
         ))}
       </Select>
-      <Table loading={loadings}columns={columns} dataSource={data} />
+      <Table loading={loadings} columns={columns} dataSource={data} />
       <button onClick={() => setIsModalOpen2(true)}>เปิร์ด</button>
       <Modal
         title="Basic Modal"
@@ -165,12 +167,15 @@ export const DirectorHomePage = () => {
         {modalData ? <EvaluationForm data={modalData} /> : <Spin />}
       </Modal>
       <Modal
-        title="History"
+        title={`ประวัติประเมิน :` + modalData?.TeamName}
         open={isModalOpen2}
         onOk={handleOk2}
         onCancel={handleCancel2}
       >
-        <EvaluationHistoryPage data={modalData} /> 
+        <h3>ประเภทแข่งขัน : {modalData?.CompetitionRound}</h3>
+
+        <h3>รอบประเมิน : {modalData?.CompetitionType}</h3>
+        <EvaluationHistoryPage data={modalData} />
       </Modal>
     </>
   );
