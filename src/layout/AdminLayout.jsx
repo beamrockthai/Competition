@@ -64,7 +64,14 @@ export const AdminLayout = (props) => {
         style={{ maxHeight: "100%" }}
       >
         <div style={{ padding: "20px" }}>
-          <Avatar style={{ alignItems: "center" }} icon={<UserOutlined />} />
+          <Avatar style={{ alignItems: "center", backgroundColor: "#87d068" }}>
+            {" "}
+            {authUser.FirstName && authUser.LastName != null ? (
+              authUser.FirstName.charAt(0) + authUser.LastName.charAt(0)
+            ) : (
+              <Avatar size={64} icon={<UserOutlined />} />
+            )}
+          </Avatar>{" "}
           <span style={{ fontSize: "16px", color: "white" }}>สวัสดี Admin</span>
           <Dropdown
             menu={{
@@ -75,8 +82,7 @@ export const AdminLayout = (props) => {
             <a onClick={(e) => e.preventDefault()}>
               <Space>
                 <span style={{ fontSize: "16px", color: "white" }}>
-                  {/* {authUser.user.fname} {authUser.user.lname} */}
-                  name
+                  {authUser.FirstName} {authUser.LastName}
                 </span>
                 <DownOutlined />
               </Space>
@@ -99,28 +105,16 @@ export const AdminLayout = (props) => {
           <Menu.Item key="/admin/roundconfig" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>กำหนดรอบแข่งขัน</span>
           </Menu.Item>
-          <Menu.Item
-            key="/admin/tournament"
-            icon={<AppstoreAddOutlined />}
-          >
+          <Menu.Item key="/admin/tournament" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>ประเภทแข่งขัน</span>
           </Menu.Item>
-          <Menu.Item
-            key="/admin/managedirector"
-            icon={<AppstoreAddOutlined />}
-          >
+          <Menu.Item key="/admin/managedirector" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>จัดการกรรมการ</span>
           </Menu.Item>
-          <Menu.Item
-            key="/admin/evaluation"
-            icon={<AppstoreAddOutlined />}
-          >
+          <Menu.Item key="/admin/evaluation" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>แบบประเมิน</span>
           </Menu.Item>
-          <Menu.Item
-            key="/admin/teammanagement"
-            icon={<AppstoreAddOutlined />}
-          >
+          <Menu.Item key="/admin/teammanagement" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>จัดการทีม</span>
           </Menu.Item>
         </Menu>

@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Space,
+  Steps,
 } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +18,13 @@ import { TeamMemberPage } from "../../../components/TeamMember";
 import { TeamConsultPage } from "../../../components/TeamConsult";
 
 export const TeamEditPage = () => {
+  useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
+    getMyTeam();
+    getPersontypeOptions();
+    getCompetitionType();
+  }, []);
   //   const [value, setValue] = useState(1);
   const [form] = Form.useForm();
 
@@ -64,7 +72,7 @@ export const TeamEditPage = () => {
     console.log("Success:", values);
 
     axios
-      .post(PATH_API + "/users/update", { ...values, id: authUser.uid })
+      .patch(PATH_API + "/users/update", { ...values, id: authUser.uid })
       .then((res) => {
         console.log("Created", res);
       });
@@ -104,13 +112,13 @@ export const TeamEditPage = () => {
       LineId: a.LineId || null,
     });
   };
-  useEffect(() => {
-    if (dataFetchedRef.current) return;
-    dataFetchedRef.current = true;
-    getMyTeam();
-    getPersontypeOptions();
-    getCompetitionType();
-  }, []);
+
+  const [current, setCurrent] = useState(0);
+  const onChange = (value) => {
+    console.log("onChange:", value);
+    setCurrent(value);
+  };
+  const description = "This is a description.";
   return (
     <div className="body">
       <Card>
@@ -203,168 +211,16 @@ export const TeamEditPage = () => {
               </Form.Item>
             </Col>
           </Row>
-          {/* <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="ชื่อ"
-                name="FirstName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="นามสกุล"
-                name="LastName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="เลขบัตรประชาชน"
-                name="NationalId"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="วันเกิด"
-                name="DateofBirth"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <DatePicker />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="อาชีพ"
-                name="Occupation"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="สังกัดสถานศึกษา"
-                name="AffiliatedAgency"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="ที่อยู่ปัจจุบัน"
-                name="Address1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="เบอร์ติดต่อ"
-                name="Phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="Line ID"
-                name="LineId"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                label="Email"
-                name="Email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row> */}
+
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit">
-              Submit
+              บันทึกข้อมูลทีม
             </Button>
           </Form.Item>
         </Form>
+        <TeamConsultPage />
+        <TeamMemberPage data={presidentData} />
       </Card>
-
-      <TeamConsultPage />
-      <TeamMemberPage data={presidentData} />
     </div>
   );
 };

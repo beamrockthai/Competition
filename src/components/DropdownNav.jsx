@@ -14,7 +14,7 @@ export const DropdownNav = () => {
     },
     {
       label: "ข้อมูลส่วนตัวของฉัน",
-      key: "2",
+      key: "/me",
     },
     {
       label: "ออกจากระบบ",
@@ -25,13 +25,8 @@ export const DropdownNav = () => {
     <div style={{ padding: "20px" }}>
       <Avatar style={{ alignItems: "center", backgroundColor: "#87d068" }}>
         {" "}
-        {authUser.FirstName != null ? (
-          authUser.FirstName.charAt(0)
-        ) : (
-          <Avatar size={64} icon={<UserOutlined />} />
-        )}
-        {authUser.LastName != null ? (
-          authUser.LastName.charAt(0)
+        {authUser.FirstName && authUser.LastName != null ? (
+          authUser.FirstName.charAt(0) + authUser.LastName.charAt(0)
         ) : (
           <Avatar size={64} icon={<UserOutlined />} />
         )}

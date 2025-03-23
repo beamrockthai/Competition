@@ -96,8 +96,9 @@
   margin: 0;
   background-color: black;
   color: white;
-}.home-h1 {
-  font-size: 50px;
+}
+.home-h1 {
+  font-size: 40px;
   line-height: 0.8;
 }
 

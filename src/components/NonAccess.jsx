@@ -4,8 +4,12 @@ export const NonAccessPage = () => {
   return (
     <Result
       status={"403"}
-      title="คุณไม่มีสิทธิ์เข้าถึง"
-      subTitle="โปรดติดต่อผู้มีสิทธิ์ ในการอนุญาตจัดการข้อมูลเพื่อดำเนินการต่อ"
+      title={<span style={{ color: "white" }}>คุณไม่มีสิทธิ์เข้าถึง</span>}
+      subTitle={
+        <span style={{ color: "white" }}>
+          โปรดติดต่อผู้มีสิทธิ์ ในการอนุญาตจัดการข้อมูลเพื่อดำเนินการต่อ
+        </span>
+      }
       extra={[
         <Button
           key={"back"}

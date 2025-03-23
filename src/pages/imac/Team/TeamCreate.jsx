@@ -30,6 +30,8 @@ export const TeamCreatePage = () => {
   };
   const onCreateTeamStep1 = (values) => {
     const data = { ...values, CreatedBy: authUser.uid };
+    console.log("onCreateTeamStep1", data);
+
     axios.post(PATH_API + "/groups/create", data).then((res) => {
       console.log(res);
 
@@ -37,7 +39,7 @@ export const TeamCreatePage = () => {
         window.alert("Duplicate");
       } else {
         axios
-          .post(PATH_API + `/users/update`, {
+          .patch(PATH_API + `/users/update`, {
             id: authUser.uid,
             GroupId: res.data.id,
             IsPresident: "Yes",
@@ -45,7 +47,7 @@ export const TeamCreatePage = () => {
           .then((res) => {
             console.log("updateuserwhencreate", res);
 
-            window.location = "/teamedit";
+            window.location = "/teamsteps";
           });
         console.log("gggggggggggggggs", res.data);
       }
@@ -78,7 +80,9 @@ export const TeamCreatePage = () => {
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <h1>Create New Team</h1>
-          <h4>Already registered? Login</h4>
+          <h4>
+            Already registered? <a href="/userlogin">Login</a>
+          </h4>
           <Divider />
         </Col>
 
@@ -109,11 +113,11 @@ export const TeamCreatePage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Team Name!",
+                    message: "กรุณาระบุชื่อทีม",
                   },
                 ]}
               >
-                <Input />
+                <Input placeholder="ระบุชื่อทีม" />
               </Form.Item>
 
               <Form.Item
@@ -122,13 +126,13 @@ export const TeamCreatePage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your CompetitionType!",
+                    message: "กรุณาเลือกประเภทการแข่งขัน",
                   },
                 ]}
               >
                 <Select
                   loading={optionsLoading}
-                  placeholder="เลือกประเภทสื่อ"
+                  placeholder="ประเภทการแข่งขัน"
                   showSearch
                 >
                   {competitionTypeOptions
@@ -146,7 +150,7 @@ export const TeamCreatePage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
+                    message: "กรุณาเลือกประเภททีม",
                   },
                 ]}
               >
@@ -165,16 +169,19 @@ export const TeamCreatePage = () => {
                 </Select>
               </Form.Item>
               <Form.Item
-                label="เบอร์โทรศัพท์"
+                label="เบอร์โทรติดต่อผู้ประสานงาน"
                 name="Phone"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Email!",
+                    message: "กรุณากรอกเบอร์โทรติดต่อผู้ประสานงาน",
                   },
                 ]}
               >
-                <Input type="numeric" />
+                <Input
+                  type="numeric"
+                  placeholder="เบอร์โทรติดต่อผู้ประสานงาน"
+                />
               </Form.Item>
               <Form.Item
                 label="ชื่อผลงาน"
@@ -182,23 +189,23 @@ export const TeamCreatePage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your WorkName!",
+                    message: "กรุณาระบบชื่อผลงานที่สมัคร",
                   },
                 ]}
               >
-                <Input />
+                <Input placeholder="ระบุชื่อผลงานที่สมัคร" />
               </Form.Item>
               <Form.Item
-                label="โปรแกรมที่ใช้"
+                label="โปรแกรมหรือเครื่องมือที่ใช้"
                 name="ProgramUsed"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your ProgramUsed!",
+                    message: "กรุณาระบุเครื่องมือที่ใช้",
                   },
                 ]}
               >
-                <Input />
+                <Input placeholder="ระบุโปรแกรมหรือเครื่องมือที่ใช้ในการสร้างสรรค์ผลงาน" />
               </Form.Item>
               <Form.Item
                 label="แนวคิดในการสร้างสรรค์"
@@ -206,11 +213,31 @@ export const TeamCreatePage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your IdeaCreate!",
+                    message: "กรุณาระบุแนวคิดในการสร้างสรรค์ผลงาน",
                   },
                 ]}
               >
-                <Input.TextArea />
+                <Input.TextArea placeholder="ระบุชื่อแนวคิดในการสร้างสรรค์ผลงานที่ส่งแข่งขัน" />
+              </Form.Item>
+              <Form.Item
+                name="Agreement"
+                label={"ยินยอม"}
+                valuePropName="checked"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณากดยินยอม PDPA",
+                  },
+                ]}
+              >
+                <Checkbox>
+                  ข้าพเจ้าขอรับรองว่าเป็นผลงานการออกแบบและจัดทำด้วยตนเอง
+                  มิได้ลอกเลียนแบบ หรือดัดแปลงจากผลงานผู้อื่นแต่อย่างใด
+                  พร้อมยินดีปฏิบัติตามเงื่อนไขการประกวดทุกประการ
+                  และขอรับรองว่าข้อมูลที่ระบุข้างต้นเป็นความจริง
+                  และยินยอมให้ผู้ควบคุมข้อมูลส่วนบุคคลกระทำการเก็บข้อมูล
+                  นำไปใช้ในการจัดกิจกรรมดังกล่าว
+                </Checkbox>
               </Form.Item>
               <Form.Item label={null}>
                 <Button type="primary" htmlType="submit">

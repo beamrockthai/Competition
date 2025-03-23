@@ -66,8 +66,9 @@ export const Home = () => {
                 color: "white",
                 borderWidth: "2px",
               }}
+              onClick={() => window.location.assign("/teamsteps")}
             >
-              Submit
+              ส่งผลงาน
             </Button>
           </Row>
         </Col>
@@ -94,7 +95,7 @@ export const Home = () => {
             allowfullscreen="allowfullscreen"
             allow="fullscreen"
           ></iframe> */}
-          <img src="/src/assets/Screenshohome.png" width={"90%"}/>
+          <img src="/src/assets/Screenshohome.png" width={"90%"} />
         </Col>
       </Row>
     </div>

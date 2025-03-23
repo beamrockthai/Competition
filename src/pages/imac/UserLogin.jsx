@@ -20,18 +20,32 @@ export const UserLoginPage = () => {
     console.log("Success:", values);
     axios.post(PATH_API + `/users/login`, values).then((res) => {
       // window.location = "/team";
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.Role === 4) {
         localStorage.setItem("user", JSON.stringify(res.data));
         // setLoadings(false);
-        message.success(`Welcome ${res.data.FirstName} ${res.data.LastName}`);
+        message.success(
+          `Welcome ${res.data.FirstName || null} ${res.data.LastName || null}`
+        );
 
         setTimeout(() => window.location.assign("/"), 1000);
       }
+      if (res.status === 200 && res.data.Role === 2) {
+        localStorage.setItem("user", JSON.stringify(res.data));
 
+        setTimeout(() => window.location.assign("/admin"), 1000);
+        message.success(`Welcome ${res.data.FirstName} ${res.data.LastName}`);
+      }
+      if (res.status === 200 && res.data.Role === 3) {
+        localStorage.setItem("user", JSON.stringify(res.data));
+
+        setTimeout(() => window.location.assign("/director"), 1000);
+        message.success(`Welcome ${res.data.FirstName} ${res.data.LastName}`);
+      }
       if (res.status === 203) {
         message.error(res.data.message);
         setLoadings(false);
       }
+
       console.log(res);
     });
   };
@@ -89,11 +103,11 @@ export const UserLoginPage = () => {
                   {
                     required: true,
                     message: "Please input your Email!",
-                    type: 'email',
+                    type: "email",
                   },
                 ]}
               >
-                <Input  />
+                <Input />
               </Form.Item>
 
               <Form.Item
@@ -103,7 +117,6 @@ export const UserLoginPage = () => {
                   {
                     required: true,
                     message: "Please input your password!",
-                    
                   },
                 ]}
               >

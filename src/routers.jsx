@@ -27,9 +27,11 @@ import { DashboardMainPage } from "./pages/Admin/Dashboard/DashboardMain";
 import { EvaluationPage } from "./pages/Evaluation/evaluation";
 import { CurrentRoundPage } from "./pages/Admin/RoundConfig/CurrentRound";
 import { TeamManagementPage } from "./pages/Admin/TeamMangement/TeamManagement";
+import { TeamStepsPage } from "./pages/imac/Team/TeamSteps";
+import { TeamUploadPage } from "./pages/imac/Team/TeamUpload";
+import { MePage } from "./pages/Me";
 
 // import { AdminHomePage } from "./pages/Admin/AdminHome";
-
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +99,24 @@ export const router = createBrowserRouter([
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamEditPage />,
+      },
+      {
+        path: "/teamsteps",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <TeamStepsPage />,
+      },
+      {
+        path: "/teamupload",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <TeamUploadPage />,
+      },
+      {
+        path: "/me",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <MePage />,
       },
     ],
   },

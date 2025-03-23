@@ -17,7 +17,6 @@ import { authUser, PATH_API } from "../../../constrant";
 
 import { useEffect, useRef, useState } from "react";
 
-
 export const TeamPage = () => {
   const [form] = Form.useForm();
   const dataFetchedRef = useRef(false);
@@ -136,7 +135,7 @@ export const TeamPage = () => {
             {teamData ? (
               <Button
                 onClick={() => {
-                  window.location.assign("/teamedit");
+                  window.location.assign("/teamsteps");
                 }}
               >
                 แก้ไขทีม

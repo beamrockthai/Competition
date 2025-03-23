@@ -16,16 +16,22 @@ import { PATH_API } from "../../constrant";
 export const LoginRegisPage = () => {
   const onFinish = (values) => {
     console.log("ggggggg");
-    console.log("Success:", values);
-    axios.post(PATH_API + `/users/register`, values).then((res) => {
-      console.log("ฟฟฟฟฟฟ");
-      if (res.status === 409) {
-        message.error("ข้อมูลซ้ำหรืออาจเคยลงทะเบียนแล้ว");
-      }
+    console.log("Success:", { ...values, IsPresident: "Yes", Role: 4 });
+    axios
+      .post(PATH_API + `/users/register`, {
+        ...values,
+        IsPresident: "Yes",
+        Role: 4,
+      })
+      .then((res) => {
+        console.log("ฟฟฟฟฟฟ", res.message);
+        if (res.status === 409) {
+          message.error("ข้อมูลซ้ำหรืออาจเคยลงทะเบียนแล้ว");
+        }
 
-      window.location = "/userlogin";
-      console.log("ggggggg");
-    });
+        window.location = "/userlogin";
+        console.log("ggggggg", res);
+      });
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);

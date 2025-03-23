@@ -63,7 +63,14 @@ export const DirectorLayout = (props) => {
         style={{ maxHeight: "100%" }}
       >
         <div style={{ padding: "20px" }}>
-          <Avatar style={{ alignItems: "center" }} icon={<UserOutlined />} />
+          <Avatar style={{ alignItems: "center", backgroundColor: "#87d068" }}>
+            {" "}
+            {authUser.FirstName && authUser.LastName != null ? (
+              authUser.FirstName.charAt(0) + authUser.LastName.charAt(0)
+            ) : (
+              <Avatar size={64} icon={<UserOutlined />} />
+            )}
+          </Avatar>{" "}
           <span style={{ fontSize: "16px", color: "white" }}>
             สวัสดี Director
           </span>
@@ -76,8 +83,7 @@ export const DirectorLayout = (props) => {
             <a onClick={(e) => e.preventDefault()}>
               <Space>
                 <span style={{ fontSize: "16px", color: "white" }}>
-                  {/* {authUser.user.fname} {authUser.user.lname} */}
-                  name
+                  {authUser.FirstName} {authUser.LastName}
                 </span>
                 <DownOutlined />
               </Space>

@@ -5,6 +5,8 @@ import { authUser, PATH_API } from "../constrant";
 
 export const LoginPage = () => {
   const [loadings, setLoadings] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
   const onSubmit = (value) => {
     setLoadings(true);
     const newData = {
@@ -19,7 +21,18 @@ export const LoginPage = () => {
           localStorage.setItem("user", JSON.stringify(res.data));
           // console.log("AUTH : " + authUser);
           setLoadings(false);
-          window.location.assign("/admin");
+          if (res.data.Role === 2) {
+            window.location.assign("/admin");
+            message.success(
+              `Welcome ${res.data.FirstName} ${res.data.LastName}`
+            );
+          }
+          if (res.data.Role === 3) {
+            window.location.assign("/director");
+            message.success(
+              `Welcome ${res.data.FirstName} ${res.data.LastName}`
+            );
+          }
         } else {
           /// call api error
           setLoadings(false);
