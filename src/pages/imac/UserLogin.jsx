@@ -41,6 +41,10 @@ export const UserLoginPage = () => {
         setTimeout(() => window.location.assign("/director"), 1000);
         message.success(`Welcome ${res.data.FirstName} ${res.data.LastName}`);
       }
+      if (res.status === 204) {
+        message.warning("ไม่พบการลงทะเบียน หรือคุณไม่มีสิทธิ์ลงชื่อเข้าใช้", 5);
+        setLoadings(false);
+      }
       if (res.status === 203) {
         message.error(res.data.message);
         setLoadings(false);

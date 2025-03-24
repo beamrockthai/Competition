@@ -10,11 +10,11 @@ export const DropdownNav = () => {
   const items = [
     {
       label: "ทีมของฉัน",
-      key: "/team",
+      key: "/user/team",
     },
     {
       label: "ข้อมูลส่วนตัวของฉัน",
-      key: "/me",
+      key: "/user/me",
     },
     {
       label: "ออกจากระบบ",

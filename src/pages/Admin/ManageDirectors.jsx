@@ -12,7 +12,7 @@ import {
   Space,
   Select,
 } from "antd";
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 // import { useUserAuth } from "../../Context/UserAuth";
 // import {
@@ -34,30 +34,35 @@ export const ManageDirectorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนสมัคร
-  const [data,setData]= useState([])
+  const [data, setData] = useState([]);
+  const [optionsLoading, setOptionsLoading] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
     // loadDirectors(setDirectors);
-    getUserDirector()
-    getUserNotDirector()
+    getUserDirector();
+    getUserNotDirector();
   }, []);
-  const getUserDirector = async()=>{
-    const data = await axios.get(PATH_API+`/users/getbyrole/3`)
+  const getUserDirector = async () => {
+    const data = await axios.get(PATH_API + `/users/getbyrole/3`);
     console.log(data);
     setDirectors(data.data);
-  }
-  const getUserNotDirector = async()=>{
-    const data = await axios.get(PATH_API+`/users/getnotdirector`)
+  };
+  const getUserNotDirector = async () => {
+    setOptionsLoading(true);
+    const data = await axios.get(PATH_API + `/users/getnotdirector`);
     console.log(data);
     setData(data.data);
-   
-  }
+    setOptionsLoading(false);
+  };
   // ✅ เปิด Popup ยืนยันก่อนสมัคร
   const showConfirmModal = (values) => {
     console.log("showConfirmModal", values.director[0].Director);
-    for(var i=0;i<values.director.length;i++){
-axios.patch(PATH_API+`/users/update`,{Role:3,id:values.director[i].Director})
+    for (var i = 0; i < values.director.length; i++) {
+      axios.patch(PATH_API + `/users/update`, {
+        Role: 3,
+        id: values.director[i].Director,
+      });
     }
 
     setFormValues(values);
@@ -87,13 +92,12 @@ axios.patch(PATH_API+`/users/update`,{Role:3,id:values.director[i].Director})
     //   setLoading(false);
     // }
   };
-const deleteDirector=(values)=>{
-  
-  console.log("deleteDirector",values);
-  
-  axios.patch(PATH_API+`/users/update`,{Role:"4",id:values})
-  getUserDirector()
-}
+  const deleteDirector = (values) => {
+    console.log("deleteDirector", values);
+
+    axios.patch(PATH_API + `/users/update`, { Role: "4", id: values });
+    getUserDirector();
+  };
   return (
     <div style={{ padding: "20px" }}>
       {/* Header Section */}
@@ -159,52 +163,67 @@ const deleteDirector=(values)=>{
         footer={null}
       >
         <Form layout="vertical" onFinish={showConfirmModal} form={form}>
-          
+          <Form.List name="director">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{
+                      display: "flex",
+                      marginBottom: 8,
+                    }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      layout="horizontal"
+                      {...restField}
+                      label={"กรรมการ"}
+                      name={[name, "Director"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing first name",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Director"
+                        style={{ width: "100%" }}
+                        dropdownStyle={{ whiteSpace: "normal" }}
+                        loading={optionsLoading}
+                        showSearch
+                        optionFilterProp="children" // ให้ค้นหาจาก children ของ Select.Option
+                        filterOption={(input, option) =>
+                          String(option.children)
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      >
+                        {data.map((e) => (
+                          <Select.Option key={e.id} value={e.id}>
+                            {e.FirstName} {e.LastName}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
 
-        <Form.List name="director">
-      {(fields, { add, remove }) => (
-        <>
-          {fields.map(({ key, name, ...restField }) => (
-            <Space
-              key={key}
-              style={{
-                display: 'flex',
-                marginBottom: 8,
-              }}
-              align="baseline"
-            >
-              <Form.Item
-              layout="horizontal"
-                {...restField}
-                label={"กรรมการ"}
-                name={[name, 'Director']}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Missing first name',
-                  },
-                ]}
-              >
-                <Select placeholder="Director" >
-                {data.map((e) => (
-            <Select.Option key={e.id} value={e.id}>
-              {e.FirstName} {e.LastName}
-            </Select.Option>
-          ))}
-                </Select>
-              </Form.Item>
-              
-              <MinusCircleOutlined onClick={() => remove(name)} />
-            </Space>
-          ))}
-          <Form.Item>
-            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-              Add field
-            </Button>
-          </Form.Item>
-        </>
-      )}
-    </Form.List>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    เพิ่ม
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
           <Button type="primary" htmlType="submit" block loading={loading}>
             เพิ่มกรรมการ
           </Button>

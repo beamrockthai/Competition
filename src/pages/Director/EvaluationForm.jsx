@@ -1,4 +1,4 @@
-import { Button, Col, Form, InputNumber, Row } from "antd";
+import { Button, Col, Form, InputNumber, message, Row } from "antd";
 import axios from "axios";
 import { PATH_API } from "../../constrant";
 import { useEffect, useState } from "react";
@@ -7,7 +7,9 @@ export const EvaluationForm = (props) => {
   const [form] = Form.useForm();
   const data = props.data;
   const [evaluationForms, setEvaluationForms] = useState();
+  const [loading, setLoading] = useState();
   const onFinish = async (values) => {
+    setLoading(true);
     console.log("Success:", values);
     for (let i = 0; i < values.evaluation_question.length; i++) {
       const rawdata = {
@@ -27,8 +29,12 @@ export const EvaluationForm = (props) => {
         );
 
         console.log(res);
+        setLoading(false);
+        message.success("บันทึกประเมินสำเร็จ!");
       } catch (error) {
         console.error("Error submitting evaluation:", error);
+        message.error("เกิดข้อผิดพลาดในการบันทึก");
+        setLoading(false);
       }
     }
     const updateno = await axios.patch(
@@ -70,7 +76,7 @@ export const EvaluationForm = (props) => {
   }, [data]); // ✅ รันใหม่เมื่อ data เปลี่ยน
   return (
     <>
-      {JSON.stringify(props)}
+      {/* {JSON.stringify(props)} */}
       <h2>ท่านกำลังประเมินทีม {data?.TeamName}</h2>
       <h2>การแข่งขันประเภท : {data?.CompetitionType}</h2>
       <h2>รอบที่ : {data?.CompetitionRound}</h2>
@@ -143,7 +149,7 @@ export const EvaluationForm = (props) => {
         </Form.List>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             ส่งแบบประเมิน
           </Button>
         </Form.Item>

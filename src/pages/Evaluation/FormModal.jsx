@@ -26,7 +26,7 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
   const [evaluations, setEvaluations] = useState([
     { id: Date.now(), label: "" },
   ]);
-
+  const [buttonLoading, setButtonLoading] = useState();
   useEffect(() => {
     if (editingForm) {
       // setFormName(editingForm.name);
@@ -85,6 +85,7 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
   // };
 
   const onFinish = async (values) => {
+    setButtonLoading(true);
     console.log("Received values of form:", values);
     axios
       .post(PATH_API + `/evaluation_forms/create`, {
@@ -92,7 +93,11 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
         Name: values.Name,
       })
       .then((res) => {
+        setButtonLoading(false);
+
         for (var i = 0; i < values.Criteria.length; i++) {
+          setButtonLoading(true);
+
           console.log(values.Criteria[i]);
           const id = res.data[1];
           axios
@@ -103,9 +108,13 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
               Status: "Active",
             })
             .then((res) => {
+              setButtonLoading(false);
+
               console.log(res);
             });
         }
+        message.success("บันทึกสำเร็จ อย่าลืมกดมอบหมายฟอร์ม", 5);
+
         // onFormSaved();
         // onClose();
       });
@@ -319,7 +328,7 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
                   block
                   icon={<PlusOutlined />}
                 >
-                  Add field
+                  คำถาม
                 </Button>
               </Form.Item>
             </>
@@ -327,7 +336,7 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
         </Form.List>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={buttonLoading}>
             Submit
           </Button>
         </Form.Item>

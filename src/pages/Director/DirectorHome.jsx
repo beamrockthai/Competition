@@ -1,4 +1,4 @@
-import { Button, Modal, Select, Spin, Table } from "antd";
+import { Button, Modal, Result, Select, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import { EvaluationForm } from "./EvaluationForm";
 import axios from "axios";
@@ -21,9 +21,9 @@ export const DirectorHomePage = () => {
     setSelectedRound(value);
     setData(null);
     const data = await axios.get(
-      PATH_API + `/director_with_groups/getdirector/53/${value}`
+      PATH_API + `/director_with_groups/getdirector/${authUser.uid}/${value}`
     );
-    console.log(data);
+    console.log("data", data);
 
     const adata = data.data.map((e) => ({
       GroupId: e.GroupId,
@@ -136,7 +136,7 @@ export const DirectorHomePage = () => {
   }, [selectedRound]);
   return (
     <>
-      {JSON.stringify(data)}
+      {/* {JSON.stringify(data)} */}
       <h1>รายการที่ฉันต้องประเมิน</h1>
       <h1>
         กำหนดรอบแข่งขัน -{" "}
@@ -146,6 +146,7 @@ export const DirectorHomePage = () => {
           <Spin />
         )}
       </h1>
+      <h3>กรุณาเลือกรอบแข่งขัน</h3>
       <Select
         style={{ width: 120 }}
         value={selectedRound} // ✅ ใช้ value แทน defaultValue
@@ -158,14 +159,22 @@ export const DirectorHomePage = () => {
         ))}
       </Select>
       <Table loading={loadings} columns={columns} dataSource={data} />
-      <button onClick={() => setIsModalOpen2(true)}>เปิร์ด</button>
+      {/* <button onClick={() => setIsModalOpen2(true)}>เปิร์ด</button> */}
       <Modal
         title="Basic Modal"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {modalData ? <EvaluationForm data={modalData} /> : <Spin />}
+        {modalData != 0 ? (
+          modalData != null ? (
+            <EvaluationForm data={modalData} />
+          ) : (
+            <Spin />
+          )
+        ) : (
+          <Result title={"null"} />
+        )}
       </Modal>
       <Modal
         title={`ประวัติประเมิน :` + modalData?.TeamName}
@@ -173,9 +182,9 @@ export const DirectorHomePage = () => {
         onOk={handleOk2}
         onCancel={handleCancel2}
       >
-        <h3>ประเภทแข่งขัน : {modalData?.CompetitionRound}</h3>
+        <h3>ประเภทแข่งขัน : {modalData?.CompetitionType} </h3>
 
-        <h3>รอบประเมิน : {modalData?.CompetitionType}</h3>
+        <h3>รอบประเมิน : {modalData?.CompetitionRound}</h3>
         <EvaluationHistoryPage data={modalData} />
       </Modal>
     </>

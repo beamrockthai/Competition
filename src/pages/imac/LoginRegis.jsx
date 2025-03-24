@@ -84,6 +84,7 @@ export const LoginRegisPage = () => {
                   {
                     required: true,
                     message: "Please input your Email!",
+                    type: "email",
                   },
                 ]}
               >

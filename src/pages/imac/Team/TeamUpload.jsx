@@ -10,9 +10,10 @@ export const TeamUploadPage = () => {
   }, []);
   const [form] = Form.useForm();
   const [teamData, setTeamData] = useState();
+  const [buttonLoading, setButtonLoading] = useState();
   const onFinish = async (values) => {
     console.log("Success:", values);
-
+    setButtonLoading(true);
     axios
       .patch(PATH_API + "/groups/update", {
         id: teamData.id,
@@ -22,6 +23,7 @@ export const TeamUploadPage = () => {
       .then((res) => {
         console.log("Created", res);
         message.success("บันทึกลิงค์ผลงานเรียบร้อย!");
+        setButtonLoading(false);
       });
   };
   const onFinishFailed = () => {
@@ -72,7 +74,7 @@ export const TeamUploadPage = () => {
         </Form.Item>
         <Form.Item>
           <Space>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={buttonLoading}>
               บันทึกลิงค์
             </Button>
             {/* <Button htmlType="button" onClick={onFill}>

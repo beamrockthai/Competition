@@ -47,7 +47,7 @@ export const TeamCreatePage = () => {
           .then((res) => {
             console.log("updateuserwhencreate", res);
 
-            window.location = "/teamsteps";
+            window.location = "/user/teamsteps";
           });
         console.log("gggggggggggggggs", res.data);
       }
@@ -80,9 +80,9 @@ export const TeamCreatePage = () => {
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <h1>Create New Team</h1>
-          <h4>
+          {/* <h4>
             Already registered? <a href="/userlogin">Login</a>
-          </h4>
+          </h4> */}
           <Divider />
         </Col>
 

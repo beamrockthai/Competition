@@ -28,6 +28,7 @@ export const TeamManagementPage = () => {
       title: "หัวหน้าทีม",
       dataIndex: "CreatedBy",
       key: "CreatedBy",
+      render: (_, record) => record.user.FirstName + " " + record.user.LastName,
     },
 
     {

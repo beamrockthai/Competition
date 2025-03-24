@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Divider,
   Form,
   Input,
   List,
@@ -22,6 +23,7 @@ export const TeamPage = () => {
   const dataFetchedRef = useRef(false);
   const [teamData, setTeamData] = useState();
   const [teamMemberData, setTeamMemberData] = useState();
+  const [teamConsultData, setTeamConsultData] = useState();
   const [optionsLoading, setOptionsLoading] = useState(true);
   const [competitionTypeOptions, setCompetitionTypeOptions] = useState();
   const [personTypeOptions, setPersonTypeOptions] = useState();
@@ -32,31 +34,20 @@ export const TeamPage = () => {
       .then((res) => {
         setTeamData(res.data);
         setFormData(res.data);
+        console.log("getMyTeam", res.data);
+
         if (res.data.id) {
           axios
-            .get(PATH_API + `/users/getteammembers/${res.data.id}`)
-            .then((res) => {
-              console.log("teammember", res);
-              setTeamMemberData(res.data);
-              // for (var i = 0; i < res.data.length; i++) {
-              //   form.setFieldsValue({
-              //     FirstName: res.data[i].FirstName,
-              //     LastName: res.data[i].LastName,
-              //     NationalId: res.data[i].NationalId,
-              //     DateofBirth: res.data[i].DateofBirth,
-              //     Occupation: res.data[i].Occupation,
-              //     AffiliatedAgency: res.data[i].AffiliatedAgency,
-              //     Address1: res.data[i].Address1,
-              //     Address2: res.data[i].Address2,
-              //     AddressSubDistrict: res.data[i].AddressSubDistrict,
-              //     AddressDistrict: res.data[i].AddressDistrict,
-              //     AddressProvince: res.data[i].AddressProvince,
-              //     PostCode: res.data[i].PostCode,
-              //     Phone: res.data[i].Phone,
-              //     Email: res.data[i].Email,
-              //     LineId: res.data[i].LineId,
-              //   });
-              // }
+            .get(PATH_API + `/consult_with_teams/getbyteam/${res.data.id}`)
+            .then((data) => {
+              console.log("consult_with_group", data.data);
+              setTeamConsultData(data.data);
+              axios
+                .get(PATH_API + `/users/getteammembers/${res.data.id}`)
+                .then((memdata) => {
+                  console.log("teammember", memdata);
+                  setTeamMemberData(memdata.data);
+                });
             });
         } else {
           setTeamMemberData(0);
@@ -119,6 +110,9 @@ export const TeamPage = () => {
     });
   };
   useEffect(() => {
+    if (!authUser) {
+      window.location.assign("/login");
+    }
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     getMyTeam();
@@ -135,7 +129,7 @@ export const TeamPage = () => {
             {teamData ? (
               <Button
                 onClick={() => {
-                  window.location.assign("/teamsteps");
+                  window.location.assign("/user/teamsteps");
                 }}
               >
                 แก้ไขทีม
@@ -143,8 +137,9 @@ export const TeamPage = () => {
             ) : (
               <Button
                 onClick={() => {
-                  window.location.assign("/teamcreate");
+                  window.location.assign("/user/teamcreate");
                 }}
+                loading={optionsLoading}
               >
                 สร้างทีม
               </Button>
@@ -242,11 +237,13 @@ export const TeamPage = () => {
             </Col>
           </Row>
         </Form>
-        {teamMemberData != 0 ? (
-          teamMemberData != null ? (
+
+        <h3>ที่ปรึกษา</h3>
+        {teamConsultData != 0 ? (
+          teamConsultData != null ? (
             <List
               itemLayout="horizontal"
-              dataSource={teamMemberData}
+              dataSource={teamConsultData}
               renderItem={(item, index) => (
                 <List.Item>
                   <List.Item.Meta
@@ -257,23 +254,78 @@ export const TeamPage = () => {
                     }
                     title={
                       <p>
-                        {item.FirstName} {item.LastName} | ตำแหน่ง :
-                        {item.IsPresident && item.IsPresident === "Yes"
-                          ? "หัวหน้ากลุ่ม"
-                          : "สมาชิกกลุ่ม"}
+                        {item.user.FirstName} {item.user.LastName} | ตำแหน่ง :
+                        {item.user.IsPresident &&
+                        item.user.IsPresident === "Consult"
+                          ? "ที่ปรึกษา"
+                          : "ไม่ได้ระบุ"}
                       </p>
                     }
                     description={
                       <p>
-                        {item.Email}
+                        {item.user.Email}
                         <br />
-                        {item.Phone}
+                        {item.user.Phone}
                       </p>
                     }
                   />
                 </List.Item>
               )}
             />
+          ) : (
+            <Skeleton
+              avatar
+              paragraph={{
+                rows: 2,
+              }}
+            />
+          )
+        ) : (
+          <Result
+            title="ไม่พบข้อมูลที่ปรึกษาของทีม"
+            // extra={
+            //   <Button type="primary" key="console">
+            //     Go Console
+            //   </Button>
+            // }
+          />
+        )}
+        <Divider />
+        <h3>สมาชิก</h3>
+        {teamMemberData != 0 ? (
+          teamMemberData != null ? (
+            <>
+              <List
+                itemLayout="horizontal"
+                dataSource={teamMemberData}
+                renderItem={(item, index) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar
+                          src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
+                        />
+                      }
+                      title={
+                        <p>
+                          {item.FirstName} {item.LastName} | ตำแหน่ง :
+                          {item.IsPresident && item.IsPresident === "Yes"
+                            ? "หัวหน้ากลุ่ม"
+                            : "สมาชิกกลุ่ม"}
+                        </p>
+                      }
+                      description={
+                        <p>
+                          {item.Email}
+                          <br />
+                          {item.Phone}
+                        </p>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </>
           ) : (
             <Skeleton
               avatar

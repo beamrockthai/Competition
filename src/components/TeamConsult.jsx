@@ -47,36 +47,59 @@ export const TeamConsultPage = (props) => {
   const [namePrefixOptions, setNamePrefixOptions] = useState();
   const [OccupationOptions, setOccupationOptions] = useState();
   const [optionsLoading, setOptionsLoading] = useState();
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
     console.log("PAONN", values);
+    setButtonLoading(true);
 
     for (var i = 0; i < values.items.length; i++) {
-      console.log(values.items[i]);
+      console.log("ggggggg", values.items[i]);
       await axios
         .post(PATH_API + "/users/create", {
           ...values.items[i],
+
           IsPresident: "Consult",
           GroupId: teamData.id,
           CreatedBy: authUser.uid,
           Role: 4,
         })
         .then((res) => {
-          console.log("Created", res);
-          const createdata = {
-            ConsultUserId: res.data.id,
-            GroupId: res.data.GroupId,
-            Status: "Active",
-            CreatedBy: authUser.uid,
-          };
-          axios
-            .post(PATH_API + `/consult_with_teams/create`, createdata)
-            .then((res) => {
-              console.log("/consult_with_teams/create", res);
-            });
+          console.log("Created//////////", res);
+          if (res.status === 204) {
+            setButtonLoading(false);
+          } else if (res.status === 200) {
+            const createdata = {
+              ConsultUserId: values.items[i].id,
+              GroupId: teamData.id,
+              Status: "Active",
+              CreatedBy: authUser.uid,
+            };
+            axios
+              .post(PATH_API + `/consult_with_teams/create`, createdata)
+              .then((res) => {
+                console.log("/consult_with_teams/create", res);
+                setButtonLoading(false);
+              });
+          } else if (res.status === 201) {
+            const createdata = {
+              ConsultUserId: res.data.id,
+              GroupId: teamData.id,
+              Status: "Active",
+              CreatedBy: authUser.uid,
+            };
+            axios
+              .post(PATH_API + `/consult_with_teams/create`, createdata)
+              .then((res) => {
+                console.log("/consult_with_teams/create", res);
+                setButtonLoading(false);
+              });
+          }
+          setButtonLoading(false);
         });
     }
+    message.success("บันทึกข้อมูลที่ปรึกษาทีมสำเร็จแล้ว!", 5);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -107,7 +130,7 @@ export const TeamConsultPage = (props) => {
             console.log("consult_with_group", res.data);
             const newconsultdata = res.data.map((e) => ({
               ...e.user,
-              id: e.id,
+              id: e.ConsultUserId,
               Occupation: e.user.OccupationId,
               DateofBirth: e.user.DateofBirth
                 ? dayjs(e.user.DateofBirth, dateFormat)
@@ -218,7 +241,7 @@ export const TeamConsultPage = (props) => {
 
                               axios
                                 .post(
-                                  `${PATH_API}/consult_with_teams/delete/${memberId}/${authUser.uid}`
+                                  `${PATH_API}/consult_with_teams/delete/${memberId}/${teamData.id}/${authUser.uid}`
                                 )
                                 .then((res) => {
                                   console.log("Member deleted:", res);
@@ -231,6 +254,8 @@ export const TeamConsultPage = (props) => {
                                 .catch((err) => {
                                   console.error("Error deleting member:", err);
                                 });
+                            } else if (!memberId) {
+                              remove(field.name);
                             }
                           }}
                         >
@@ -241,7 +266,7 @@ export const TeamConsultPage = (props) => {
                       }
                     >
                       <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="id"
                             name={[field.name, "id"]}
@@ -281,7 +306,7 @@ export const TeamConsultPage = (props) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="ชื่อ"
                             name={[field.name, "FirstName"]}
@@ -292,7 +317,7 @@ export const TeamConsultPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="นามสกุล"
                             name={[field.name, "LastName"]}
@@ -306,7 +331,7 @@ export const TeamConsultPage = (props) => {
                       </Row>
 
                       <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="เลขบัตรประชาชน"
                             name={[field.name, "NationalId"]}
@@ -320,7 +345,7 @@ export const TeamConsultPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="วัน/เดือน/ปี เกิด"
                             name={[field.name, "DateofBirth"]}
@@ -343,6 +368,20 @@ export const TeamConsultPage = (props) => {
                               }}
                               onChange={onChange}
                             />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="สังกัดสถานศึกษา"
+                            name={[field.name, "AffiliatedAgency"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "กรุณากรอกสังกัดสถานศึกษา!",
+                              },
+                            ]}
+                          >
+                            <Input />
                           </Form.Item>
                           <Form.Item
                             label="อาชีพ"
@@ -377,24 +416,10 @@ export const TeamConsultPage = (props) => {
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
-                          <Form.Item
-                            label="สังกัดสถานศึกษา"
-                            name={[field.name, "AffiliatedAgency"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "กรุณากรอกสังกัดสถานศึกษา!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
                       </Row>
 
                       <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="ที่อยู่ปัจจุบัน"
                             name={[field.name, "Address1"]}
@@ -408,7 +433,7 @@ export const TeamConsultPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="เบอร์ติดต่อ"
                             name={[field.name, "Phone"]}
@@ -422,7 +447,7 @@ export const TeamConsultPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="Line ID"
                             name={[field.name, "LineId"]}
@@ -436,7 +461,7 @@ export const TeamConsultPage = (props) => {
                       </Row>
 
                       <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="Email"
                             name={[field.name, "Email"]}
@@ -459,8 +484,14 @@ export const TeamConsultPage = (props) => {
               )}
             </Form.List>
 
-            <Form.Item label={null}>
-              <Button type="primary" htmlType="submit">
+            <Form.Item
+              style={{
+                marginTop: "16px",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button type="primary" htmlType="submit" loading={buttonLoading}>
                 บันทึกที่ปรึกษา
               </Button>
             </Form.Item>

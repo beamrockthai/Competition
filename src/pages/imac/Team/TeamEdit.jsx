@@ -3,6 +3,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Divider,
   Form,
   Input,
   Radio,
@@ -219,6 +220,7 @@ export const TeamEditPage = () => {
           </Form.Item>
         </Form>
         <TeamConsultPage />
+        <Divider />
         <TeamMemberPage data={presidentData} />
       </Card>
     </div>

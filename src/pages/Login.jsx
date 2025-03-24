@@ -24,15 +24,33 @@ export const LoginPage = () => {
           if (res.data.Role === 2) {
             window.location.assign("/admin");
             message.success(
-              `Welcome ${res.data.FirstName} ${res.data.LastName}`
+              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              2
             );
+            setLoadings(false);
           }
           if (res.data.Role === 3) {
             window.location.assign("/director");
             message.success(
-              `Welcome ${res.data.FirstName} ${res.data.LastName}`
+              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              2
             );
+            setLoadings(false);
           }
+          if (res.data.Role === 4) {
+            window.location.assign("/");
+            message.success(
+              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              2
+            );
+            setLoadings(false);
+          }
+        } else if (res.status === 204) {
+          message.warning(
+            "ไม่พบการลงทะเบียน หรือคุณไม่มีสิทธิ์ลงชื่อเข้าใช้",
+            5
+          );
+          setLoadings(false);
         } else {
           /// call api error
           setLoadings(false);
@@ -40,10 +58,12 @@ export const LoginPage = () => {
         }
       })
       .catch((err) => {
+        setLoadings(false);
         if (err.response) {
           setLoadings(false);
           if (err.response.status === 401) {
             message.error("ข้อมูลลงชื่อเข้าใช้ไม่ถูกต้อง");
+            setLoadings(false);
           }
           console.log(err.response.status);
         }

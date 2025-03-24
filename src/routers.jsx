@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Root } from "./pages/Root";
+import { Root, RootLoader } from "./pages/Root";
 
 import { LoginPage } from "./pages/Login";
 // import { Logout } from "./components/Logout";
@@ -30,6 +30,7 @@ import { TeamManagementPage } from "./pages/Admin/TeamMangement/TeamManagement";
 import { TeamStepsPage } from "./pages/imac/Team/TeamSteps";
 import { TeamUploadPage } from "./pages/imac/Team/TeamUpload";
 import { MePage } from "./pages/Me";
+import { UserRoot, UserRootLoader } from "./pages/UserRoot";
 
 // import { AdminHomePage } from "./pages/Admin/AdminHome";
 
@@ -37,7 +38,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     id: "root",
-    // loader: RootLoader, FIXME: loader in router is loadding state
+
     element: <Root />,
     children: [
       {
@@ -82,38 +83,46 @@ export const router = createBrowserRouter([
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <UserLoginPage />,
       },
+    ],
+  },
+  {
+    path: "/user",
+    id: "userroot",
+    loader: UserRootLoader,
+    element: <UserRoot />,
+    children: [
       {
-        path: "/team",
+        path: "team",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamPage />,
       },
       {
-        path: "/teamcreate",
+        path: "teamcreate",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamCreatePage />,
       },
       {
-        path: "/teamedit",
+        path: "teamedit",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamEditPage />,
       },
       {
-        path: "/teamsteps",
+        path: "teamsteps",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamStepsPage />,
       },
       {
-        path: "/teamupload",
+        path: "teamupload",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamUploadPage />,
       },
       {
-        path: "/me",
+        path: "me",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <MePage />,

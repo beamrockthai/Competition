@@ -48,11 +48,12 @@ export const TeamMemberPage = (props) => {
   const [namePrefixOptions, setNamePrefixOptions] = useState();
   const [OccupationOptions, setOccupationOptions] = useState();
   const [optionsLoading, setOptionsLoading] = useState();
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
     console.log("PAONN", values);
-
+    setButtonLoading(true);
     for (var i = 0; i < values.items.length; i++) {
       console.log(dayjs(values.items[i].DateofBirth, "DDMMYYYY"));
       await axios
@@ -65,8 +66,10 @@ export const TeamMemberPage = (props) => {
         })
         .then((res) => {
           console.log("Created", res);
+          setButtonLoading(false);
         });
     }
+    message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!", 5);
   };
   const onChange = (date, dateString) => {
     console.log(dateString);
@@ -142,7 +145,7 @@ export const TeamMemberPage = (props) => {
   };
   return (
     <>
-      {JSON.stringify(presidentData)}
+      {/* {JSON.stringify(presidentData)} */}
 
       {teamData ? (
         <Card>
@@ -224,6 +227,7 @@ export const TeamMemberPage = (props) => {
                                       "ลบข้อมูลสมาชิกออกจากทีมแล้ว",
                                       5
                                     );
+                                    remove(field.name);
                                   })
                                   .catch((err) => {
                                     console.error(
@@ -232,6 +236,8 @@ export const TeamMemberPage = (props) => {
                                     );
                                   });
                               }
+                            } else if (!memberId) {
+                              remove(field.name);
                             }
                           }}
                         >
@@ -242,7 +248,7 @@ export const TeamMemberPage = (props) => {
                       }
                     >
                       <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             hidden="true"
                             label="id"
@@ -326,7 +332,7 @@ export const TeamMemberPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="วัน/เดือน/ปี เกิด"
                             name={[field.name, "DateofBirth"]}
@@ -398,7 +404,7 @@ export const TeamMemberPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="ที่อยู่ปัจจุบัน"
                             name={[field.name, "Address1"]}
@@ -438,7 +444,7 @@ export const TeamMemberPage = (props) => {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="Email"
                             name={[field.name, "Email"]}
@@ -462,8 +468,15 @@ export const TeamMemberPage = (props) => {
                 </div>
               )}
             </Form.List>
-            <Form.Item label={null}>
-              <Button type="primary" htmlType="submit">
+            <Form.Item
+              label={null}
+              style={{
+                marginTop: "16px",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button type="primary" htmlType="submit" loading={buttonLoading}>
                 บันทึกสมาชิก
               </Button>
             </Form.Item>

@@ -66,9 +66,9 @@ export const Home = () => {
                 color: "white",
                 borderWidth: "2px",
               }}
-              onClick={() => window.location.assign("/teamsteps")}
+              onClick={() => window.location.assign("/user/team")}
             >
-              ส่งผลงาน
+              ดูข้อมูลการสมัครของฉัน
             </Button>
           </Row>
         </Col>

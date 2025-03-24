@@ -8,7 +8,7 @@ export const RegisterResultPage = () => (
       <Button
         type="primary"
         key="team"
-        onClick={() => window.location.assign("/team")}
+        onClick={() => window.location.assign("/user/team")}
       >
         ทีมของฉัน
       </Button>,

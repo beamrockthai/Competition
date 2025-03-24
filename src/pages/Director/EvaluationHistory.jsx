@@ -33,7 +33,7 @@ export const EvaluationHistoryPage = (props) => {
   }, []);
   return (
     <>
-      {JSON.stringify(data)}
+      {/* {JSON.stringify(data)} */}
       <Form
         form={form}
         name="evaluation_form"
@@ -68,6 +68,7 @@ export const EvaluationHistoryPage = (props) => {
                       rules={[{ required: true, message: "กรุณากรอกคะแนน" }]}
                     >
                       <InputNumber
+                        disabled={true}
                         min={
                           form.getFieldValue([
                             "evaluation_question",
