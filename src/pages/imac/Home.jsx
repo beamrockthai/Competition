@@ -22,23 +22,20 @@ export const Home = () => {
   ];
 
   return (
-    <div className="home-body" style={{ padding: "20px" }}>
+    <div className="home-body">
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <div className="home-h1 ">
             <h1>
               <span className="orange">I</span>TED
-            </h1>
-            <h1>
+              <br />
               <span className="orange">M</span>EDIA{" "}
               <span className="orange">A</span>CADEMY
-            </h1>
-            <h1>
+              <br />
               <span className="orange">C</span>ONTEST{" "}
               <span className="orange">2025</span>
             </h1>
           </div>
-
           <p>
             We are the best way to organize <span className="orange">IMAC</span>{" "}
             events
@@ -72,6 +69,7 @@ export const Home = () => {
             </Button>
           </Row>
         </Col>
+
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           {/* <Carousel style={{ width: "100%" }} afterChange={onChange}>
             <div>
@@ -95,6 +93,7 @@ export const Home = () => {
             allowfullscreen="allowfullscreen"
             allow="fullscreen"
           ></iframe> */}
+          <br />
           <img src="/src/assets/Screenshohome.png" width={"90%"} />
         </Col>
       </Row>

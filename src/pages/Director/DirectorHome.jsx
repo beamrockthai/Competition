@@ -1,4 +1,4 @@
-import { Button, Modal, Result, Select, Spin, Table } from "antd";
+import { Button, Modal, Result, Select, Spin, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { EvaluationForm } from "./EvaluationForm";
 import axios from "axios";
@@ -139,16 +139,16 @@ export const DirectorHomePage = () => {
       {/* {JSON.stringify(data)} */}
       <h1>รายการที่ฉันต้องประเมิน</h1>
       <h1>
-        กำหนดรอบแข่งขัน -{" "}
+        รอบแข่งขันปัจจุบันในระบบ -{" "}
         {defaultRoundOptions.length > 0 ? (
-          defaultRoundOptions[0].Details
+          <Tag color="#2db7f5">{defaultRoundOptions[0].Details}</Tag>
         ) : (
           <Spin />
         )}
       </h1>
       <h3>กรุณาเลือกรอบแข่งขัน</h3>
       <Select
-        style={{ width: 120 }}
+        style={{ width: 120, paddingBottom: 5 }}
         value={selectedRound} // ✅ ใช้ value แทน defaultValue
         onChange={(value) => getMyEvaluationList(value)} // ✅ อัปเดตค่าเมื่อเปลี่ยนรอบ
       >
@@ -158,6 +158,7 @@ export const DirectorHomePage = () => {
           </Select.Option>
         ))}
       </Select>
+
       <Table loading={loadings} columns={columns} dataSource={data} />
       {/* <button onClick={() => setIsModalOpen2(true)}>เปิร์ด</button> */}
       <Modal

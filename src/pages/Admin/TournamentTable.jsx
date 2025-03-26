@@ -1,8 +1,12 @@
 import React from "react";
-import { Button, Tag } from "antd"; // นำเข้า Button จาก Ant Design
+import { Button, message, Popconfirm, Tag } from "antd"; // นำเข้า Button จาก Ant Design
 import moment from "moment";
 
 const TournamentTable = ({ handleEditTournament, handleDelete }) => {
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
   const columns = [
     {
       title: "ชื่อการแข่งขัน",
@@ -52,10 +56,10 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
     //   dataIndex: "maxRounds",
     // },
 
-    {
-      title: "จำนวนผู้สมัคร",
-      dataIndex: "registrationCount",
-    },
+    // {
+    //   title: "จำนวนผู้สมัคร",
+    //   dataIndex: "registrationCount",
+    // },
 
     {
       title: "สถานะ",
@@ -84,14 +88,18 @@ const TournamentTable = ({ handleEditTournament, handleDelete }) => {
           <Button type="primary" onClick={() => handleEditTournament(record)}>
             แก้ไข
           </Button>
-          <Button
-            danger
-            onClick={() => handleDelete(record.id)}
-            style={{ marginLeft: 8 }}
+          <Popconfirm
+            title={`คุณต้องการลบการแข่งขันประเภท ${record.CompetitionTypeName} ?`}
+            description={`โปรดแน่ใจว่าไม่มีทีมใดเลือกประเภทนี้อยู่`}
+            onConfirm={() => handleDelete(record.id)}
+            onCancel={cancel}
+            okText="ยืนยัน"
+            cancelText="ยกเลิก"
           >
-            ลบ
-          </Button>
-          
+            <Button danger style={{ marginLeft: 8 }}>
+              ลบ
+            </Button>
+          </Popconfirm>
         </>
       ),
     },

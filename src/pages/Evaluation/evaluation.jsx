@@ -28,8 +28,10 @@ export const EvaluationPage = () => {
   const loadForms = async () => {
     setLoading(true);
     try {
-      const fetchedForms = await fetchForms();
-      setForms(fetchedForms);
+      const fetchedForms = await axios.get(PATH_API + `/evaluation_forms/get`);
+      console.log("fetchedForms", fetchedForms);
+
+      setForms(fetchedForms.data);
     } catch (error) {
       console.error("Error fetching forms:", error);
     } finally {
@@ -87,21 +89,22 @@ export const EvaluationPage = () => {
 
       <FormModal
         visible={isFormModalVisible}
-        onClose={() => setIsFormModalVisible(false)}
+        onClose={() => {
+          setIsFormModalVisible(false), setSelectedForm(null);
+        }}
         onFormSaved={loadForms}
         editingForm={editingForm}
       />
 
       <AssignModal
         visible={isAssignModalVisible}
-        onClose={() => setIsAssignModalVisible(false)}
+        onClose={() => {
+          setIsAssignModalVisible(false), setSelectedForm(null);
+        }}
         selectedForm={selectedForm}
         directors={directors}
         onAssignSuccess={loadForms}
-      >
-        {" "}
-        {JSON.stringify(selectedForm)}
-      </AssignModal>
+      ></AssignModal>
     </div>
   );
 };

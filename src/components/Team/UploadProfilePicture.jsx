@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Flex, message, Upload } from "antd";
+import { ImgUrl, PATH_API } from "../../constrant";
+import axios from "axios";
+
 const getBase64 = (img, callback) => {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -13,7 +16,7 @@ const beforeUpload = (file) => {
   if (!isJpgOrPng) {
     message.error("You can only upload JPG/PNG file!");
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024 < 50;
   if (!isLt2M) {
     message.error("Image must smaller than 2MB!");
   }
@@ -22,19 +25,17 @@ const beforeUpload = (file) => {
 export const UploadProfilePicture = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+  const [file, setFile] = useState();
+
   const handleChange = (info) => {
-    console.log("handleChange", info);
+    console.log("handleChange", info.file);
 
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
     }
     if (info.file.status === "done") {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
+      setImageUrl(ImgUrl + info.file.response);
     }
   };
   const uploadButton = (
@@ -57,14 +58,13 @@ export const UploadProfilePicture = () => {
   );
   return (
     <>
-      {JSON.stringify(imageUrl)}
       <Flex gap="middle" wrap>
         <Upload
-          name="avatar"
+          name="Image"
           listType="picture-circle"
           className="avatar-uploader"
           showUploadList={false}
-          // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+          action={PATH_API + "/upload"}
           beforeUpload={beforeUpload}
           onChange={handleChange}
         >

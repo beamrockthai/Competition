@@ -15,7 +15,7 @@ import {
   Dropdown,
   Space,
 } from "antd";
-import { authUser } from "../constrant";
+import { authUser, ImgUrl } from "../constrant";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LoginPage } from "../pages/Login";
 import dayjs from "dayjs";
@@ -64,14 +64,19 @@ export const AdminLayout = (props) => {
         style={{ maxHeight: "100%" }}
       >
         <div style={{ padding: "20px" }}>
-          <Avatar style={{ alignItems: "center", backgroundColor: "#87d068" }}>
-            {" "}
-            {authUser.FirstName && authUser.LastName != null ? (
-              authUser.FirstName.charAt(0) + authUser.LastName.charAt(0)
-            ) : (
-              <Avatar size={64} icon={<UserOutlined />} />
-            )}
-          </Avatar>{" "}
+          {authUser.ProfilePicture !== null ? (
+            <Avatar src={ImgUrl + authUser.ProfilePictureURL} />
+          ) : (
+            <Avatar
+              style={{ alignItems: "center", backgroundColor: "#87d068" }}
+            >
+              {authUser.FirstName && authUser.LastName != null ? (
+                authUser.FirstName.charAt(0) + authUser.LastName.charAt(0)
+              ) : (
+                <Avatar size={64} icon={<UserOutlined />} />
+              )}
+            </Avatar>
+          )}{" "}
           <span style={{ fontSize: "16px", color: "white" }}>สวัสดี Admin</span>
           <Dropdown
             menu={{

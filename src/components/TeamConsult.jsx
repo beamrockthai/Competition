@@ -1,8 +1,10 @@
 import {
+  Avatar,
   Button,
   Card,
   Col,
   DatePicker,
+  Flex,
   Form,
   Input,
   message,
@@ -12,10 +14,11 @@ import {
   Skeleton,
   Space,
   Spin,
+  Upload,
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { authUser, PATH_API } from "../constrant";
+import { authUser, ImgUrl, PATH_API } from "../constrant";
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -24,6 +27,7 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData"; // เพิ่ม plugin นี้
 import thLocale from "antd/es/date-picker/locale/th_TH";
 import "dayjs/locale/th";
+// import { fs } from "fs";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(buddhistEra);
@@ -48,7 +52,37 @@ export const TeamConsultPage = (props) => {
   const [OccupationOptions, setOccupationOptions] = useState();
   const [optionsLoading, setOptionsLoading] = useState();
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState();
+  const [loading, setLoading] = useState(false);
 
+  const handleChange = (info, name) => {
+    console.log("handleChange", info.file);
+
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const newImageUrl = ImgUrl ? info.file.response : info.file.response;
+      setImageUrl(newImageUrl);
+
+      form.setFieldValue(["items", name, "ProfilePictureURL"], newImageUrl);
+    }
+  };
+
+  const beforeUpload = (file) => {
+    console.log("beforeUpload", file);
+
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 10;
+    if (!isLt2M) {
+      message.error("Image must smaller than 10MB!");
+    }
+    return isJpgOrPng && isLt2M;
+  };
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
     console.log("PAONN", values);
@@ -116,6 +150,15 @@ export const TeamConsultPage = (props) => {
   // };
   const onChange = (date, dateString) => {
     console.log(dateString);
+    if (date) {
+      const age = dayjs().diff(date, "year"); // คำนวณอายุ
+      if (age < 25) {
+        message.error("คุณต้องมีอายุอย่างน้อย 25 ปีขึ้นไป!", 5);
+        form.setFieldsValue({ DateofBirth: null }); // รีเซ็ตค่าในฟอร์ม
+      } else {
+        form.setFieldsValue({ DateofBirth: date }); // อัปเดตค่าในฟอร์ม
+      }
+    }
   };
   const getMyTeam = async () => {
     await axios
@@ -174,7 +217,7 @@ export const TeamConsultPage = (props) => {
   return (
     <>
       {teamData ? (
-        <Card>
+        <>
           <h1>ข้อมูลที่ปรึกษา/อาจารย์ของทีม</h1>
           <Form
             labelCol={{
@@ -275,6 +318,42 @@ export const TeamConsultPage = (props) => {
                             <Input disabled />
                           </Form.Item>
                           <Form.Item
+                            label="ProfilePicture"
+                            name={[field.name, "ProfilePicture"]}
+                          >
+                            <Flex gap="middle" wrap>
+                              <Upload
+                                name="Image"
+                                listType="picture-circle"
+                                className="avatar-uploader"
+                                showUploadList={false}
+                                action={PATH_API + "/upload"}
+                                beforeUpload={beforeUpload}
+                                onChange={(e) => handleChange(e, field.name)}
+                              >
+                                <Avatar
+                                  size={100}
+                                  src={
+                                    ImgUrl +
+                                    form.getFieldValue([
+                                      "items",
+                                      field.name,
+                                      "ProfilePictureURL",
+                                    ])
+                                  }
+                                  alt="avatar"
+                                  className="profile-avatar"
+                                  // style={{
+                                  //   width: "100%",
+
+                                  // objectFit: "cover", // ป้องกันการบิดเบี้ยว
+                                  // }}
+                                />
+                              </Upload>
+                            </Flex>
+                            {/* <UploadProfilePicture /> */}
+                          </Form.Item>
+                          <Form.Item
                             label="คำนำหน้า"
                             name={[field.name, "NamePrefixId"]}
                           >
@@ -356,18 +435,7 @@ export const TeamConsultPage = (props) => {
                               },
                             ]}
                           >
-                            <DatePicker
-                              locale={thLocale}
-                              disabledDate={(current) => {
-                                const minDate = dayjs()
-                                  .subtract(25, "year")
-                                  .endOf("day"); // คำนวณวันสุดท้ายที่อายุ 15 ปี
-                                return (
-                                  current && current.isAfter(minDate, "day")
-                                ); // ปิดวันที่ที่อายุไม่ถึง 15 ปี
-                              }}
-                              onChange={onChange}
-                            />
+                            <DatePicker locale={thLocale} onChange={onChange} />
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
@@ -496,7 +564,7 @@ export const TeamConsultPage = (props) => {
               </Button>
             </Form.Item>
           </Form>
-        </Card>
+        </>
       ) : (
         <Card>
           <h1>ข้อมูลที่ปรึกษา/อาจารย์ของทีม</h1>

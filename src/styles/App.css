@@ -98,13 +98,14 @@
   color: white;
 }
 .home-h1 {
-  font-size: 40px;
-  line-height: 0.8;
+  font-size: 36px;
+  line-height: 1;
 }
 
 .home-body {
   background-color: black;
   color: white;
+  padding: 0;
 }
 .orange {
   color: #ff6100; /* เปลี่ยนสีตัวอักษรเป็นสีส้ม */

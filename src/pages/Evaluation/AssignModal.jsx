@@ -68,6 +68,7 @@ const AssignModal = ({
       //   selectedTournament,
       //   competitionRound
       // );
+
       const data = await axios.patch(PATH_API + `/evaluation_forms/update`, {
         id: selectedForm.id,
         CompetitionTypeId: selectedTournament,
@@ -75,8 +76,8 @@ const AssignModal = ({
       });
       console.log("handleAssignForm", data);
 
-      // onAssignSuccess();
-      // onClose();
+      onAssignSuccess();
+      onClose();
     } catch (error) {
       console.error("Error assigning form:", error);
     }
@@ -84,6 +85,7 @@ const AssignModal = ({
 
   return (
     <>
+      {/* {JSON.stringify(selectedForm)} */}
       <Modal
         title={`มอบหมายแบบฟอร์ม: ${selectedForm?.Name || ""}`}
         open={visible}

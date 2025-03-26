@@ -219,6 +219,7 @@ export const TeamEditPage = () => {
             </Button>
           </Form.Item>
         </Form>
+        <Divider />
         <TeamConsultPage />
         <Divider />
         <TeamMemberPage data={presidentData} />

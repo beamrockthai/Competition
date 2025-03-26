@@ -13,8 +13,9 @@ import {
   Select,
   Skeleton,
 } from "antd";
+import { PlusOutlined, ToolOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { authUser, PATH_API } from "../../../constrant";
+import { authUser, ImgUrl, PATH_API } from "../../../constrant";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -72,20 +73,7 @@ export const TeamPage = () => {
       setOptionsLoading(false);
     });
   };
-  const data = [
-    {
-      title: `kk`,
-    },
-    {
-      title: "Ant Design Title 2",
-    },
-    {
-      title: "Ant Design Title 3",
-    },
-    {
-      title: "Ant Design Title 4",
-    },
-  ];
+
   const onFinish = async (values) => {
     console.log("Success:", values);
 
@@ -131,6 +119,7 @@ export const TeamPage = () => {
                 onClick={() => {
                   window.location.assign("/user/teamsteps");
                 }}
+                icon={<ToolOutlined />}
               >
                 แก้ไขทีม
               </Button>
@@ -140,6 +129,7 @@ export const TeamPage = () => {
                   window.location.assign("/user/teamcreate");
                 }}
                 loading={optionsLoading}
+                icon={<PlusOutlined />}
               >
                 สร้างทีม
               </Button>
@@ -248,9 +238,7 @@ export const TeamPage = () => {
                 <List.Item>
                   <List.Item.Meta
                     avatar={
-                      <Avatar
-                        src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
-                      />
+                      <Avatar src={ImgUrl + item.user.ProfilePictureURL} />
                     }
                     title={
                       <p>
@@ -301,11 +289,7 @@ export const TeamPage = () => {
                 renderItem={(item, index) => (
                   <List.Item>
                     <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
-                        />
-                      }
+                      avatar={<Avatar src={ImgUrl + item.ProfilePictureURL} />}
                       title={
                         <p>
                           {item.FirstName} {item.LastName} | ตำแหน่ง :

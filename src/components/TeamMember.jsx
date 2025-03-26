@@ -1,9 +1,12 @@
 import {
+  Avatar,
   Button,
   Card,
   Col,
   DatePicker,
+  Flex,
   Form,
+  Image,
   Input,
   message,
   Popconfirm,
@@ -11,11 +14,16 @@ import {
   Select,
   Skeleton,
   Spin,
+  Upload,
 } from "antd";
 
-import { CloseOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  LoadingOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
-import { authUser, PATH_API } from "../constrant";
+import { authUser, ImgUrl, PATH_API } from "../constrant";
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -49,7 +57,37 @@ export const TeamMemberPage = (props) => {
   const [OccupationOptions, setOccupationOptions] = useState();
   const [optionsLoading, setOptionsLoading] = useState();
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState();
 
+  const handleChange = (info, name) => {
+    console.log("handleChange", info.file);
+
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const newImageUrl = ImgUrl ? info.file.response : info.file.response;
+      setImageUrl(newImageUrl);
+
+      form.setFieldValue(["items", name, "ProfilePictureURL"], newImageUrl);
+    }
+  };
+
+  const beforeUpload = (file) => {
+    console.log("beforeUpload", file);
+
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 10;
+    if (!isLt2M) {
+      message.error("Image must smaller than 10MB!");
+    }
+    return isJpgOrPng && isLt2M;
+  };
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
     console.log("PAONN", values);
@@ -73,10 +111,38 @@ export const TeamMemberPage = (props) => {
   };
   const onChange = (date, dateString) => {
     console.log(dateString);
+    if (date) {
+      const age = dayjs().diff(date, "year"); // คำนวณอายุ
+      if (age < 15) {
+        message.error("คุณต้องมีอายุอย่างน้อย 15 ปีขึ้นไป!", 5);
+        form.setFieldsValue({ DateofBirth: null }); // รีเซ็ตค่าในฟอร์ม
+      } else {
+        form.setFieldsValue({ DateofBirth: date }); // อัปเดตค่าในฟอร์ม
+      }
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: "none",
+      }}
+      type="button"
+    >
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
+  // const upload
   // const getTeamMembers = async () => {
   //   await axios
   //     .get(PATH_API + `/users/getteammembers/${teamData.id}`)
@@ -148,7 +214,7 @@ export const TeamMemberPage = (props) => {
       {/* {JSON.stringify(presidentData)} */}
 
       {teamData ? (
-        <Card>
+        <>
           <h1>ข้อมูลสมาชิกในทีม</h1>
           <Form
             labelCol={{
@@ -260,7 +326,37 @@ export const TeamMemberPage = (props) => {
                             label="ProfilePicture"
                             name={[field.name, "ProfilePicture"]}
                           >
-                            <UploadProfilePicture />
+                            <Flex gap="middle" wrap>
+                              <Upload
+                                name="Image"
+                                listType="picture-circle"
+                                className="avatar-uploader"
+                                showUploadList={false}
+                                action={PATH_API + "/upload"}
+                                beforeUpload={beforeUpload}
+                                onChange={(e) => handleChange(e, field.name)}
+                              >
+                                <Avatar
+                                  size={100}
+                                  src={
+                                    ImgUrl +
+                                    form.getFieldValue([
+                                      "items",
+                                      field.name,
+                                      "ProfilePictureURL",
+                                    ])
+                                  }
+                                  alt="avatar"
+                                  className="profile-avatar"
+                                  // style={{
+                                  //   width: "100%",
+
+                                  // objectFit: "cover", // ป้องกันการบิดเบี้ยว
+                                  // }}
+                                />
+                              </Upload>
+                            </Flex>
+                            {/* <UploadProfilePicture /> */}
                           </Form.Item>
                           <Form.Item
                             label="คำนำหน้า"
@@ -343,16 +439,7 @@ export const TeamMemberPage = (props) => {
                               },
                             ]}
                           >
-                            <DatePicker
-                              locale={thLocale}
-                              disabledDate={(current) => {
-                                const minDate = dayjs().subtract(15, "year"); // ต้องมีอายุ 15 ปีขึ้นไป
-                                return (
-                                  current && current.isAfter(minDate, "day")
-                                );
-                              }}
-                              onChange={onChange}
-                            />
+                            <DatePicker locale={thLocale} onChange={onChange} />
                           </Form.Item>
 
                           <Form.Item
@@ -468,8 +555,8 @@ export const TeamMemberPage = (props) => {
                 </div>
               )}
             </Form.List>
+
             <Form.Item
-              label={null}
               style={{
                 marginTop: "16px",
                 display: "flex",
@@ -481,7 +568,7 @@ export const TeamMemberPage = (props) => {
               </Button>
             </Form.Item>
           </Form>
-        </Card>
+        </>
       ) : (
         <Card>
           <Spin />

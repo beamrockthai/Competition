@@ -114,13 +114,15 @@ export const AppLayout = (props) => {
 
           {/* ปุ่มเมนู Hamburger สำหรับ Mobile */}
           {isMobile ? (
-            <Button
-              type="text"
-              style={{ color: "white" }}
-              onClick={toggleDrawer}
-            >
-              <MenuOutlined style={{ fontSize: "20px" }} />
-            </Button>
+            <>
+              <Button
+                type="text"
+                style={{ color: "white" }}
+                onClick={toggleDrawer}
+              >
+                <MenuOutlined style={{ fontSize: "20px" }} />
+              </Button>
+            </>
           ) : authUser ? (
             <DropdownNav />
           ) : (
@@ -151,7 +153,7 @@ export const AppLayout = (props) => {
 
         {/* Content */}
         <Content style={{ margin: "24px 16px 0" }}>
-          <div style={{ padding: 24, minHeight: 360 }}>{props.children}</div>
+          <div style={{ padding: 0, minHeight: 360 }}>{props.children}</div>
         </Content>
 
         {/* Footer */}
