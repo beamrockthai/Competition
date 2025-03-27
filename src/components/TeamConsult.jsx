@@ -130,7 +130,7 @@ export const TeamConsultPage = (props) => {
                 setButtonLoading(false);
               });
           } else {
-            console.log("203".res);
+            console.log("203", res);
 
             const createdata = {
               ConsultUserId: res.data.id,
