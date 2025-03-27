@@ -129,7 +129,21 @@ export const TeamConsultPage = (props) => {
                 console.log("/consult_with_teams/create", res);
                 setButtonLoading(false);
               });
+          } else if (res.status === 203) {
+            const createdata = {
+              ConsultUserId: res.data.id,
+              GroupId: teamData.id,
+              Status: "Active",
+              CreatedBy: authUser.uid,
+            };
+            axios
+              .post(PATH_API + `/consult_with_teams/create`, createdata)
+              .then((res) => {
+                console.log("/consult_with_teams/create", res);
+                setButtonLoading(false);
+              });
           }
+
           setButtonLoading(false);
         });
     }

@@ -6,6 +6,7 @@ import {
   Divider,
   Form,
   Input,
+  message,
   Radio,
   Row,
   Select,
@@ -35,6 +36,8 @@ export const TeamEditPage = () => {
   const [presidentData, setPresidentData] = useState();
   const [personTypeOptions, setPersonTypeOptions] = useState();
   const [teamData, setTeamData] = useState();
+  const [loading, setLoading] = useState();
+
   const getPersontypeOptions = () => {
     axios.get(PATH_API + "/person_types/get").then((res) => {
       setOptionsLoading(true);
@@ -70,12 +73,15 @@ export const TeamEditPage = () => {
       });
   };
   const onFinish = async (values) => {
+    setLoading(true);
     console.log("Success:", values);
 
     axios
       .patch(PATH_API + "/users/update", { ...values, id: authUser.uid })
       .then((res) => {
         console.log("Created", res);
+        setLoading(false);
+        message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!");
       });
   };
 
@@ -213,8 +219,14 @@ export const TeamEditPage = () => {
             </Col>
           </Row>
 
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit">
+          <Form.Item
+            style={{
+              marginTop: "16px",
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button type="primary" htmlType="submit" loading={loading}>
               บันทึกข้อมูลทีม
             </Button>
           </Form.Item>
