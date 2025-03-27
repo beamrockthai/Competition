@@ -130,6 +130,8 @@ export const TeamConsultPage = (props) => {
                 setButtonLoading(false);
               });
           } else if (res.status === 203) {
+            console.log("203".res.status);
+
             const createdata = {
               ConsultUserId: res.data.id,
               GroupId: teamData.id,
