@@ -271,13 +271,11 @@ export const TeamPage = () => {
             />
           )
         ) : (
-          <Result
-            title="ไม่พบข้อมูลที่ปรึกษาของทีม"
-            // extra={
-            //   <Button type="primary" key="console">
-            //     Go Console
-            //   </Button>
-            // }
+          <Skeleton
+            avatar
+            paragraph={{
+              rows: 2,
+            }}
           />
         )}
         <Divider />
