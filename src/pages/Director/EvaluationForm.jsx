@@ -8,6 +8,7 @@ export const EvaluationForm = (props) => {
   const data = props.data;
   const [evaluationForms, setEvaluationForms] = useState();
   const [loading, setLoading] = useState();
+
   const onFinish = async (values) => {
     setLoading(true);
     console.log("Success:", values);
@@ -24,13 +25,12 @@ export const EvaluationForm = (props) => {
       console.log("rawdata", rawdata);
 
       try {
-        const res = await axios.post(
-          PATH_API + `/evaluation_answers/create`,
-          rawdata
-        );
-
-        console.log(res);
-        setLoading(false);
+        axios
+          .post(PATH_API + `/evaluation_answers/create`, rawdata)
+          .then((res) => {
+            console.log(res);
+            setLoading(false);
+          });
       } catch (error) {
         console.error("Error submitting evaluation:", error);
         message.error("เกิดข้อผิดพลาดในการบันทึก");
