@@ -129,7 +129,7 @@ export const TeamConsultPage = (props) => {
                 console.log("/consult_with_teams/create", res);
                 setButtonLoading(false);
               });
-          } else if (res.status === 203) {
+          } else {
             console.log("203".res.status);
 
             const createdata = {

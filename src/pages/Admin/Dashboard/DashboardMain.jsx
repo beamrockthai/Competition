@@ -10,13 +10,16 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 import moment from "moment";
 import "moment/locale/th";
+import { PATH_API } from "../../../constrant";
+import axios from "axios";
 
 const { Title } = Typography;
 
 export const DashboardMainPage = () => {
-  const [competitorCount, setCompetitorCount] = useState(0); // จำนวนผู้เข้าแข่งขัน
+  const [teamCount, setTeamCount] = useState(0); // จำนวนผู้เข้าแข่งขัน
   const [directorCount, setDirectorCount] = useState(0); // จำนวนกรรมการ
-  const [tournamentCount, setTournamentCount] = useState(0); // จำนวนกีฬา
+  const [compType, setCompType] = useState(0); // จำนวนกีฬา
+
   const [users, setUsers] = useState([]); // รายชื่อผู้ใช้ (เฉพาะ role user)
 
   useEffect(() => {
@@ -48,8 +51,32 @@ export const DashboardMainPage = () => {
   }, []);
 
   const todayDate = moment().format("D MMMM YYYY");
+  const getUser = async () => {
+    const data = await axios.get(PATH_API + `/users/getteampresident/4`);
 
+    setUsers(data.data);
+    console.log(data.data);
+  };
+  const getTeam = async () => {
+    const team = await axios.get(PATH_API + `/groups/get`);
+    setTeamCount(team.data.length);
+    console.log("setTeamCount", team.data.length);
+  };
+  const getComType = async () => {
+    const comtype = await axios.get(PATH_API + `/competition_types/get`);
+    setCompType(comtype.data.length);
+    console.log("setCompType", comtype.data.length);
+  };
+  const getDirector = async () => {
+    const director = await axios.get(PATH_API + `/users/getbyrole/3`);
+    setDirectorCount(director.data.length);
+    console.log("setDirectorCount", director.data.length);
+  };
   useEffect(() => {
+    getUser();
+    getTeam();
+    getComType();
+    getDirector();
     const fetchData = async () => {
       try {
         const userQuerySnapshot = await getDocs(collection(db, "users"));
@@ -59,16 +86,16 @@ export const DashboardMainPage = () => {
         }));
 
         const filteredUsers = usersData.filter((user) => user.role === "user");
-        setUsers(filteredUsers); // ✅ แสดงเฉพาะ role user ในตาราง
-        setCompetitorCount(filteredUsers.length); // นับจำนวนเฉพาะ role user
-        setDirectorCount(
-          usersData.filter((user) => user.role === "director").length
-        );
+        // setUsers(filteredUsers); // ✅ แสดงเฉพาะ role user ในตาราง
+        // setCompetitorCount(filteredUsers.length); // นับจำนวนเฉพาะ role user
+        // setDirectorCount(
+        //   usersData.filter((user) => user.role === "director").length
+        // );
 
         const tournamentQuerySnapshot = await getDocs(
           collection(db, "tournaments")
         );
-        setTournamentCount(tournamentQuerySnapshot.size); // นับจำนวนกีฬา
+        // setTournamentCount(tournamentQuerySnapshot.size); // นับจำนวนกีฬา
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -86,13 +113,13 @@ export const DashboardMainPage = () => {
     },
     {
       title: "จํานวนทีมเเข่งขัน",
-      value: competitorCount,
+      value: teamCount,
       icon: <UserOutlined />,
       color: "#1890ff",
     },
     {
       title: "รายการเเข่งขัน",
-      value: tournamentCount,
+      value: compType,
       icon: <TrophyOutlined />,
       color: "#52c41a",
     },
@@ -107,20 +134,20 @@ export const DashboardMainPage = () => {
   const columns = [
     {
       title: "ผู้เข้าเเข่งขัน",
-      dataIndex: "firstName",
-      key: "firstName",
-      render: (text, record) => `${record.firstName} ${record.lastName}`,
+      dataIndex: "FirstName",
+      key: "FirstName",
+      render: (text, record) => `${record.FirstName} ${record.LastName}`,
     },
     {
       title: "วันที่สมัครเข้าสู่ระบบ",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "CreatedAt",
+      key: "CreatedAt",
       render: (createdAt) =>
-        createdAt ? moment(createdAt.toDate()).format("DD-MM-YYYY") : "N/A",
+        createdAt ? moment(createdAt).format("DD-MM-YYYY") : "N/A",
     },
     {
       title: "Status",
-      key: "status",
+      key: "Status",
       render: () => <Tag color="blue">User</Tag>,
     },
   ];
