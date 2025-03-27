@@ -1,6 +1,6 @@
 import { Button, Col, Form, InputNumber, message, Row } from "antd";
 import axios from "axios";
-import { PATH_API } from "../../constrant";
+import { authUser, PATH_API } from "../../constrant";
 import { useEffect, useState } from "react";
 
 export const EvaluationForm = (props) => {
@@ -19,6 +19,7 @@ export const EvaluationForm = (props) => {
         CompetitionRoundId: data.CompetitionRoundId,
         CompetitionTypeId: data.CompetitionTypeId,
         EvaluationFormId: evaluationForms,
+        CreatedBy: authUser.uid,
       };
       console.log("rawdata", rawdata);
 
@@ -30,12 +31,13 @@ export const EvaluationForm = (props) => {
 
         console.log(res);
         setLoading(false);
-        message.success("บันทึกประเมินสำเร็จ!");
       } catch (error) {
         console.error("Error submitting evaluation:", error);
         message.error("เกิดข้อผิดพลาดในการบันทึก");
         setLoading(false);
       }
+      updateno();
+      message.success("บันทึกประเมินสำเร็จ!");
     }
     const updateno = await axios.patch(
       PATH_API + `/director_with_groups/updateno`,
@@ -43,7 +45,7 @@ export const EvaluationForm = (props) => {
         GroupId: data.GroupId,
         CompetitionRoundId: data.CompetitionRoundId,
         CompetitionTypeId: data.CompetitionTypeId,
-        DirectorId: 53,
+        DirectorId: authUser.uid,
         Status: "Yes",
       }
     );
