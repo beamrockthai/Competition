@@ -55,7 +55,21 @@ export const TeamConsultPage = () => {
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
   // const [presidentData, setPresidentData] = useState();
-
+  // const searchNationlId = (e, name) => {
+  //   const numDigits = e.target.value.toString().length;
+  //   if (numDigits === 13) {
+  //     console.log(numDigits);
+  //     const nid = e.target.value;
+  //     axios.get(PATH_API + `/users/getbynid/${nid}`).then((udata) => {
+  //       const gg = [udata];
+  //       console.log("udata", gg);
+  //       if (udata.data.id) {
+  //         message.info("พบข้อมูลในระบบ!");
+  //         form.setFieldsValue("items", gg[0].data);
+  //       }
+  //     });
+  //   }
+  // };
   const handleChange = (info, name) => {
     console.log("handleChange", info.file);
 
@@ -442,9 +456,16 @@ export const TeamConsultPage = () => {
                                 required: true,
                                 message: "กรุณากรอกเลขบัตรประชาชน!",
                               },
+                              {
+                                pattern: /^\d{13}$/,
+                                message:
+                                  "เลขบัตรประชาชนต้องมี 13 หลักและเป็นตัวเลขเท่านั้น!",
+                              },
                             ]}
                           >
-                            <Input />
+                            <Input
+                            // onChange={(e) => searchNationlId(e, field.name)}
+                            />
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
@@ -531,7 +552,12 @@ export const TeamConsultPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "กรุณากรอกเบอร์ติดต่อ!",
+                                message: "กรุณากรอกเบอร์โทร",
+                              },
+                              {
+                                pattern: /^\d{9,10}$/,
+                                message:
+                                  "เบอร์โทรต้องมี 9 หรือ 10 หลัก และเป็นตัวเลขเท่านั้น!",
                               },
                             ]}
                           >

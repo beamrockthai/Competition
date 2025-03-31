@@ -74,7 +74,23 @@ export const TeamMemberPage = () => {
       form.setFieldValue(["items", name, "ProfilePictureURL"], newImageUrl);
     }
   };
-
+  const searchNationlId = (e, name) => {
+    const numDigits = e.target.value.toString().length;
+    if (numDigits === 13) {
+      console.log(numDigits);
+      const nid = e.target.value;
+      axios.get(PATH_API + `/users/getbynid/${nid}`).then((udata) => {
+        console.log("udata", udata);
+        if (udata.data.id) {
+          form.setFieldValue(["items", name, "NationalId"], null);
+          message.error(
+            "มีการใช้เลขบัตรประชาชนซ้ำ กรุณาตรวจสอบและลองใหม่อีกครั้ง",
+            5
+          );
+        }
+      });
+    }
+  };
   const beforeUpload = (file) => {
     console.log("beforeUpload", file);
 
@@ -122,9 +138,9 @@ export const TeamMemberPage = () => {
       const age = dayjs().diff(date, "year"); // คำนวณอายุ
       if (age < 15) {
         message.error("คุณต้องมีอายุอย่างน้อย 15 ปีขึ้นไป!", 5);
-        form.setFieldsValue({ DateofBirth: null }); // รีเซ็ตค่าในฟอร์ม
+        form.setFieldsValue(["items", field.name, "DateofBirth"], null); // รีเซ็ตค่าในฟอร์ม
       } else {
-        form.setFieldsValue({ DateofBirth: date }); // อัปเดตค่าในฟอร์ม
+        form.setFieldsValue(["items", field.name, "DateofBirth"], date); // อัปเดตค่าในฟอร์ม
       }
     }
   };
@@ -465,7 +481,9 @@ export const TeamMemberPage = () => {
                               },
                             ]}
                           >
-                            <Input />
+                            <Input
+                              onChange={(e) => searchNationlId(e, field.name)}
+                            />
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
@@ -594,9 +612,12 @@ export const TeamMemberPage = () => {
                     </Card>
                   ))}
 
-                  <Button type="dashed" onClick={() => add()} block>
-                    + เพิ่มสมาชิก
-                  </Button>
+                  {/* ซ่อนปุ่มเพิ่มสมาชิกเมื่อมีครบ 3 คน */}
+                  {fields.length < 3 && (
+                    <Button type="dashed" onClick={() => add()} block>
+                      + เพิ่มสมาชิก
+                    </Button>
+                  )}
                 </div>
               )}
             </Form.List>
