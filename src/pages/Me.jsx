@@ -146,6 +146,7 @@ export const MePage = () => {
             <Form.Item hidden="true" label="id" name={"id"}>
               <Input disabled={true} />
             </Form.Item>
+            <Form.Item hidden="true" name={"IsPresident"}></Form.Item>
             <Form.Item label="ProfilePicture" name={"ProfilePictureURL"}>
               <Flex gap="middle" wrap>
                 <Upload
