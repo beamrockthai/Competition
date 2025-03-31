@@ -475,7 +475,7 @@ export const TeamConsultPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณาเลือกวันเกิด!",
                               },
                             ]}
                           >
@@ -486,12 +486,12 @@ export const TeamConsultPage = () => {
                           <Form.Item
                             label="สังกัดสถานศึกษา"
                             name={[field.name, "AffiliatedAgency"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "กรุณากรอกสังกัดสถานศึกษา!",
-                              },
-                            ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "กรุณากรอกสังกัดสถานศึกษา!",
+                            //   },
+                            // ]}
                           >
                             <Input />
                           </Form.Item>

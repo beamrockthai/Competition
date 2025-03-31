@@ -127,6 +127,13 @@ export const TeamMemberPage = () => {
           }
           console.log("Created", res);
           setButtonLoading(false);
+        })
+        .catch((err) => {
+          message.error(
+            "มีการใช้เลขบัตรประชาชนซ้ำบางรายการ กรุณาตรวจสอบและลองใหม่อีกครั้ง",
+            5
+          );
+          setButtonLoading(false);
         });
     }
     message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!", 5);
@@ -446,7 +453,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกชื่อ!",
                               },
                             ]}
                           >
@@ -459,7 +466,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกนามสกุล!",
                               },
                             ]}
                           >
@@ -493,7 +500,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณาเลือกวันเกิด!",
                               },
                             ]}
                           >
@@ -506,7 +513,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกอาชีพ!",
                               },
                             ]}
                           >
@@ -542,7 +549,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกข้อมูล!",
                               },
                             ]}
                           >
@@ -556,7 +563,7 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณารอกที่อยู่ปัจจุบัน!",
                               },
                             ]}
                           >
@@ -629,7 +636,7 @@ export const TeamMemberPage = () => {
                 justifyContent: "flex-end",
               }}
             >
-              <Button type="primary" htmlType="submit" loading={buttonLoading}>
+              <Button type="primary" htmlType="submit">
                 บันทึกสมาชิก
               </Button>
             </Form.Item>
