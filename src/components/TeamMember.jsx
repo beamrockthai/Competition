@@ -103,6 +103,12 @@ export const TeamMemberPage = () => {
           GroupId: teamData.id,
         })
         .then((res) => {
+          if (res.status === 409) {
+            message.error(
+              "มีการใช้เลขบัตรประชาชนซ้ำ กรุณาตรวจสอบและลองใหม่อีกครั้ง",
+              5
+            );
+          }
           console.log("Created", res);
           setButtonLoading(false);
         });
@@ -450,7 +456,12 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกเลขบัตรประชาชน!",
+                              },
+                              {
+                                pattern: /^\d{13}$/,
+                                message:
+                                  "เลขบัตรประชาชนต้องมี 13 หลักและเป็นตัวเลขเท่านั้น!",
                               },
                             ]}
                           >
@@ -540,7 +551,12 @@ export const TeamMemberPage = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please input your Email!",
+                                message: "กรุณากรอกเบอร์โทร",
+                              },
+                              {
+                                pattern: /^\d{9,10}$/,
+                                message:
+                                  "เบอร์โทรต้องมี 9 หรือ 10 หลัก และเป็นตัวเลขเท่านั้น!",
                               },
                             ]}
                           >
