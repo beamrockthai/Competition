@@ -135,7 +135,7 @@ export const MePage = () => {
         console.log("Created", res);
         setButtonLoading(false);
       });
-
+    setButtonLoading(false);
     message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!", 5);
   };
   return (
@@ -146,7 +146,7 @@ export const MePage = () => {
             <Form.Item hidden="true" label="id" name={"id"}>
               <Input disabled={true} />
             </Form.Item>
-            <Form.Item label="ProfilePicture" name={"ProfilePicture"}>
+            <Form.Item label="ProfilePicture" name={"ProfilePictureURL"}>
               <Flex gap="middle" wrap>
                 <Upload
                   name="Image"
