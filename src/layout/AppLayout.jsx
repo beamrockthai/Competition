@@ -134,13 +134,31 @@ export const AppLayout = (props) => {
 
         {/* Drawer สำหรับ Mobile Menu */}
         <Drawer
+          style={{ backgroundColor: "black" }}
           title="Menu"
           placement="right"
           onClose={toggleDrawer}
           open={visible}
-          width={250}
+          width={"80%"}
         >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img height="25px" src="/src/assets/ITED-LOGO.jpg" alt="logo" />
+            <div style={{ paddingLeft: "10px", color: "white" }}>
+              <span style={{ fontSize: "16px", display: "block" }}>
+                สำนักพัฒนาเทคนิคศึกษา
+              </span>
+              {/* <span style={{ fontSize: "10px", display: "block" }}>
+                Institute For Technical Education Development
+              </span> */}
+            </div>
+          </div>
+          {authUser && (
+            <div style={{ textAlign: "center" }}>
+              <DropdownNav />
+            </div>
+          )}
           <Menu
+            theme="dark"
             mode="vertical"
             selectedKeys={[location.pathname]}
             onClick={({ key }) => {

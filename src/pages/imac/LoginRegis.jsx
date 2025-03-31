@@ -40,25 +40,25 @@ export const LoginRegisPage = () => {
     <div className="body">
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-          <h1>Create New Account</h1>
+          <h1>สร้างบัญชีผู้ใช้</h1>
           <h4>
-            Already registered? <a href="/userlogin">Login</a>
+            มีบัญชีอยู่แล้วใช่ไหม? <a href="/userlogin">ลงชื่อเข้าใช้</a>
           </h4>
           <Divider />
-          <h4>Why is password protection important?</h4>
+          <h4> ทำไมการป้องกันด้วยรหัสผ่านจึงมีความสำคัญ?</h4>
           <p>
-            Passwords are your first line of defense against unauthorized access
-            to your online accounts, devices, and files. Strong passwords help
-            protect your information from attackers and malicious software. The
-            harder a password is to guess, the more your information is
-            protected. Using a weak password is like leaving your car or house
-            door unlocked it's simply not safe.
+            รหัสผ่านเป็นแนวป้องกันด่านแรกของคุณต่อการเข้าถึงบัญชีออนไลน์ อุปกรณ์
+            และไฟล์ของคุณโดยไม่ได้รับอนุญาต
+            รหัสผ่านที่แข็งแกร่งจะช่วยปกป้องข้อมูลของคุณจากผู้โจมตีและซอฟต์แวร์ที่เป็นอันตราย
+            ยิ่งรหัสผ่านเดายาก ข้อมูลของคุณก็จะยิ่งได้รับการปกป้องมากขึ้น
+            การใช้รหัสผ่านที่อ่อนแอก็เหมือนกับการลืมล็อกประตูรถหรือบ้าน
+            ซึ่งไม่ปลอดภัยเลย
           </p>
         </Col>
 
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <Card>
-            <h1>Sign Up</h1>
+            <h1>สร้างบัญชีผู้ใช้</h1>
             <Form
               name="basic"
               labelCol={{
