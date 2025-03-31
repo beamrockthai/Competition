@@ -31,6 +31,8 @@ import { TeamStepsPage } from "./pages/imac/Team/TeamSteps";
 import { TeamUploadPage } from "./pages/imac/Team/TeamUpload";
 import { MePage } from "./pages/Me";
 import { UserRoot, UserRootLoader } from "./pages/UserRoot";
+import { TeamConsultPage } from "./components/TeamConsult";
+import { TeamMemberPage } from "./components/TeamMember";
 
 // import { AdminHomePage } from "./pages/Admin/AdminHome";
 
@@ -122,6 +124,18 @@ export const router = createBrowserRouter([
         element: <TeamUploadPage />,
       },
       {
+        path: "teamconsult",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <TeamConsultPage />,
+      },
+      {
+        path: "teammember",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <TeamMemberPage />,
+      },
+      {
         path: "me",
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
@@ -165,6 +179,7 @@ export const router = createBrowserRouter([
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamManagementPage />,
       },
+
       {
         path: "tournament",
         // loader: deskIndexLoader,

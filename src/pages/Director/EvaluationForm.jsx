@@ -1,6 +1,6 @@
 import { Button, Col, Form, InputNumber, message, Row } from "antd";
 import axios from "axios";
-import { authUser, PATH_API } from "../../constrant";
+import { authUser, EventId, PATH_API } from "../../constrant";
 import { useEffect, useState } from "react";
 
 export const EvaluationForm = (props) => {
@@ -20,6 +20,7 @@ export const EvaluationForm = (props) => {
         CompetitionRoundId: data.CompetitionRoundId,
         CompetitionTypeId: data.CompetitionTypeId,
         EvaluationFormId: evaluationForms,
+        EventId: EventId,
         CreatedBy: authUser.uid,
       };
       console.log("rawdata", rawdata);
@@ -30,25 +31,23 @@ export const EvaluationForm = (props) => {
           .then((res) => {
             console.log(res);
             setLoading(false);
+            message.success("บันทึกคำตอบสำเร็จ กรุณาตรวจสอบผลประเมิน");
           });
       } catch (error) {
         console.error("Error submitting evaluation:", error);
         message.error("เกิดข้อผิดพลาดในการบันทึก");
         setLoading(false);
       }
-      updateno();
+
       message.success("บันทึกประเมินสำเร็จ!");
     }
-    const updateno = await axios.patch(
-      PATH_API + `/director_with_groups/updateno`,
-      {
-        GroupId: data.GroupId,
-        CompetitionRoundId: data.CompetitionRoundId,
-        CompetitionTypeId: data.CompetitionTypeId,
-        DirectorId: authUser.uid,
-        Status: "Yes",
-      }
-    );
+    await axios.patch(PATH_API + `/director_with_groups/updateno`, {
+      GroupId: data.GroupId,
+      CompetitionRoundId: data.CompetitionRoundId,
+      CompetitionTypeId: data.CompetitionTypeId,
+      DirectorId: authUser.uid,
+      Status: "Yes",
+    });
   };
 
   const getEvaluationForm = async () => {
@@ -57,7 +56,7 @@ export const EvaluationForm = (props) => {
       form.resetFields();
       const newdata = await axios.get(
         PATH_API +
-          `/evaluation_forms/getby/${data.CompetitionRoundId}/${data.CompetitionTypeId}`
+          `/evaluation_forms/getby/${data.CompetitionRoundId}/${data.CompetitionTypeId}/${EventId}`
       );
       setEvaluationForms(newdata.data[0].id);
       console.log("newdata", newdata.data[0]);

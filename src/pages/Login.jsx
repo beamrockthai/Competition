@@ -24,7 +24,9 @@ export const LoginPage = () => {
           if (res.data.Role === 2) {
             window.location.assign("/admin");
             message.success(
-              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              res.data.FirstName && res.data.LastName !== null
+                ? `Welcome ${res.data.FirstName} ${res.data.LastName}`
+                : "Welcome ",
               2
             );
             setLoadings(false);
@@ -32,7 +34,9 @@ export const LoginPage = () => {
           if (res.data.Role === 3) {
             window.location.assign("/director");
             message.success(
-              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              res.data.FirstName && res.data.LastName !== null
+                ? `Welcome ${res.data.FirstName} ${res.data.LastName}`
+                : "Welcome ",
               2
             );
             setLoadings(false);
@@ -40,7 +44,9 @@ export const LoginPage = () => {
           if (res.data.Role === 4) {
             window.location.assign("/");
             message.success(
-              `Welcome ${res.data.FirstName} ${res.data.LastName}`,
+              res.data.FirstName && res.data.LastName !== null
+                ? `Welcome ${res.data.FirstName} ${res.data.LastName}`
+                : "Welcome ",
               2
             );
             setLoadings(false);

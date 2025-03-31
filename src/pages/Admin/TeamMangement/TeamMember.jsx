@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { authUser, PATH_API } from "../../../constrant";
+import { authUser, EventId, PATH_API } from "../../../constrant";
 import { useEffect, useRef, useState } from "react";
 export const TeamMemberPage = (props) => {
   const dataFetchedRef = useRef(false);
@@ -68,18 +68,20 @@ export const TeamMemberPage = (props) => {
     }
   };
   const getMyTeam = () => {
-    axios.get(PATH_API + `/groups/getbyteamid/${teamid}`).then((res) => {
-      console.log(res.data);
+    axios
+      .get(PATH_API + `/groups/getbyteamid/${teamid}/${EventId}`)
+      .then((res) => {
+        console.log(res.data);
 
-      setTeamData(res.data);
-      axios
-        .get(PATH_API + `/users/getteammembers/${res.data.id}`)
-        .then((res) => {
-          console.log("getteammembers", res);
+        setTeamData(res.data);
+        axios
+          .get(PATH_API + `/users/getteammembers/${res.data.id}`)
+          .then((res) => {
+            console.log("getteammembers", res);
 
-          form.setFieldValue("items", res.data);
-        });
-    });
+            form.setFieldValue("items", res.data);
+          });
+      });
   };
   useEffect(() => {
     if (!teamid) return; // ถ้า teamid ไม่มีค่า ไม่ต้องโหลด

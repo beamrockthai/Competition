@@ -40,7 +40,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData); // เรียกใช้ localeData
 dayjs.locale("th");
 const dateFormat = "YYYY-MM-DD";
-export const TeamMemberPage = (props) => {
+export const TeamMemberPage = () => {
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -50,7 +50,7 @@ export const TeamMemberPage = (props) => {
     // getTeamMembers();
   }, []);
   const dataFetchedRef = useRef(false);
-  const presidentData = props.data;
+
   const [form] = Form.useForm();
   const [teamData, setTeamData] = useState();
   const [namePrefixOptions, setNamePrefixOptions] = useState();
@@ -59,7 +59,7 @@ export const TeamMemberPage = (props) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-
+  const [presidentData, setPresidentData] = useState();
   const handleChange = (info, name) => {
     console.log("handleChange", info.file);
 
@@ -109,6 +109,7 @@ export const TeamMemberPage = (props) => {
     }
     message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!", 5);
   };
+
   const onChange = (date, dateString) => {
     console.log(dateString);
     if (date) {
@@ -177,6 +178,13 @@ export const TeamMemberPage = (props) => {
       .then((res) => {
         setTeamData(res.data);
         axios
+          .get(PATH_API + `/users/getbyid/${res.data.CreatedBy}`)
+          .then((res) => {
+            setPresidentData(res.data);
+            setPresidentFormData(res.data);
+            console.log(res.data);
+          });
+        axios
           .get(PATH_API + `/users/getteammembers/${res.data.id}`)
           .then((res) => {
             console.log("getteammembers", res);
@@ -192,6 +200,27 @@ export const TeamMemberPage = (props) => {
             form.setFieldValue("items", newdata);
           });
       });
+  };
+  const setPresidentFormData = (a) => {
+    console.log("a", a);
+
+    form.setFieldsValue({
+      FirstName: a.FirstName || null,
+      LastName: a.LastName || null,
+      NationalId: a.NationalId || null,
+      // DateofBirth: a.DateofBirth || null,
+      Occupation: a.Occupation || null,
+      AffiliatedAgency: a.AffiliatedAgency || null,
+      Address1: a.Address1 || null,
+      Address2: a.Address2 || null,
+      AddressSubDistrict: a.AddressSubDistrict || null,
+      AddressDistrict: a.AddressDistrict || null,
+      AddressProvince: a.AddressProvince || null,
+      Postcode: a.Postcode || null,
+      Phone: a.Phone || null,
+      Email: a.Email || null,
+      LineId: a.LineId || null,
+    });
   };
   const getNamePrefixOptions = async () => {
     setOptionsLoading(true);

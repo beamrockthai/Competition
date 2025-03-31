@@ -15,7 +15,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { authUser, PATH_API } from "../../../constrant";
+import { authUser, EventId, PATH_API } from "../../../constrant";
 import { TeamMemberPage } from "../../../components/TeamMember";
 import { TeamConsultPage } from "../../../components/TeamConsult";
 
@@ -48,7 +48,7 @@ export const TeamEditPage = () => {
     });
   };
   const getCompetitionType = () => {
-    axios.get(PATH_API + "/competition_types/get").then((res) => {
+    axios.get(PATH_API + `/competition_types/get/${EventId}`).then((res) => {
       setOptionsLoading(true);
 
       setCompetitionTypeOptions(res.data);
@@ -77,7 +77,10 @@ export const TeamEditPage = () => {
     console.log("Success:", values);
 
     axios
-      .patch(PATH_API + "/users/update", { ...values, id: authUser.uid })
+      .patch(PATH_API + "/groups/update", {
+        ...values,
+        UpdatedBy: authUser.uid,
+      })
       .then((res) => {
         console.log("Created", res);
         setLoading(false);
@@ -92,11 +95,9 @@ export const TeamEditPage = () => {
   //     setValue(e.target.value);
   //   };
   const setFormData = async (a) => {
-    form.setFieldsValue({
-      TeamName: a.TeamName,
-      PersonType: a.PersonTypeId,
-      CompetitionType: a.CompetitionType,
-    });
+    console.log("setFormData", a);
+
+    form.setFieldsValue(a);
   };
   const setPresidentFormData = (a) => {
     console.log("a", a);
@@ -150,6 +151,9 @@ export const TeamEditPage = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
+          <Form.Item name="id" hidden={true}>
+            <Input />
+          </Form.Item>
           <Row>
             <Col xs={24} sm={24} md={8} lg={8} xl={8}>
               <Form.Item
@@ -168,7 +172,7 @@ export const TeamEditPage = () => {
             <Col xs={24} sm={24} md={8} lg={8} xl={8}>
               <Form.Item
                 label="ประเภทบุคคล"
-                name="PersonType"
+                name="PersonTypeId"
                 rules={[
                   {
                     required: true,
@@ -218,6 +222,73 @@ export const TeamEditPage = () => {
               </Form.Item>
             </Col>
           </Row>
+          <Row>
+            {" "}
+            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+              {" "}
+              <Form.Item
+                label="เบอร์โทรติดต่อผู้ประสานงาน"
+                name="Phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณากรอกเบอร์โทรติดต่อผู้ประสานงาน",
+                  },
+                ]}
+              >
+                <Input
+                  type="numeric"
+                  placeholder="เบอร์โทรติดต่อผู้ประสานงาน"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+              <Form.Item
+                label="ชื่อผลงาน"
+                name="WorkName"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณาระบบชื่อผลงานที่สมัคร",
+                  },
+                ]}
+              >
+                <Input placeholder="ระบุชื่อผลงานที่สมัคร" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+              {" "}
+              <Form.Item
+                label="โปรแกรมหรือเครื่องมือที่ใช้"
+                name="ProgramUsed"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณาระบุเครื่องมือที่ใช้",
+                  },
+                ]}
+              >
+                <Input placeholder="ระบุโปรแกรมหรือเครื่องมือที่ใช้ในการสร้างสรรค์ผลงาน" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={24} sm={24} md={16} lg={16} xl={16}>
+              {" "}
+              <Form.Item
+                label="แนวคิดในการสร้างสรรค์"
+                name="IdeaCreate"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณาระบุแนวคิดในการสร้างสรรค์ผลงาน",
+                  },
+                ]}
+              >
+                <Input.TextArea placeholder="ระบุชื่อแนวคิดในการสร้างสรรค์ผลงานที่ส่งแข่งขัน" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             style={{
@@ -231,10 +302,10 @@ export const TeamEditPage = () => {
             </Button>
           </Form.Item>
         </Form>
-        <Divider />
+        {/* <Divider />
         <TeamConsultPage />
         <Divider />
-        <TeamMemberPage data={presidentData} />
+        <TeamMemberPage data={presidentData} /> */}
       </Card>
     </div>
   );

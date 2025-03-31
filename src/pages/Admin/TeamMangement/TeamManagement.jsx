@@ -1,7 +1,7 @@
 import { Button, Modal, Spin, Table } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { PATH_API } from "../../../constrant";
+import { EventId, PATH_API } from "../../../constrant";
 import { TeamMemberPage } from "./TeamMember";
 import { TeamDirectorPage } from "./TeamDirector";
 
@@ -25,6 +25,19 @@ export const TeamManagementPage = () => {
       key: "WorkName",
     },
     {
+      title: "ประเภทแข่งที่สมัคร",
+      dataIndex: "CompetitionType",
+      key: "CompetitionType",
+      render: (_, record) => (
+        <>
+          {record.competition_type &&
+          record.competition_type.CompetitionTypeName
+            ? record.competition_type.CompetitionTypeName
+            : "ไม่พบ"}
+        </>
+      ),
+    },
+    {
       title: "หัวหน้าทีม",
       dataIndex: "CreatedBy",
       key: "CreatedBy",
@@ -42,7 +55,9 @@ export const TeamManagementPage = () => {
           <Button danger style={{ marginLeft: 8 }}>
             ลบ
           </Button>
-          <Button onClick={() => showModal2(record)}>กำหนดกรรมการ</Button>
+          <Button style={{ marginLeft: 8 }} onClick={() => showModal2(record)}>
+            กำหนดกรรมการ
+          </Button>
         </>
       ),
     },
@@ -55,10 +70,12 @@ export const TeamManagementPage = () => {
   const handleOk = () => {
     setIsModalOpen(false);
     setTeamData("");
+    getTeam();
   };
   const handleCancel = () => {
     setIsModalOpen(false);
     setModalData("");
+    getTeam();
   };
   const showModal2 = (e) => {
     setIsModalOpen2(true);
@@ -70,14 +87,16 @@ export const TeamManagementPage = () => {
   const handleOk2 = () => {
     setIsModalOpen2(false);
     setTeamData("");
+    getTeam();
   };
   const handleCancel2 = () => {
     setIsModalOpen2(false);
     setModalData("");
+    getTeam();
   };
   const getTeam = async () => {
     setLoadings(true);
-    const data = await axios.get(PATH_API + `/groups/get`);
+    const data = await axios.get(PATH_API + `/groups/get/${EventId}`);
     console.log("getTeam", data);
 
     setTeamData(data.data);

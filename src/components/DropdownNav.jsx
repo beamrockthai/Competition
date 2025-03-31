@@ -38,8 +38,9 @@ export const DropdownNav = () => {
       )}
 
       <span style={{ fontSize: "14px", color: "white" }}>
-        {" "}
-        {authUser.FirstName} {authUser.LastName}
+        {authUser.FirstName && authUser.LastName !== null
+          ? authUser.FirstName + " " + authUser.LastName
+          : authUser.Email}
       </span>
       <Dropdown
         menu={{

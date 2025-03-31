@@ -6,7 +6,7 @@ import {
   fetchTournaments,
 } from "../../services/evaluation";
 import axios from "axios";
-import { PATH_API } from "../../constrant";
+import { EventId, PATH_API } from "../../constrant";
 
 const AssignModal = ({
   visible,
@@ -42,7 +42,9 @@ const AssignModal = ({
   };
   const getRound = async () => {
     try {
-      const compround = await axios.get(PATH_API + `/competition_rounds/get`);
+      const compround = await axios.get(
+        PATH_API + `/competition_rounds/get/${EventId}`
+      );
       setCompetitionRound(compround.data);
     } catch (error) {
       console.error("Error getRound", error);

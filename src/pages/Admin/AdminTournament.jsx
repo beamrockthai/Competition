@@ -23,7 +23,7 @@ import {
 import TournamentTable from "./TournamentTable";
 import TableComponent from "../../components/TableComponent"; // นำเข้า TableComponent
 import axios from "axios";
-import { PATH_API } from "../../constrant";
+import { EventId, PATH_API } from "../../constrant";
 
 export const AdminTournamentPage = () => {
   const [form] = Form.useForm();
@@ -59,10 +59,10 @@ export const AdminTournamentPage = () => {
   const handleAddTournament = async (values) => {
     console.log(values);
 
-    const data = await axios.post(
-      PATH_API + `/competition_types/create`,
-      values
-    );
+    const data = await axios.post(PATH_API + `/competition_types/create`, {
+      ...values,
+      EventId: EventId,
+    });
     console.log("handleAddTournament", data);
 
     setModalVisible(false);

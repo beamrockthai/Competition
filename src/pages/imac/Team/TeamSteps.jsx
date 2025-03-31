@@ -6,6 +6,8 @@ import { authUser, PATH_API } from "../../../constrant";
 import { TeamEditPage } from "./TeamEdit";
 import { TeamUploadPage } from "./TeamUpload";
 import { RegisterResultPage } from "../../../components/Team/RegisterResult";
+import { TeamConsultPage } from "../../../components/TeamConsult";
+import { TeamMemberPage } from "../../../components/TeamMember";
 
 export const TeamStepsPage = () => {
   //   const [value, setValue] = useState(1);
@@ -24,8 +26,16 @@ export const TeamStepsPage = () => {
       content: null,
     },
     {
-      title: "ข้อมูลสมาชิก",
+      title: "ข้อมูลทีม",
       content: <TeamEditPage />,
+    },
+    {
+      title: "ข้อมูลสมาชิก",
+      content: <TeamMemberPage />,
+    },
+    {
+      title: "ข้อมูลที่ปรึกษา",
+      content: <TeamConsultPage />,
     },
     {
       title: "ส่งผลงาน",
@@ -68,6 +78,16 @@ export const TeamStepsPage = () => {
             gap: "8px", // เพิ่มช่องว่างระหว่างปุ่ม
           }}
         >
+          {current > 1 && (
+            <Button
+              style={{
+                margin: "0 8px",
+              }}
+              onClick={() => prev()}
+            >
+              ก่อนหน้า
+            </Button>
+          )}
           {current < steps.length - 1 && (
             <Popconfirm
               title="อย่าลืม! กดบันทึกข้อมูลก่อน"
@@ -98,16 +118,6 @@ export const TeamStepsPage = () => {
                 </Button>
               </Popconfirm>
             ))}
-          {current > 1 && (
-            <Button
-              style={{
-                margin: "0 8px",
-              }}
-              onClick={() => prev()}
-            >
-              ก่อนหน้า
-            </Button>
-          )}
         </div>
       </Card>
     </div>

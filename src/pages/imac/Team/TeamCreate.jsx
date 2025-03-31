@@ -11,7 +11,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { PATH_API, authUser } from "../../../constrant";
+import { EventId, PATH_API, authUser } from "../../../constrant";
 import { convertLegacyProps } from "antd/es/button";
 
 export const TeamCreatePage = () => {
@@ -29,7 +29,7 @@ export const TeamCreatePage = () => {
     });
   };
   const onCreateTeamStep1 = (values) => {
-    const data = { ...values, CreatedBy: authUser.uid };
+    const data = { ...values, CreatedBy: authUser.uid, EventId: EventId };
     console.log("onCreateTeamStep1", data);
 
     axios.post(PATH_API + "/groups/create", data).then((res) => {
@@ -54,13 +54,15 @@ export const TeamCreatePage = () => {
     });
   };
   const getCompetitionType = () => {
-    axios.get(PATH_API + "/competition_types/get").then((res) => {
-      setOptionsLoading(true);
+    axios
+      .get(PATH_API + `/competition_types/getactive/${EventId}`)
+      .then((res) => {
+        setOptionsLoading(true);
 
-      setCompetitionTypeOptions(res.data);
-      console.log(res.data);
-      setOptionsLoading(false);
-    });
+        setCompetitionTypeOptions(res.data);
+        console.log(res.data);
+        setOptionsLoading(false);
+      });
   };
   const onFinish = (values) => {
     console.log("Success:", values);

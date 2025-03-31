@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import axios from "axios";
-import { PATH_API } from "../constrant";
+import { EventId, PATH_API } from "../constrant";
 
 const formsCollection = collection(db, "evaluations");
 
@@ -21,7 +21,7 @@ export const fetchForms = async () => {
   //   id: doc.id,
   //   ...doc.data(),
   // }));
-  const data = await axios.get(PATH_API + `/evaluation_forms/get`);
+  const data = await axios.get(PATH_API + `/evaluation_forms/get/${EventId}`);
   return data.data;
 };
 
@@ -90,7 +90,7 @@ export const fetchTournaments = async () => {
   //   console.error("Error fetching tournaments:", error);
   //   return [];
   // }
-  const data = await axios.get(PATH_API + `/competition_types/get`);
+  const data = await axios.get(PATH_API + `/competition_types/get/${EventId}`);
   console.log("fetchTournaments", data);
   return data.data;
 };

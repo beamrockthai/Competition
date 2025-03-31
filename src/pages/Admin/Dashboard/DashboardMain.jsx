@@ -10,7 +10,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 import moment from "moment";
 import "moment/locale/th";
-import { PATH_API } from "../../../constrant";
+import { EventId, PATH_API } from "../../../constrant";
 import axios from "axios";
 
 const { Title } = Typography;
@@ -58,12 +58,14 @@ export const DashboardMainPage = () => {
     console.log(data.data);
   };
   const getTeam = async () => {
-    const team = await axios.get(PATH_API + `/groups/get`);
+    const team = await axios.get(PATH_API + `/groups/get/${EventId}`);
     setTeamCount(team.data.length);
     console.log("setTeamCount", team.data.length);
   };
   const getComType = async () => {
-    const comtype = await axios.get(PATH_API + `/competition_types/get`);
+    const comtype = await axios.get(
+      PATH_API + `/competition_types/get/${EventId}`
+    );
     setCompType(comtype.data.length);
     console.log("setCompType", comtype.data.length);
   };

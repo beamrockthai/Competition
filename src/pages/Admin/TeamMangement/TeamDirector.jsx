@@ -190,10 +190,10 @@
 //     </>
 //   );
 // };
-import { Button, Form, Popconfirm, Select, Space } from "antd";
+import { Button, Form, message, Popconfirm, Select, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { PATH_API } from "../../../constrant";
+import { EventId, PATH_API } from "../../../constrant";
 import { useEffect, useState } from "react";
 
 export const TeamDirectorPage = (props) => {
@@ -209,21 +209,29 @@ export const TeamDirectorPage = (props) => {
     setSelectedRound(roundId); // ✅ อัปเดต selectedRound
 
     const data = await axios.get(
-      PATH_API + `/director_with_groups/getbyteam/${teamData.id}/${roundId}`
+      PATH_API +
+        `/director_with_groups/getbyteam/${teamData.id}/${roundId}/${EventId}`
     );
     console.log("data", data);
 
-    const mapData = data.data.map((e) => ({
-      ...e,
-      DirectorName: e.user.FirstName + " " + e.user.LastName,
-    }));
+    const mapData = data.data
+      .filter((e) => e.user?.FirstName) // กรองเฉพาะข้อมูลที่ FirstName ไม่เป็น null หรือ undefined
+      .map((e) => ({
+        ...e,
+        DirectorName: `${e.user.FirstName || ""} ${
+          e.user.LastName || ""
+        }`.trim(), // ป้องกัน null และตัดช่องว่างที่เกินมา
+      }));
+
     form.setFieldValue("users", mapData);
     console.log("getDirectorwithGroup2", mapData);
   };
 
   const onGetRoundOptions = async () => {
     try {
-      const { data } = await axios.get(PATH_API + `/competition_rounds/get`);
+      const { data } = await axios.get(
+        PATH_API + `/competition_rounds/get/${EventId}`
+      );
       console.log("data", data);
 
       setRoundOptions(data);
@@ -252,10 +260,12 @@ export const TeamDirectorPage = (props) => {
           DirectorId: values.users[i].DirectorName,
           CompetitionRoundId: values.CompetitionRoundId,
           CompetitionTypeId: teamData.CompetitionType,
+          EventId: EventId,
           GroupId: teamData.id,
         })
         .then((res) => {
           console.log(res);
+          message.success("บันทึกข้อมูลสำเร็จ!");
         });
     }
   };

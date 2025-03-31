@@ -9,7 +9,7 @@ import FormModal from "./FormModal";
 import AssignModal from "./AssignModal";
 import EvaluationTable from "./EvaluationTable";
 import axios from "axios";
-import { PATH_API } from "../../constrant";
+import { EventId, PATH_API } from "../../constrant";
 
 export const EvaluationPage = () => {
   const [forms, setForms] = useState([]);
@@ -28,7 +28,9 @@ export const EvaluationPage = () => {
   const loadForms = async () => {
     setLoading(true);
     try {
-      const fetchedForms = await axios.get(PATH_API + `/evaluation_forms/get`);
+      const fetchedForms = await axios.get(
+        PATH_API + `/evaluation_forms/get/${EventId}`
+      );
       console.log("fetchedForms", fetchedForms);
 
       setForms(fetchedForms.data);

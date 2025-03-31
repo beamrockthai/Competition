@@ -2,7 +2,7 @@ import { Button, Card, Select, Spin } from "antd";
 import axios from "axios";
 
 import { useEffect, useRef, useState } from "react";
-import { PATH_API } from "../../../constrant";
+import { EventId, PATH_API } from "../../../constrant";
 
 export const CurrentRoundPage = () => {
   const dataFetchedRef = useRef(false);
@@ -22,7 +22,9 @@ export const CurrentRoundPage = () => {
   };
   const onGetRoundOptions = async () => {
     try {
-      const { data } = await axios.get(PATH_API + `/competition_rounds/get`);
+      const { data } = await axios.get(
+        PATH_API + `/competition_rounds/get/${EventId}`
+      );
       console.log("data", data);
 
       setRoundOptions(data);

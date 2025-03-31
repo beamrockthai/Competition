@@ -28,12 +28,13 @@ import { PATH_API } from "../../constrant";
 export const ManageDirectorsPage = () => {
   // const { signUpDirector } = useUserAuth();
   const [loading, setLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   const [directors, setDirectors] = useState([]);
   const [passwords, setPasswords] = useState({});
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนสมัคร
+  // const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  // const [formValues, setFormValues] = useState(null); // ✅ เก็บค่าฟอร์มก่อนสมัคร
   const [data, setData] = useState([]);
   const [optionsLoading, setOptionsLoading] = useState();
   const navigate = useNavigate();
@@ -44,9 +45,12 @@ export const ManageDirectorsPage = () => {
     getUserNotDirector();
   }, []);
   const getUserDirector = async () => {
+    setTableLoading(true);
     const data = await axios.get(PATH_API + `/users/getbyrole/3`);
     console.log(data);
+
     setDirectors(data.data);
+    setTableLoading(false);
   };
   const getUserNotDirector = async () => {
     setOptionsLoading(true);
@@ -56,23 +60,28 @@ export const ManageDirectorsPage = () => {
     setOptionsLoading(false);
   };
   // ✅ เปิด Popup ยืนยันก่อนสมัคร
-  const showConfirmModal = (values) => {
+  const showConfirmModal = async (values) => {
+    setDirectors(null);
+
     console.log("showConfirmModal", values.director[0].Director);
     for (var i = 0; i < values.director.length; i++) {
-      axios.patch(PATH_API + `/users/update`, {
+      await axios.patch(PATH_API + `/users/update`, {
         Role: 3,
         id: values.director[i].Director,
       });
     }
 
-    setFormValues(values);
-    setIsConfirmModalOpen(false);
+    // setFormValues(values);
+    setIsModalOpen(false);
+    getUserDirector();
+    form.resetFields();
+    message.success("เพิ่มกรรมการสำเร็จแล้ว!", 5);
   };
 
   // ✅ ยืนยันสมัครกรรมการ
   const handleConfirmRegister = async () => {
     setLoading(true);
-    setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
+    // setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
 
     // try {
     //   await addDirector(
@@ -92,15 +101,21 @@ export const ManageDirectorsPage = () => {
     //   setLoading(false);
     // }
   };
-  const deleteDirector = (values) => {
+  const deleteDirector = async (values) => {
+    setTableLoading(true);
+
     console.log("deleteDirector", values);
 
-    axios.patch(PATH_API + `/users/update`, { Role: "4", id: values });
+    await axios.patch(PATH_API + `/users/update`, { Role: "4", id: values });
+
+    message.success("ลบกรรมการสำเร็จแล้ว!", 5);
     getUserDirector();
+    setTableLoading(false);
   };
   return (
     <div style={{ padding: "20px" }}>
       {/* Header Section */}
+
       <Row
         justify="space-between"
         align="middle"
@@ -111,6 +126,7 @@ export const ManageDirectorsPage = () => {
         </Col>
         <Col>
           <Button
+            loading={loading}
             type="primary"
             onClick={() => setIsModalOpen(true)}
             style={{ backgroundColor: "#b12341", borderColor: "#b12341" }}
@@ -149,10 +165,10 @@ export const ManageDirectorsPage = () => {
         ]}
         dataSource={directors}
         bordered={true}
-        loading={loading}
+        loading={tableLoading}
         // pagination={{ pageSize: 5 }}
         rowKey="id"
-        onRowClick={(record) => console.log(record)}
+        // onRowClick={(record) => console.log(record)}
       />
 
       {/* Modal for Adding Director */}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PATH_API } from "../../constrant";
+import { EventId, PATH_API } from "../../constrant";
 import { useEffect, useState } from "react";
 // import { Form } from "react-router-dom"
 import { Form, Button, Col, InputNumber, Row } from "antd";
@@ -14,7 +14,7 @@ export const EvaluationHistoryPage = (props) => {
   const getEvaluationAnswer = async () => {
     const ansdata = await axios.get(
       PATH_API +
-        `/evaluation_answers/getbyteam/${data.GroupId}/55/${data.CompetitionTypeId}/${data.CompetitionRoundId}`
+        `/evaluation_answers/getbyteam/${data.GroupId}/55/${data.CompetitionTypeId}/${data.CompetitionRoundId}/${EventId}`
     );
     console.log("getEvaluationAnswer", data);
     setEvaluationAnswer(data.data);

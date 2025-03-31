@@ -18,7 +18,7 @@ import {
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { authUser, ImgUrl, PATH_API } from "../constrant";
+import { authUser, EventId, ImgUrl, PATH_API } from "../constrant";
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -35,7 +35,7 @@ dayjs.extend(weekday);
 dayjs.extend(localeData); // เรียกใช้ localeData
 dayjs.locale("th");
 const dateFormat = "YYYY-MM-DD";
-export const TeamConsultPage = (props) => {
+export const TeamConsultPage = () => {
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -45,7 +45,7 @@ export const TeamConsultPage = (props) => {
     // getTeamMembers();
   }, []);
   const dataFetchedRef = useRef(false);
-  const presidentData = props.data;
+
   const [form] = Form.useForm();
   const [teamData, setTeamData] = useState();
   const [namePrefixOptions, setNamePrefixOptions] = useState();
@@ -54,6 +54,7 @@ export const TeamConsultPage = (props) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
+  // const [presidentData, setPresidentData] = useState();
 
   const handleChange = (info, name) => {
     console.log("handleChange", info.file);
@@ -107,6 +108,7 @@ export const TeamConsultPage = (props) => {
             const createdata = {
               ConsultUserId: values.items[i].id,
               GroupId: teamData.id,
+              EventId: EventId,
               Status: "Active",
               CreatedBy: authUser.uid,
             };
@@ -120,6 +122,7 @@ export const TeamConsultPage = (props) => {
             const createdata = {
               ConsultUserId: res.data.id,
               GroupId: teamData.id,
+              EventId: EventId,
               Status: "Active",
               CreatedBy: authUser.uid,
             };
@@ -135,6 +138,7 @@ export const TeamConsultPage = (props) => {
             const createdata = {
               ConsultUserId: res.data.id,
               GroupId: teamData.id,
+              EventId: EventId,
               Status: "Active",
               CreatedBy: authUser.uid,
             };
@@ -184,7 +188,9 @@ export const TeamConsultPage = (props) => {
         console.log("getMyTeamhabibi", res.data);
 
         axios
-          .get(PATH_API + `/consult_with_teams/getbyteam/${res.data.id}`)
+          .get(
+            PATH_API + `/consult_with_teams/getbyteam/${res.data.id}/${EventId}`
+          )
           .then((res) => {
             console.log("consult_with_group", res.data);
             const newconsultdata = res.data.map((e) => ({
@@ -214,6 +220,7 @@ export const TeamConsultPage = (props) => {
         //   });
       });
   };
+
   const getNamePrefixOptions = async () => {
     setOptionsLoading(true);
     const nameprefixdata = await axios.get(PATH_API + `/name_prefixes/get`);
@@ -233,7 +240,7 @@ export const TeamConsultPage = (props) => {
   return (
     <>
       {teamData ? (
-        <>
+        <div className="cardbody">
           <h1>ข้อมูลที่ปรึกษา/อาจารย์ของทีม</h1>
           <Form
             labelCol={{
@@ -580,7 +587,7 @@ export const TeamConsultPage = (props) => {
               </Button>
             </Form.Item>
           </Form>
-        </>
+        </div>
       ) : (
         <Card>
           <h1>ข้อมูลที่ปรึกษา/อาจารย์ของทีม</h1>

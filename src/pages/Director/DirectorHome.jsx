@@ -2,7 +2,7 @@ import { Button, Modal, Result, Select, Spin, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { EvaluationForm } from "./EvaluationForm";
 import axios from "axios";
-import { authUser, PATH_API } from "../../constrant";
+import { authUser, EventId, PATH_API } from "../../constrant";
 import { EvaluationHistoryPage } from "./EvaluationHistory";
 
 export const DirectorHomePage = () => {
@@ -15,13 +15,32 @@ export const DirectorHomePage = () => {
   const [selectedRound, setSelectedRound] = useState(null);
   const [loadings, setLoadings] = useState(false);
   const [data, setData] = useState();
+  const onGetRoundOptions = async () => {
+    try {
+      const { data } = await axios.get(
+        PATH_API + `/competition_rounds/get/${EventId}`
+      );
+      console.log("data", data);
 
+      setRoundOptions(data);
+      const df = data.filter((e) => e.IsCurrent === "Yes");
+      console.log("df", df);
+      setDefaultRoundOptions(df);
+
+      if (df.length > 0) {
+        setSelectedRound(df[0].id); // ✅ กำหนดค่าเริ่มต้น
+      }
+    } catch (error) {
+      console.error("Error fetching round options:", error);
+    }
+  };
   const getMyEvaluationList = async (value) => {
     setLoadings(true);
     setSelectedRound(value);
     setData(null);
     const data = await axios.get(
-      PATH_API + `/director_with_groups/getdirector/${authUser.uid}/${value}`
+      PATH_API +
+        `/director_with_groups/getdirector/${authUser.uid}/${value}/${EventId}`
     );
     console.log("data", data);
 
@@ -40,23 +59,6 @@ export const DirectorHomePage = () => {
     return data.data;
   };
 
-  const onGetRoundOptions = async () => {
-    try {
-      const { data } = await axios.get(PATH_API + `/competition_rounds/get`);
-      console.log("data", data);
-
-      setRoundOptions(data);
-      const df = data.filter((e) => e.IsCurrent === "Yes");
-      console.log("df", df);
-      setDefaultRoundOptions(df);
-
-      if (df.length > 0) {
-        setSelectedRound(df[0].id); // ✅ กำหนดค่าเริ่มต้น
-      }
-    } catch (error) {
-      console.error("Error fetching round options:", error);
-    }
-  };
   const columns = [
     {
       title: "ชื่อทีม",
@@ -110,6 +112,8 @@ export const DirectorHomePage = () => {
   const handleOk2 = () => {
     setIsModalOpen2(false);
     setModalData(null);
+    onGetRoundOptions();
+    getMyEvaluationList();
   };
   const handleCancel2 = () => {
     setIsModalOpen2(false);
@@ -120,9 +124,13 @@ export const DirectorHomePage = () => {
   const handleOk = () => {
     setIsModalOpen(false);
     setModalData(null);
+    onGetRoundOptions();
+    getMyEvaluationList();
   };
   const handleCancel = () => {
     setIsModalOpen(false);
+    onGetRoundOptions();
+    getMyEvaluationList();
     setModalData(null);
   };
   useEffect(() => {

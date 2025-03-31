@@ -13,7 +13,7 @@ import {
 import { message } from "antd";
 import moment from "moment";
 import axios from "axios";
-import { PATH_API } from "../constrant";
+import { EventId, PATH_API } from "../constrant";
 
 // 📌 ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
 export const fetchTournaments = async () => {
@@ -29,7 +29,7 @@ export const fetchTournaments = async () => {
   //   message.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
   //   return [];
   // }
-  const data = await axios.get(PATH_API + "/competition_types/get");
+  const data = await axios.get(PATH_API + `/competition_types/get/${EventId}`);
   console.log("fetchTournaments", data.data);
 
   return data;

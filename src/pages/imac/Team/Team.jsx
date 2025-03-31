@@ -8,6 +8,7 @@ import {
   Form,
   Input,
   List,
+  Modal,
   Result,
   Row,
   Select,
@@ -15,9 +16,10 @@ import {
 } from "antd";
 import { PlusOutlined, ToolOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { authUser, ImgUrl, PATH_API } from "../../../constrant";
+import { authUser, EventId, ImgUrl, PATH_API } from "../../../constrant";
 
 import { useEffect, useRef, useState } from "react";
+import { TeamConsultPage } from "../../../components/TeamConsult";
 
 export const TeamPage = () => {
   const [form] = Form.useForm();
@@ -29,6 +31,16 @@ export const TeamPage = () => {
   const [competitionTypeOptions, setCompetitionTypeOptions] = useState();
   const [personTypeOptions, setPersonTypeOptions] = useState();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const getMyTeam = async () => {
     await axios
       .get(PATH_API + `/groups/getbyid/${authUser.uid}`)
@@ -39,7 +51,10 @@ export const TeamPage = () => {
 
         if (res.data.id) {
           axios
-            .get(PATH_API + `/consult_with_teams/getbyteam/${res.data.id}`)
+            .get(
+              PATH_API +
+                `/consult_with_teams/getbyteam/${res.data.id}/${EventId}`
+            )
             .then((data) => {
               console.log("consult_with_group", data.data);
               setTeamConsultData(data.data);
@@ -65,13 +80,15 @@ export const TeamPage = () => {
     });
   };
   const getCompetitionType = async () => {
-    await axios.get(PATH_API + "/competition_types/get").then((res) => {
-      setOptionsLoading(true);
+    await axios
+      .get(PATH_API + `/competition_types/get/${EventId}`)
+      .then((res) => {
+        setOptionsLoading(true);
 
-      setCompetitionTypeOptions(res.data);
-      console.log(res.data);
-      setOptionsLoading(false);
-    });
+        setCompetitionTypeOptions(res.data);
+        console.log(res.data);
+        setOptionsLoading(false);
+      });
   };
 
   const onFinish = async (values) => {
@@ -117,7 +134,7 @@ export const TeamPage = () => {
             {teamData ? (
               <Button
                 onClick={() => {
-                  window.location.assign("/user/teamsteps");
+                  window.location.assign("/user/teamedit");
                 }}
                 icon={<ToolOutlined />}
               >
@@ -229,6 +246,15 @@ export const TeamPage = () => {
         </Form>
 
         <h3>ที่ปรึกษา</h3>
+        <Button
+          onClick={() => {
+            window.location.assign("/user/teamconsult");
+          }}
+          // onClick={showModal}
+          icon={<ToolOutlined />}
+        >
+          แก้ไขที่ปรึกษา
+        </Button>
         {teamConsultData != 0 ? (
           teamConsultData != null ? (
             <List
@@ -280,6 +306,15 @@ export const TeamPage = () => {
         )}
         <Divider />
         <h3>สมาชิก</h3>
+        <Button
+          onClick={() => {
+            window.location.assign("/user/teammember");
+          }}
+          // onClick={showModal}
+          icon={<ToolOutlined />}
+        >
+          แก้ไขสมาชิก
+        </Button>
         {teamMemberData != 0 ? (
           teamMemberData != null ? (
             <>
@@ -322,6 +357,15 @@ export const TeamPage = () => {
           <Result title="คุณยังไม่ได้สร้างทีม" />
         )}
       </Card>
+
+      <Modal
+        title="แก้ไขที่ปรึกษา"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <TeamConsultPage />
+      </Modal>
     </div>
   );
 };
