@@ -246,46 +246,49 @@ export const TeamPage = () => {
         </Form>
 
         <h3>ที่ปรึกษา</h3>
-        <Button
-          onClick={() => {
-            window.location.assign("/user/teamconsult");
-          }}
-          // onClick={showModal}
-          icon={<ToolOutlined />}
-        >
-          แก้ไขที่ปรึกษา
-        </Button>
+
         {teamConsultData != 0 ? (
           teamConsultData != null ? (
-            <List
-              itemLayout="horizontal"
-              dataSource={teamConsultData}
-              renderItem={(item, index) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar src={ImgUrl + item.user.ProfilePictureURL} />
-                    }
-                    title={
-                      <p>
-                        {item.user.FirstName} {item.user.LastName} | ตำแหน่ง :
-                        {item.user.IsPresident &&
-                        item.user.IsPresident === "Consult"
-                          ? "ที่ปรึกษา"
-                          : "ไม่ได้ระบุ"}
-                      </p>
-                    }
-                    description={
-                      <p>
-                        {item.user.Email}
-                        <br />
-                        {item.user.Phone}
-                      </p>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+            <>
+              <Button
+                onClick={() => {
+                  window.location.assign("/user/teamconsult");
+                }}
+                // onClick={showModal}
+                icon={<ToolOutlined />}
+              >
+                แก้ไขที่ปรึกษา
+              </Button>
+              <List
+                itemLayout="horizontal"
+                dataSource={teamConsultData}
+                renderItem={(item, index) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar src={ImgUrl + item.user.ProfilePictureURL} />
+                      }
+                      title={
+                        <p>
+                          {item.user.FirstName} {item.user.LastName} | ตำแหน่ง :
+                          {item.user.IsPresident &&
+                          item.user.IsPresident === "Consult"
+                            ? "ที่ปรึกษา"
+                            : "ไม่ได้ระบุ"}
+                        </p>
+                      }
+                      description={
+                        <p>
+                          {item.user.Email}
+                          <br />
+                          {item.user.Phone}
+                        </p>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </>
           ) : (
             <Result
               title="ไม่พบข้อมูลที่ปรึกษาของทีม"
@@ -306,18 +309,19 @@ export const TeamPage = () => {
         )}
         <Divider />
         <h3>สมาชิก</h3>
-        <Button
-          onClick={() => {
-            window.location.assign("/user/teammember");
-          }}
-          // onClick={showModal}
-          icon={<ToolOutlined />}
-        >
-          แก้ไขสมาชิก
-        </Button>
+
         {teamMemberData != 0 ? (
           teamMemberData != null ? (
             <>
+              <Button
+                onClick={() => {
+                  window.location.assign("/user/teammember");
+                }}
+                // onClick={showModal}
+                icon={<ToolOutlined />}
+              >
+                แก้ไขสมาชิก
+              </Button>
               <List
                 itemLayout="horizontal"
                 dataSource={teamMemberData}
