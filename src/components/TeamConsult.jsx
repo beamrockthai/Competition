@@ -254,7 +254,7 @@ export const TeamConsultPage = () => {
   return (
     <>
       {teamData ? (
-        <div className="cardbody">
+        <div>
           <h1>ข้อมูลที่ปรึกษา/อาจารย์ของทีม</h1>
           <Form
             labelCol={{

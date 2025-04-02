@@ -130,7 +130,7 @@ export const TeamEditPage = () => {
   return (
     <div className="body">
       <Card>
-        <h1>ข้อมูลทีม</h1>
+        <h1 style={{ color: "white" }}>ข้อมูลทีม</h1>
         <Form
           form={form}
           layout="horizontal"

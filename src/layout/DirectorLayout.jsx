@@ -31,10 +31,13 @@ export const DirectorLayout = (props) => {
     return <LoginPage />;
   }
   const onClick = ({ key }) => {
-    message.info(`Click on item ${key}`);
-    window.location.assign("/logout");
+    window.location.assign(key);
   };
   const items = [
+    {
+      label: "ข้อมูลส่วนตัวของฉัน",
+      key: "/director/me",
+    },
     {
       label: "ออกจากระบบ",
       key: "/logout",

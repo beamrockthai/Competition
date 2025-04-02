@@ -14,7 +14,7 @@ export const EvaluationHistoryPage = (props) => {
   const getEvaluationAnswer = async () => {
     const ansdata = await axios.get(
       PATH_API +
-        `/evaluation_answers/getbyteam/${data.GroupId}/55/${data.CompetitionTypeId}/${data.CompetitionRoundId}/${EventId}`
+        `/evaluation_answers/getbyteam/${data.GroupId}/${data.CompetitionTypeId}/${data.CompetitionRoundId}/${EventId}`
     );
     console.log("getEvaluationAnswer", data);
     setEvaluationAnswer(data.data);
@@ -33,7 +33,7 @@ export const EvaluationHistoryPage = (props) => {
   }, []);
   return (
     <>
-      {/* {JSON.stringify(data)} */}
+      {JSON.stringify(data)}
       <Form
         form={form}
         name="evaluation_form"

@@ -87,7 +87,7 @@ export const LoginPage = () => {
         align="middle"
         style={{ minHeight: "100vh" }}
       >
-        <Card title="Plese Login First">
+        <Card title={<h3 style={{ color: "white" }}>Plese Login First</h3>}>
           <Form
             name="basic"
             labelCol={{
@@ -146,7 +146,7 @@ export const LoginPage = () => {
                 span: 16,
               }}
             >
-              <Button loading={loadings} type="primary" htmlType="submit">
+              <Button type="primary" loading={loadings} htmlType="submit">
                 Submit
               </Button>
             </Form.Item>

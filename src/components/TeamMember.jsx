@@ -117,6 +117,8 @@ export const TeamMemberPage = () => {
             ? values.items.IsPresident
             : "No",
           GroupId: teamData.id,
+          CreatedBy: authUser.id,
+          Role: 4,
         })
         .then((res) => {
           if (res.status === 409) {
@@ -272,7 +274,7 @@ export const TeamMemberPage = () => {
       {/* {JSON.stringify(presidentData)} */}
 
       {teamData ? (
-        <>
+        <div>
           <h1>ข้อมูลสมาชิกในทีม</h1>
           <Form
             labelCol={{
@@ -641,7 +643,7 @@ export const TeamMemberPage = () => {
               </Button>
             </Form.Item>
           </Form>
-        </>
+        </div>
       ) : (
         <Card>
           <Spin />

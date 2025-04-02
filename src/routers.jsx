@@ -33,6 +33,7 @@ import { MePage } from "./pages/Me";
 import { UserRoot, UserRootLoader } from "./pages/UserRoot";
 import { TeamConsultPage } from "./components/TeamConsult";
 import { TeamMemberPage } from "./components/TeamMember";
+import { TeamStatusPage } from "./pages/Admin/TeamStatus/TeamStatus";
 
 // import { AdminHomePage } from "./pages/Admin/AdminHome";
 
@@ -179,7 +180,12 @@ export const router = createBrowserRouter([
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <TeamManagementPage />,
       },
-
+      {
+        path: "teamstatus",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <TeamStatusPage />,
+      },
       {
         path: "tournament",
         // loader: deskIndexLoader,
@@ -199,6 +205,12 @@ export const router = createBrowserRouter([
         // loader: deskIndexLoader,
         // action: deskIndexAction, // FIXME: action is defined to call api
         element: <DirectorHomePage />,
+      },
+      {
+        path: "me",
+        // loader: deskIndexLoader,
+        // action: deskIndexAction, // FIXME: action is defined to call api
+        element: <MePage />,
       },
     ],
   },

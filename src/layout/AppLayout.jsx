@@ -93,11 +93,9 @@ export const AppLayout = (props) => {
               items={menuItems.map((item) => ({
                 ...item,
                 style: {
-                  color: location.pathname === item.key ? "white" : "orange", // ถ้าเลือกแล้วให้เป็นสีขาว ถ้ายังไม่ได้เลือกเป็นสีส้ม
+                  color: location.pathname === item.key ? "white" : "#ff6100", // ถ้าเลือกแล้วให้เป็นสีขาว ถ้ายังไม่ได้เลือกเป็นสีส้ม
                   backgroundColor:
-                    location.pathname === item.key
-                      ? "rgba(255, 165, 0, 0.3)"
-                      : "transparent", // พื้นหลังเมนูที่ถูกเลือกให้เป็นสีส้มอ่อน
+                    location.pathname === item.key ? "#ff6100" : "transparent", // พื้นหลังเมนูที่ถูกเลือกให้เป็นสีส้มอ่อน
                   transition: "all 0.3s ease", // เพิ่มเอฟเฟกต์ให้ smooth
                 },
                 onMouseEnter: (e) => {
@@ -106,7 +104,7 @@ export const AppLayout = (props) => {
                 },
                 onMouseLeave: (e) => {
                   if (location.pathname !== item.key)
-                    e.domEvent.target.style.color = "orange"; // กลับเป็นสีส้มเมื่อออกจาก hover ถ้าไม่ได้ถูกเลือกอยู่
+                    e.domEvent.target.style.color = "#ff6100"; // กลับเป็นสีส้มเมื่อออกจาก hover ถ้าไม่ได้ถูกเลือกอยู่
                 },
               }))}
             />
@@ -126,9 +124,9 @@ export const AppLayout = (props) => {
           ) : authUser ? (
             <DropdownNav />
           ) : (
-            <Button href="/userlogin" style={{ color: "white" }} type="text">
+            <a href="/userlogin" style={{ color: "white" }} type="text">
               เข้าสู่ระบบ/สมัครสมาชิก
-            </Button>
+            </a>
           )}
         </Header>
 

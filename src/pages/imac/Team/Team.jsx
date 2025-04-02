@@ -128,39 +128,65 @@ export const TeamPage = () => {
     <div className="body">
       <h1>Team Page</h1>
       <Card
-        title={<h1>ข้อมูลทีม</h1>}
-        extra={
-          <>
-            {teamData ? (
-              <Button
-                onClick={() => {
-                  window.location.assign("/user/teamedit");
-                }}
-                icon={<ToolOutlined />}
-              >
-                แก้ไขทีม
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  window.location.assign("/user/teamcreate");
-                }}
-                loading={optionsLoading}
-                icon={<PlusOutlined />}
-              >
-                สร้างทีม
-              </Button>
-            )}
-          </>
-        }
+        style={{ border: "0px" }}
+        // title={<h1>ข้อมูลทีม</h1>}
+        // extra={
+        //   <>
+        //     {teamData ? (
+        //       <Button
+        //         onClick={() => {
+        //           window.location.assign("/user/teamedit");
+        //         }}
+        //         icon={<ToolOutlined />}
+        //       >
+        //         แก้ไขทีม
+        //       </Button>
+        //     ) : (
+        //       <Button
+        //         onClick={() => {
+        //           window.location.assign("/user/teamcreate");
+        //         }}
+        //         loading={optionsLoading}
+        //         icon={<PlusOutlined />}
+        //       >
+        //         สร้างทีม
+        //       </Button>
+        //     )}
+        //   </>
+        // }
       >
+        <div style={{ display: "flex", justifyContent: "between" }}>
+          <h1>ข้อมูลทีม</h1>
+
+          {teamData ? (
+            <Button
+              onClick={() => {
+                window.location.assign("/user/teamedit");
+              }}
+              icon={<ToolOutlined />}
+            >
+              แก้ไขทีม
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                window.location.assign("/user/teamcreate");
+              }}
+              loading={optionsLoading}
+              icon={<PlusOutlined />}
+            >
+              สร้างทีม
+            </Button>
+          )}
+        </div>
+
         <Form
           disabled={true}
           form={form}
           layout="horizontal"
           name="basic"
           labelCol={{
-            span: 8,
+            span: 4,
           }}
           wrapperCol={{
             span: 16,
@@ -244,9 +270,8 @@ export const TeamPage = () => {
             </Col>
           </Row>
         </Form>
-
+        <Divider />
         <h3>ที่ปรึกษา</h3>
-
         {teamConsultData != 0 ? (
           teamConsultData != null ? (
             <>
@@ -290,6 +315,28 @@ export const TeamPage = () => {
               />
             </>
           ) : (
+            // <Result
+            //   title="ไม่พบข้อมูลที่ปรึกษาของทีม"
+            //   // extra={
+            //   //   <Button type="primary" key="console">
+            //   //     Go Console
+            //   //   </Button>
+            //   // }
+            // />
+            <Skeleton avatar active />
+          )
+        ) : (
+          <>
+            <Button
+              onClick={() => {
+                window.location.assign("/user/teamconsult");
+              }}
+              // onClick={showModal}
+              icon={<PlusOutlined />}
+            >
+              เพิ่มที่ปรึกษา
+            </Button>
+
             <Result
               title="ไม่พบข้อมูลที่ปรึกษาของทีม"
               // extra={
@@ -298,18 +345,10 @@ export const TeamPage = () => {
               //   </Button>
               // }
             />
-          )
-        ) : (
-          <Skeleton
-            avatar
-            paragraph={{
-              rows: 2,
-            }}
-          />
+          </>
         )}
         <Divider />
         <h3>สมาชิก</h3>
-
         {teamMemberData != 0 ? (
           teamMemberData != null ? (
             <>
@@ -350,12 +389,24 @@ export const TeamPage = () => {
               />
             </>
           ) : (
-            <Skeleton
-              avatar
-              paragraph={{
-                rows: 2,
-              }}
-            />
+            <>
+              <Button
+                onClick={() => {
+                  window.location.assign("/user/teammember");
+                }}
+                // onClick={showModal}
+                icon={<PlusOutlined />}
+              >
+                เพิ่มสมาชิก
+              </Button>
+              <Skeleton
+                avatar
+                paragraph={{
+                  rows: 2,
+                }}
+                active
+              />
+            </>
           )
         ) : (
           <Result title="คุณยังไม่ได้สร้างทีม" />

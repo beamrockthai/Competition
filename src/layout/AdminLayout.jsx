@@ -107,6 +107,9 @@ export const AdminLayout = (props) => {
           <Menu.Item key="/admin" icon={<DashboardOutlined />}>
             <span style={{ fontWeight: "bold" }}>Dashboard</span>
           </Menu.Item>
+          <Menu.Item key="/admin/teamstatus" icon={<AppstoreAddOutlined />}>
+            <span style={{ fontWeight: "bold" }}>สถานะทีม</span>
+          </Menu.Item>
           <Menu.Item key="/admin/roundconfig" icon={<AppstoreAddOutlined />}>
             <span style={{ fontWeight: "bold" }}>กำหนดรอบแข่งขัน</span>
           </Menu.Item>

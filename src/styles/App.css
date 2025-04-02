@@ -82,15 +82,34 @@
     animation: logo-spin infinite 20s linear;
   }
 }
-
+.ant-picker-outlined {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
 /* เพิ่ม padding ให้กับ card */
+.ant-card-head {
+  color: white;
+  background-color: #3e3e3c !important;
+}
+.ant-card-head-title {
+  color: white;
+}
 .card {
-  padding: 2em;
+  color: white;
+}
+.ant-card {
+  background-color: #494949;
 }
 
 /* เพิ่มสีให้ข้อความในส่วน read-the-docs */
 .read-the-docs {
   color: #888;
+}
+h1,
+h2,
+h3 {
+  color: white;
 }
 .body {
   padding: 5px;
@@ -102,9 +121,7 @@
   line-height: 1;
 }
 .cardbody {
-  background-color: white;
-  color: black;
-  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 .home-body {
   background-color: black;
@@ -113,4 +130,142 @@
 }
 .orange {
   color: #ff6100; /* เปลี่ยนสีตัวอักษรเป็นสีส้ม */
+}
+.ant-form-item-label > label {
+  color: white !important;
+}
+.ant-form-item-explain-error {
+  color: #ff5757 !important;
+}
+
+.ant-input {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+.ant-input-affix-wrapper > input.ant-input,
+.ant-input-password {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+/* ปรับสีตัวหนังสือของ Input.Password */
+.ant-input-password input {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ปรับสี placeholder ใน Input.Password */
+.ant-input-password input::placeholder {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border: none;
+}
+
+/* ปรับสีไอคอนแสดง/ซ่อนรหัสผ่าน */
+.ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+.ant-btn-variant-outlined {
+  /* background-color: black !important; */
+  color: black !important;
+  border: #ff6100 !important;
+}
+.ant-btn:hover {
+  background-color: #3e3e3c !important;
+  border: #ff6100 !important;
+  color: #ffffff !important;
+}
+.ant-btn-color-default.ant-btn-variant-dashed {
+  background-color: #ff6100;
+  border-color: #e42727;
+  color: #ffffff;
+}
+.ant-btn::shadow,
+.ant-btn {
+  background-color: #ff6100;
+  border: #ff6100 !important;
+}
+.ant-btn-color-primary {
+  background-color: #ff6100 !important;
+}
+.ant-select-dropdown {
+  background-color: #787474 !important;
+  color: white !important;
+}
+
+/* เปลี่ยนสีตัวเลือกใน dropdown */
+.ant-select-item {
+  /* color: rgba(255, 255, 255, 0.2) !important; */
+  color: white !important;
+}
+
+/* เปลี่ยนสีตัวเลือกที่ hover หรือถูกเลือก */
+.ant-select-item-option-active {
+  color: white !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: #ff6100 !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* เปลี่ยนสีของ input ใน Select */
+.ant-select-single,
+.ant-select-selector {
+  background-color: #787474 !important;
+  color: #ffffff !important;
+  border: none;
+}
+.ant-result-subtitle,
+.ant-result-title {
+  color: white !important;
+}
+.ant-result {
+  background-color: #494949 !important;
+  margin-top: 5px;
+  border-radius: 10px;
+}
+p {
+  color: white !important;
+}
+
+/* เปลี่ยนสีของ step ที่กำลัง active */
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: #ff6100 !important; /* สีพื้นหลังของวงกลม */
+  border-color: #ff6100 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
+  color: white !important; /* สีตัวเลขในวงกลม */
+}
+
+/* เปลี่ยนสีของ step ที่สำเร็จแล้ว */
+.ant-steps-item-finish .ant-steps-item-icon {
+  background-color: #52c41a !important; /* สีพื้นหลังของวงกลมที่สำเร็จ */
+  border-color: #52c41a !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: white !important; /* สีตัวเลข */
+}
+
+/* เปลี่ยนสีเส้นที่เชื่อมระหว่างขั้นตอน */
+.ant-steps-item-finish .ant-steps-item-tail::after {
+  background-color: #ff6100 !important; /* สีเส้น */
+}
+
+/* เปลี่ยนสีข้อความใต้ Step */
+.ant-steps-item-title {
+  color: white !important;
+}
+
+/* เปลี่ยนสีข้อความของ step ที่ active */
+.ant-steps-item-process .ant-steps-item-title {
+  color: white !important;
+}
+.ant-divider {
+  background-color: #787474 !important;
 }

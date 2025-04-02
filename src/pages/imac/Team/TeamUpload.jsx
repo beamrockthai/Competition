@@ -73,7 +73,13 @@ export const TeamUploadPage = () => {
           <Input placeholder="Link Google Drive" />
         </Form.Item>
         <Form.Item>
-          <Space>
+          <Space
+            style={{
+              margin: "5px",
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
             <Button type="primary" htmlType="submit" loading={buttonLoading}>
               บันทึกลิงค์
             </Button>
