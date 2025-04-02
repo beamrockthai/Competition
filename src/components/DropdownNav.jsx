@@ -37,11 +37,12 @@ export const DropdownNav = () => {
         </Avatar>
       )}
 
-      <span style={{ fontSize: "14px", color: "white" }}>
+      <span style={{ fontSize: "14px", color: "white", margin: "5px" }}>
         {authUser.FirstName && authUser.LastName !== null
           ? authUser.FirstName + " " + authUser.LastName
           : authUser.Email}
       </span>
+
       <Dropdown
         menu={{
           items,
@@ -50,7 +51,7 @@ export const DropdownNav = () => {
       >
         <a onClick={(e) => e.preventDefault()}>
           <Space>
-            <DownOutlined />
+            <DownOutlined style={{ color: "#ff6100" }} />
           </Space>
         </a>
       </Dropdown>

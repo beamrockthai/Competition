@@ -272,7 +272,7 @@ export const TeamConsultPage = () => {
             }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
-            layout="horizontal"
+            layout="vertical"
           >
             <Form.List name="items">
               {(fields, { add, remove }) => (

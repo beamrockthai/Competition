@@ -133,10 +133,10 @@ export const TeamEditPage = () => {
         <h1 style={{ color: "white" }}>ข้อมูลทีม</h1>
         <Form
           form={form}
-          layout="horizontal"
+          layout="vertical"
           name="basic"
           labelCol={{
-            span: 8,
+            span: 16,
           }}
           wrapperCol={{
             span: 16,

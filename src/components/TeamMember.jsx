@@ -277,6 +277,7 @@ export const TeamMemberPage = () => {
         <div>
           <h1>ข้อมูลสมาชิกในทีม</h1>
           <Form
+            layout="vertical"
             labelCol={{
               span: 12,
             }}

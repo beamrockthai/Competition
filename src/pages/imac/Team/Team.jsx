@@ -155,38 +155,46 @@ export const TeamPage = () => {
         //   </>
         // }
       >
-        <div style={{ display: "flex", justifyContent: "between" }}>
-          <h1>ข้อมูลทีม</h1>
+        <Row justify="space-between" align="middle">
+          {/* คอลัมน์สำหรับข้อความ "ข้อมูลทีม" */}
+          <Col>
+            <h1>ข้อมูลทีม</h1>
+          </Col>
 
-          {teamData ? (
-            <Button
-              onClick={() => {
-                window.location.assign("/user/teamedit");
-              }}
-              icon={<ToolOutlined />}
-            >
-              แก้ไขทีม
-            </Button>
-          ) : (
-            <Button
-              onClick={() => {
-                window.location.assign("/user/teamcreate");
-              }}
-              loading={optionsLoading}
-              icon={<PlusOutlined />}
-            >
-              สร้างทีม
-            </Button>
-          )}
-        </div>
+          {/* คอลัมน์สำหรับปุ่ม (ชิดขวา) */}
+          <Col>
+            {teamData ? (
+              <Button
+                onClick={() => {
+                  window.location.assign("/user/teamedit");
+                }}
+                icon={<ToolOutlined />}
+              >
+                แก้ไขทีม
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  window.location.assign("/user/teamcreate");
+                }}
+                loading={optionsLoading}
+                icon={<PlusOutlined />}
+              >
+                สร้างทีม
+              </Button>
+            )}
+          </Col>
+        </Row>
+
+        <div style={{ display: "flex", justifyContent: "between" }}></div>
 
         <Form
           disabled={true}
           form={form}
-          layout="horizontal"
+          layout="vertical"
           name="basic"
           labelCol={{
-            span: 4,
+            span: 16,
           }}
           wrapperCol={{
             span: 16,

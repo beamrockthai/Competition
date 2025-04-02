@@ -140,7 +140,13 @@ export const MePage = () => {
   };
   return (
     <Card>
-      <Form form={form} name="basic" onFinish={onFinish} autoComplete="on">
+      <Form
+        form={form}
+        layout="vertical"
+        name="basic"
+        onFinish={onFinish}
+        autoComplete="on"
+      >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             <Form.Item hidden="true" label="id" name={"id"}>

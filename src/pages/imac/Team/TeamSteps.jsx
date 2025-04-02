@@ -66,7 +66,7 @@ export const TeamStepsPage = () => {
     marginTop: 16,
   };
   return (
-    <Card>
+    <Card style={{ border: "none" }}>
       <Steps current={current} items={items} />
       <div style={contentStyle}>{steps[current].content}</div>
       <div
