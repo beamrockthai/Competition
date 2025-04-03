@@ -47,6 +47,7 @@ export const TeamMemberPage = () => {
     getMyTeam();
     getNamePrefixOptions();
     getOccupationOptions();
+    getProvince();
     // getTeamMembers();
   }, []);
   const dataFetchedRef = useRef(false);
@@ -60,6 +61,44 @@ export const TeamMemberPage = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [presidentData, setPresidentData] = useState();
+  const [provinceOption, setProvinceOption] = useState();
+  const [amphureOption, setAmphureOption] = useState();
+  const [tambonOption, setTambonOption] = useState();
+  const [postcodeOption, setPostcodeOption] = useState();
+
+  const getProvince = () => {
+    axios.get(PATH_API + `/thai_provinces/get`).then((res) => {
+      console.log("getProvince", res.data);
+
+      setProvinceOption(res.data);
+    });
+  };
+  const getAmphure = (e) => {
+    axios.get(PATH_API + `/thai_amphures/getbyid/${e}`).then((res) => {
+      console.log("getAmphure", res.data);
+
+      setAmphureOption(res.data);
+    });
+  };
+  const getTambon = (e) => {
+    console.log("Tambon", e);
+
+    axios.get(PATH_API + `/thai_tambons/getbyid/${e}`).then((res) => {
+      console.log("getTambon", res.data);
+
+      setTambonOption(res.data);
+      getPostcode(res.data.id);
+    });
+  };
+  const getPostcode = (e, name) => {
+    console.log("hai_tambon", e);
+
+    axios.get(PATH_API + `/thai_tambons/getbypost/${e}`).then((res) => {
+      console.log("getPostcode", res.data.zip_code);
+      form.setFieldValue(["items", name, "Postcode"], res.data.zip_code);
+      // setPostcodeOption(String(res.data.zip_code));
+    });
+  };
   const handleChange = (info, name) => {
     console.log("handleChange", info.file);
 
@@ -174,35 +213,7 @@ export const TeamMemberPage = () => {
       </div>
     </button>
   );
-  // const upload
-  // const getTeamMembers = async () => {
-  //   await axios
-  //     .get(PATH_API + `/users/getteammembers/${teamData.id}`)
-  //     .then((res) => {
-  //       console.log("ffffffff", res);
 
-  //       form.setFieldValue("items", res.data);
-  //     });
-  // };
-  const confirm = () => {
-    const memberId = form.getFieldValue(["items", field.name, "id"]); // ดึงค่า id ของสมาชิก
-    console.log("Deleting member with ID:", memberId);
-
-    if (memberId) {
-      if (memberId === presidentData.id) {
-        message.error("ไม่สามารถลบหัวหน้ากลุ่มออกจากทีมได้");
-      } else {
-        axios
-          .post(`${PATH_API}/users/delete/${memberId}/${authUser.uid}`)
-          .then((res) => {
-            console.log("Member deleted:", res);
-          })
-          .catch((err) => {
-            console.error("Error deleting member:", err);
-          });
-      }
-    }
-  };
   const getMyTeam = async () => {
     await axios
       .get(PATH_API + `/groups/getbyid/${authUser.uid}`)
@@ -375,17 +386,18 @@ export const TeamMemberPage = () => {
                       }
                     >
                       <Row gutter={[16, 16]}>
-                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                        <Form.Item
+                          hidden="true"
+                          // label="id"
+                          name={[field.name, "id"]}
+                        >
+                          <Input disabled={true} />
+                        </Form.Item>
+                        <Col xs={24} sm={24} md={12} lg={4} xl={4}>
                           <Form.Item
-                            hidden="true"
-                            label="id"
-                            name={[field.name, "id"]}
-                          >
-                            <Input disabled={true} />
-                          </Form.Item>
-                          <Form.Item
-                            label="ProfilePicture"
+                            label="รูปภาพโปรไฟล์"
                             name={[field.name, "ProfilePicture"]}
+                            layout="horizontal"
                           >
                             <Flex gap="middle" wrap>
                               <Upload
@@ -419,6 +431,8 @@ export const TeamMemberPage = () => {
                             </Flex>
                             {/* <UploadProfilePicture /> */}
                           </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={4} lg={4} xl={4}>
                           <Form.Item
                             label="คำนำหน้า"
                             name={[field.name, "NamePrefixId"]}
@@ -450,6 +464,8 @@ export const TeamMemberPage = () => {
                                 : null}
                             </Select>
                           </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                           <Form.Item
                             label="ชื่อ"
                             name={[field.name, "FirstName"]}
@@ -462,7 +478,8 @@ export const TeamMemberPage = () => {
                           >
                             <Input />
                           </Form.Item>
-
+                        </Col>
+                        <Col xs={24} sm={24} md={6} lg={6} xl={6}>
                           <Form.Item
                             label="นามสกุล"
                             name={[field.name, "LastName"]}
@@ -475,7 +492,8 @@ export const TeamMemberPage = () => {
                           >
                             <Input />
                           </Form.Item>
-
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="เลขบัตรประชาชน"
                             name={[field.name, "NationalId"]}
@@ -509,7 +527,8 @@ export const TeamMemberPage = () => {
                           >
                             <DatePicker locale={thLocale} onChange={onChange} />
                           </Form.Item>
-
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="อาชีพ"
                             name={[field.name, "Occupation"]}
@@ -545,7 +564,8 @@ export const TeamMemberPage = () => {
                                 : null}
                             </Select>
                           </Form.Item>
-
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="สังกัดสถานศึกษา"
                             name={[field.name, "AffiliatedAgency"]}
@@ -572,7 +592,169 @@ export const TeamMemberPage = () => {
                           >
                             <Input />
                           </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="ซอย / ถนน"
+                            name={[field.name, "Address2"]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "กรุณารอกที่อยู่ปัจจุบัน!",
+                            //   },
+                            // ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
 
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="จังหวัด"
+                            name={[field.name, "AddressProvince"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "กรุณารอกที่อยู่ปัจจุบัน!",
+                              },
+                            ]}
+                          >
+                            <Select
+                              style={{ width: "100%" }}
+                              dropdownStyle={{ whiteSpace: "normal" }}
+                              loading={optionsLoading}
+                              placeholder="จังหวัด"
+                              showSearch
+                              optionFilterProp="children" // ให้ค้นหาจาก children ของ Select.Option
+                              filterOption={(input, option) =>
+                                String(option.children)
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              onChange={(e) => {
+                                getAmphure(e);
+                              }}
+                            >
+                              {provinceOption
+                                ? provinceOption.map((item) => (
+                                    <Select.Option
+                                      key={item.id}
+                                      value={item.id}
+                                    >
+                                      {item.name_th}
+                                    </Select.Option>
+                                  ))
+                                : null}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="อำเภอ"
+                            name={[field.name, "AddressDistrict"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "กรุณารอกที่อยู่ปัจจุบัน!",
+                              },
+                            ]}
+                          >
+                            <Select
+                              style={{ width: "100%" }}
+                              dropdownStyle={{ whiteSpace: "normal" }}
+                              loading={optionsLoading}
+                              placeholder="อำเภอ"
+                              showSearch
+                              optionFilterProp="children" // ให้ค้นหาจาก children ของ Select.Option
+                              filterOption={(input, option) =>
+                                String(option.children)
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              onChange={(e) => {
+                                getTambon(e);
+                              }}
+                            >
+                              {amphureOption
+                                ? amphureOption.map((item) => (
+                                    <Select.Option
+                                      key={item.id}
+                                      value={item.id}
+                                    >
+                                      {item.name_th}
+                                    </Select.Option>
+                                  ))
+                                : null}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="ตำบล"
+                            name={[field.name, "AddressSubDistrict"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "กรุณารอกที่อยู่ปัจจุบัน!",
+                              },
+                            ]}
+                          >
+                            <Select
+                              style={{ width: "100%" }}
+                              dropdownStyle={{ whiteSpace: "normal" }}
+                              loading={optionsLoading}
+                              placeholder="ตำบล"
+                              showSearch
+                              optionFilterProp="children" // ให้ค้นหาจาก children ของ Select.Option
+                              filterOption={(input, option) =>
+                                String(option.children)
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              onChange={(e) => {
+                                console.log("AddressSubDistrict", e);
+                                getPostcode(e);
+                              }}
+                            >
+                              {tambonOption
+                                ? tambonOption.map((item) => (
+                                    <Select.Option
+                                      key={item.id}
+                                      value={item.id}
+                                    >
+                                      {item.name_th}
+                                    </Select.Option>
+                                  ))
+                                : null}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="รหัสไปรษณีย์"
+                            name={[field.name, "Postcode"]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "กรุณารอกที่อยู่ปัจจุบัน!",
+                            //   },
+                            // ]}
+                          >
+                            <Input
+                              // value={postcodeOption}
+                              onClick={() => {
+                                const data = form.getFieldValue([
+                                  "items",
+                                  field.name,
+                                  "AddressSubDistrict",
+                                ]);
+                                getPostcode(data, field.name);
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="เบอร์ติดต่อ"
                             name={[field.name, "Phone"]}
@@ -590,7 +772,8 @@ export const TeamMemberPage = () => {
                           >
                             <Input />
                           </Form.Item>
-
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="Line ID"
                             name={[field.name, "LineId"]}

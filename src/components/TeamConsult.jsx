@@ -346,17 +346,15 @@ export const TeamConsultPage = () => {
                       }
                     >
                       <Row gutter={[16, 16]}>
-                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
-                          <Form.Item
-                            label="id"
-                            name={[field.name, "id"]}
-                            hidden={true}
-                          >
-                            <Input disabled />
-                          </Form.Item>
+                        <Form.Item name={[field.name, "id"]} hidden={true}>
+                          <Input disabled />
+                        </Form.Item>
+
+                        <Col xs={24} sm={24} md={4} lg={4} xl={4}>
                           <Form.Item
                             label="ProfilePicture"
                             name={[field.name, "ProfilePicture"]}
+                            layout="horizontal"
                           >
                             <Flex gap="middle" wrap>
                               <Upload
@@ -390,6 +388,8 @@ export const TeamConsultPage = () => {
                             </Flex>
                             {/* <UploadProfilePicture /> */}
                           </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={24} md={4} lg={4} xl={4}>
                           <Form.Item
                             label="คำนำหน้า"
                             name={[field.name, "NamePrefixId"]}
@@ -444,9 +444,7 @@ export const TeamConsultPage = () => {
                             <Input />
                           </Form.Item>
                         </Col>
-                      </Row>
 
-                      <Row gutter={[16, 16]}>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="เลขบัตรประชาชน"
@@ -484,18 +482,6 @@ export const TeamConsultPage = () => {
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
-                            label="สังกัดสถานศึกษา"
-                            name={[field.name, "AffiliatedAgency"]}
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "กรุณากรอกสังกัดสถานศึกษา!",
-                            //   },
-                            // ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                          <Form.Item
                             label="อาชีพ"
                             name={[field.name, "Occupation"]}
                             rules={[
@@ -528,9 +514,21 @@ export const TeamConsultPage = () => {
                             </Select>
                           </Form.Item>
                         </Col>
-                      </Row>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+                          <Form.Item
+                            label="สังกัดสถานศึกษา"
+                            name={[field.name, "AffiliatedAgency"]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "กรุณากรอกสังกัดสถานศึกษา!",
+                            //   },
+                            // ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
 
-                      <Row gutter={[16, 16]}>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="ที่อยู่ปัจจุบัน"
@@ -575,9 +573,7 @@ export const TeamConsultPage = () => {
                             <Input />
                           </Form.Item>
                         </Col>
-                      </Row>
 
-                      <Row gutter={[16, 16]}>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="Email"
