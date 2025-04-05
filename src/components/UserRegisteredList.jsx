@@ -45,18 +45,18 @@ const UserRegisteredList = () => {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "auto" }}>
+    <div style={{ padding: "25px", maxWidth: "1200px", margin: "auto" }}>
       <Title level={2} style={{ textAlign: "center", color: "#1890ff" }}>
         รายการที่คุณลงทะเบียนไว้
       </Title>
 
       {loading ? (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <div style={{ textAlign: "center", marginTop: "25px" }}>
           <Spin size="large" />
         </div>
       ) : registrations.length === 0 ? (
         <p style={{ textAlign: "center", color: "#888", fontSize: "16px" }}>
-          ❌ ยังไม่มีการแข่งขันที่คุณสมัคร
+          ยังไม่มีการแข่งขันที่คุณสมัคร
         </p>
       ) : (
         <Row gutter={[16, 16]} justify="center">

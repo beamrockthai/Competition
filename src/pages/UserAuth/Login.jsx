@@ -1,32 +1,47 @@
 // components/UserAuth/Login.jsx
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, Card, Typography, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import {
+  AlipayOutlined,
+  LockOutlined,
+  MobileOutlined,
+  TaobaoOutlined,
+  UserOutlined,
+  WeiboOutlined,
+  WindowsOutlined,
+  CodeSandboxOutlined,
+} from "@ant-design/icons";
+import {
+  LoginFormPage,
+  ProConfigProvider,
+  ProFormCaptcha,
+  ProFormCheckbox,
+  ProFormText,
+} from "@ant-design/pro-components";
+import { Button, Divider, Space, Tabs, message, theme } from "antd";
 import { useUserAuth } from "../../Context/UserAuth";
 
-const { Title } = Typography;
-
-export const Login = () => {
+const Login = () => {
+  const [loginType, setLoginType] = useState("account");
   const [loading, setLoading] = useState(false);
+  const { token } = theme.useToken();
   const { user, logIn } = useUserAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ถ้าผู้ใช้ล็อกอินค้างอยู่แล้ว ให้เด้งกลับไปหน้า "/" เลย
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  const onFinish = async (values) => {
+  const handleLogin = async (values) => {
     setLoading(true);
     try {
-      await logIn(values.email, values.password);
+      await logIn(values.username, values.password);
       message.success("Login successful!");
-      navigate("/"); // ไปหน้า home (หรือ dashboard) ได้เลย
+      navigate("/");
     } catch (error) {
-      // แสดงรายละเอียด error ชัดเจน
       console.log("Login error:", error.code, error.message);
       switch (error.code) {
         case "auth/wrong-password":
@@ -46,47 +61,147 @@ export const Login = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        background: "#f0f2f5",
-      }}
-    >
-      <Card style={{ width: 350, padding: "20px", borderRadius: "10px" }}>
-        <Title level={2} style={{ textAlign: "center", color: "#1890ff" }}>
-          Login
-        </Title>
-        <Form name="login_form" onFinish={onFinish} layout="vertical">
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Please enter your email!" }]}
+    <ProConfigProvider dark>
+      <div style={{ backgroundColor: "white", height: "100vh" }}>
+        <LoginFormPage
+          backgroundVideoUrl="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4"
+          logo={
+            <CodeSandboxOutlined style={{ fontSize: 50, color: "#DC143C" }} />
+          }
+          title="Compatition"
+          subTitle="ระบบการเเข่งขันกีฬา"
+          onFinish={handleLogin}
+          submitter={{
+            searchConfig: {
+              submitText: "ล็อกอิน",
+            },
+            submitButtonProps: {
+              loading,
+            },
+          }}
+          containerStyle={{
+            backgroundColor: "rgba(0, 0, 0,0.65)",
+            backdropFilter: "blur(4px)",
+          }}
+          activityConfig={{
+            style: {
+              boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.2)",
+              color: token.colorTextHeading,
+              borderRadius: 8,
+              backgroundColor: "rgba(220, 20, 60)",
+              backdropFilter: "blur(4px)",
+            },
+            title: "กิจกรรมแนะนำ",
+            subTitle: "ลงชื่อเข้าใช้งานเพื่อรับสิทธิพิเศษ",
+            // action: (
+            //   <Button
+            //     size="large"
+            //     style={{
+            //       borderRadius: 20,
+            //       background: token.colorBgElevated,
+            //       color: token.colorPrimary,
+            //       width: 120,
+            //     }}
+            //   >
+            //     เริ่มเลย
+            //   </Button>
+            // ),
+          }}
+          // actions={
+          //   <div style={{ textAlign: "center" }}>
+          //     <Divider plain>
+          //       <span style={{ color: token.colorTextPlaceholder }}>
+          //         เข้าสู่ระบบด้วยบัญชีอื่น
+          //       </span>
+          //     </Divider>
+          //     <Space size={24}>
+          //       <AlipayOutlined style={{ fontSize: 24, color: "#1677FF" }} />
+          //       <TaobaoOutlined style={{ fontSize: 24, color: "#FF6A10" }} />
+          //       <WeiboOutlined style={{ fontSize: 24, color: "#1890ff" }} />
+          //     </Space>
+          //   </div>
+          // }
+        >
+          <Tabs
+            centered
+            activeKey={loginType}
+            onChange={(key) => setLoginType(key)}
           >
-            <Input prefix={<UserOutlined />} placeholder="Email" />
-          </Form.Item>
+            <Tabs.TabPane key="account" tab="บัญชีผู้ใช้" />
+            {/* <Tabs.TabPane key="phone" tab="เบอร์โทรศัพท์" /> */}
+          </Tabs>
 
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Please enter your password!" }]}
-          >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-          </Form.Item>
+          {loginType === "account" && (
+            <>
+              <ProFormText
+                name="username"
+                fieldProps={{
+                  size: "large",
+                  prefix: <UserOutlined />,
+                }}
+                placeholder="Email"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณากรอกอีเมล",
+                  },
+                ]}
+              />
+              <ProFormText.Password
+                name="password"
+                fieldProps={{
+                  size: "large",
+                  prefix: <LockOutlined />,
+                }}
+                placeholder="รหัสผ่าน"
+                rules={[
+                  {
+                    required: true,
+                    message: "กรุณากรอกรหัสผ่าน",
+                  },
+                ]}
+              />
+            </>
+          )}
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Login
-            </Button>
-          </Form.Item>
-        </Form>
+          {/* {loginType === "phone" && (
+            <>
+              <ProFormText
+                name="mobile"
+                fieldProps={{
+                  size: "large",
+                  prefix: <MobileOutlined />,
+                }}
+                placeholder="เบอร์โทรศัพท์"
+                rules={[
+                  { required: true, message: "กรุณากรอกเบอร์โทรศัพท์" },
+                  { pattern: /^0\d{9}$/, message: "รูปแบบเบอร์ไม่ถูกต้อง" },
+                ]}
+              />
+              <ProFormCaptcha
+                name="captcha"
+                placeholder="กรอกรหัสยืนยัน"
+                onGetCaptcha={async () => {
+                  message.success("ส่งรหัส OTP แล้ว (mock: 1234)");
+                }}
+                rules={[
+                  { required: true, message: "กรุณากรอกรหัสยืนยัน" },
+                ]}
+                captchaTextRender={(timing, count) =>
+                  timing ? `${count} วินาที` : "ขอรหัสยืนยัน"
+                }
+              />
+            </>
+          )} */}
 
-        <div style={{ textAlign: "center" }}>
-          <Typography.Text>
-            Don't have an account? <a href="/register">Register</a>
-          </Typography.Text>
-        </div>
-      </Card>
-    </div>
+          <div style={{ marginBottom: 26 }}>
+            {/* <a style={{ float: "right"  }} href="/register">สมัครเข้าสู่ระบบ</a> */}
+            <Link to="/register">สมัครสมาชิกเข้าสู่ระบบ</Link>
+          </div>
+        </LoginFormPage>
+      </div>
+    </ProConfigProvider>
   );
 };
+
+export default Login;

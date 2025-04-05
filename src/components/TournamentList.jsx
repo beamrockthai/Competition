@@ -15,8 +15,8 @@ const TournamentList = ({ tournaments }) => {
 
   return (
     // container ห่อหุ้มด้วย maxWidth และ overflowX เพื่อรองรับหน้าจอที่เล็กลง
-    <div style={{ padding: "20px", maxWidth: "100%", overflowX: "auto" }}>
-      <Row gutter={[16, 16]}>
+    <div style={{ padding: "15px", maxWidth: "100%", overflowX: "auto" }}>
+      <Row gutter={[30, 16]}>
         {tournaments.map((tournament) => (
           <Col key={tournament.id} xs={24} sm={12} md={8} lg={6}>
             <Card
@@ -36,7 +36,7 @@ const TournamentList = ({ tournaments }) => {
                   border: "none",
                   cursor: "default",
                   width: "100%",
-                  marginBottom: "10px",
+                  marginBottom: "20px",
                 }}
               >
                 {tournament.status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}

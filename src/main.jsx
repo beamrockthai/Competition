@@ -13,8 +13,8 @@ import App from "./App";
 import { ProtectedRoute } from "./pages/ProtectedRoute/ProtectedRoute";
 
 // Components
-import { Login } from "./pages/UserAuth/Login";
-import { Register } from "./pages/UserAuth/Register";
+import  Login  from "./pages/UserAuth/Login";
+import  Register  from "./pages/UserAuth/Register";
 import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
 import { UserManagement } from "./pages/Admin/UserManagement";
