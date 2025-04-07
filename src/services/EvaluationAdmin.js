@@ -14,6 +14,7 @@ const EvaluationAdmin = async () => {
       formName: formData.formName || "ไม่ระบุ",
       submittedAt: new Date(formData.submittedAt).toLocaleString() || "ไม่ระบุ",
       evaluationResults: formData.evaluationResults || {},
+      criteria: formData.criteria || [],
     };
   });
 

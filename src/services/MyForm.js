@@ -32,6 +32,7 @@ export const submitEvaluationToFirestore = async ({
   formName,
   directorName,
   evaluationResults,
+  criteria,
 }) => {
   try {
     const docRef = doc(collection(db, "submitform"), formId); // อ้างอิงถึง submitform
@@ -41,6 +42,7 @@ export const submitEvaluationToFirestore = async ({
       directorName, // ชื่อผู้ประเมิน
       evaluationResults, // ผลการประเมิน
       submittedAt: new Date().toISOString(), // เวลาที่บันทึก
+      criteria,
     });
     console.log("Evaluation successfully submitted to Firestore!");
   } catch (error) {

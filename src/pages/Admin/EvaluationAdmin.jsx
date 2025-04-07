@@ -34,11 +34,31 @@ const EvaluationAdmin = () => {
       title: "ผลการประเมิน",
       dataIndex: "evaluationResults",
       key: "evaluationResults",
-      render: (evaluationResults) =>
-        Object.entries(evaluationResults)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(", "),
+      render: (evaluationResults, record) => {
+        console.log("bead", record.criteria);
+        console.log("beam2", evaluationResults);
+        // สร้าง map: id (string) => name
+        const criteriaMap = {};
+        (record.criteria || []).forEach((item) => {
+          criteriaMap[item.id.toString()] = item.name;
+        });
+
+        return Object.entries(evaluationResults)
+          .map(([id, score]) => {
+            const name = criteriaMap[id] || `ไม่ทราบหัวข้อ (${id})`;
+            return `${name}: ${score}`;
+          })
+          .join(", ");
+      },
     },
+
+    // {
+    //   title: "ผลการประเมิน",
+    //   dataIndex: "evaluationResults",
+    //   key: "evaluationResults",
+    //   render: (evaluationResults) =>
+    //     Object.values(evaluationResults).join(", "),
+    // },
 
     {
       title: "actions",

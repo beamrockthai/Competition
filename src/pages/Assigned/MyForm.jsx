@@ -77,12 +77,21 @@ const MyForm = () => {
           const formId = selectedForm.id;
           const formName = selectedForm.name;
           const directorName = user?.name || "Unknown Director";
+          const criteria = selectedForm?.criteria || [];
+
+          console.log("formId:", formId);
+          console.log("formName:", formName);
+          console.log("directorName:", directorName);
+          console.log("evaluationResults:", evaluationResults);
+          console.log("criteria:", criteria);
           await submitEvaluationToFirestore({
             formId,
             formName,
             directorName,
             evaluationResults,
+            criteria,
           });
+
           setEvaluatedForms((prev) => ({
             ...prev,
             [formId]: { ...evaluationResults },
