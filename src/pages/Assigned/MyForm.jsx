@@ -24,9 +24,10 @@ const MyForm = () => {
       if (user) {
         try {
           setLoading(true);
-          // const formsData = await fetchDirecForm(user.id);  เก่า
-          console.log("Logged in UID:", user?.uid);
-          const formsData = await fetchDirecForm(user.uid); //ใหม่
+          const formsData = await fetchDirecForm(user.id); // ไอดีกรรมการ
+
+          // const formsData = await fetchDirecForm(user.uid); //ใหม่
+          console.log("Logged in UID:", user?.id);
           setForms(formsData);
           console.log("formsData:", formsData);
 
@@ -105,7 +106,7 @@ const MyForm = () => {
 
   const unEvaluatedForms = forms.filter((form) => !evaluatedForms[form.id]);
   const alreadyEvaluatedForms = forms.filter((form) => evaluatedForms[form.id]);
-  const participant = users.find((u) => u.id === form.participantId);
+  const participant = users.find((u) => u.id === forms.participantId);
 
   return (
     <div style={{ padding: "20px" }}>

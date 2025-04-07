@@ -25,14 +25,21 @@ const EvaluationAdmin = () => {
       key: "submittedAt",
     },
     // {
-    //   title: "ผลการประเมิน",
+    //   title: "คะเเนน",
     //   dataIndex: "evaluationResults",
     //   key: "evaluationResults",
-    //   render: (evaluationResults) =>
-    //     Object.entries(evaluationResults)
-    //       .map(([key, value]) => `${key}: ${value}`)
-    //       .join(", "),
     // },
+
+    {
+      title: "ผลการประเมิน",
+      dataIndex: "evaluationResults",
+      key: "evaluationResults",
+      render: (evaluationResults) =>
+        Object.entries(evaluationResults)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", "),
+    },
+
     {
       title: "actions",
       key: "actions",
