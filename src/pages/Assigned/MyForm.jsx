@@ -5,10 +5,13 @@ import {
   submitEvaluationToFirestore,
   fetchEvaluations,
 } from "../../services/MyForm";
+import { loadUsers } from "../../services/userFunctions";
 import { useUserAuth } from "../../Context/UserAuth";
+import { use } from "react";
 
 const MyForm = () => {
   const [forms, setForms] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [evaluationModalVisible, setEvaluationModalVisible] = useState(false);
   const [selectedForm, setSelectedForm] = useState(null);
@@ -21,9 +24,17 @@ const MyForm = () => {
       if (user) {
         try {
           setLoading(true);
-          const formsData = await fetchDirecForm(user.id);
+          // const formsData = await fetchDirecForm(user.id);  เก่า
+          console.log("Logged in UID:", user?.uid);
+          const formsData = await fetchDirecForm(user.uid); //ใหม่
           setForms(formsData);
+          console.log("formsData:", formsData);
+
           const evaluations = await fetchEvaluations();
+
+          const allUsers = await loadUsers();
+          setUsers(allUsers);
+
           const evaluationsMap = evaluations.reduce((acc, evaluation) => {
             acc[evaluation.formId] = evaluation.evaluationResults;
             return acc;
@@ -94,6 +105,7 @@ const MyForm = () => {
 
   const unEvaluatedForms = forms.filter((form) => !evaluatedForms[form.id]);
   const alreadyEvaluatedForms = forms.filter((form) => evaluatedForms[form.id]);
+  const participant = users.find((u) => u.id === form.participantId);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -102,12 +114,21 @@ const MyForm = () => {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
             {unEvaluatedForms.length > 0 ? (
               unEvaluatedForms.map((form) => (
-                <Card key={form.id} title={form.name} style={{ width: 300 }}>
+                <Card
+                  key={form.id}
+                  title={form.name}
+                  del={users.find((u) => u.id === form.createdBy)?.fullname}
+                  style={{ width: 300 }}
+                >
                   <p>
-                    <strong>Title:</strong> {form.title}
+                    <strong>ชื่อกีฬา:</strong> {form.name}
                   </p>
-                  <p>
-                    <strong>Description:</strong> {form.description}
+
+                  <p className="text-sm text-gray-400 mt-2">
+                    นักกีฬาที่ต้องประเมิน:{" "}
+                    {participant
+                      ? `${participant.firstName} ${participant.lastName}`
+                      : "ไม่พบชื่อนักกีฬา"}
                   </p>
                   <Button
                     type="primary"
@@ -128,10 +149,13 @@ const MyForm = () => {
               alreadyEvaluatedForms.map((form) => (
                 <Card key={form.id} title={form.name} style={{ width: 300 }}>
                   <p>
-                    <strong>Title:</strong> {form.title}
+                    <strong>ชื่อกีฬา:</strong> {form.name}
                   </p>
-                  <p>
-                    <strong>Description:</strong> {form.description}
+                  <p className="text-sm text-gray-400 mt-2">
+                    นักกีฬาที่ประเมินเเล้ว:{" "}
+                    {participant
+                      ? `${participant.firstName} ${participant.lastName}`
+                      : "ไม่พบชื่อนักกีฬา"}
                   </p>
                   <Button
                     type="primary"

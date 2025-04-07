@@ -47,11 +47,14 @@ export const fetchDirectors = async () => {
 };
 
 // เลือกฟอร์มให้กรรมการ
-export const assignForm = async (formId, directorIds) => {
+export const assignForm = async (formId, directorIds, participantId) => {
   try {
     const formDoc = doc(db, "evaluations", formId);
-    await updateDoc(formDoc, { assignedTo: directorIds });
-    console.log("Form assigned successfully");
+    await updateDoc(formDoc, {
+      assignedTo: directorIds,
+      participantId: participantId,
+    });
+    console.log("Form assigned successfully", participantId);
   } catch (error) {
     console.error("Error assigning form:", error);
   }
