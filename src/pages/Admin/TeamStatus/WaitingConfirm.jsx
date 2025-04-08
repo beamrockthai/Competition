@@ -3,14 +3,15 @@ import { EventId, PATH_API } from "../../../constrant";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export const EvaluationCompletePage = () => {
-  const status = "Yes";
-  const [resultData, setResultData] = useState();
+export const WaitingConfirmPage = () => {
+  const status = "WaitingConfirm";
+  const [waitingConfirmData, setWaitingConfirmData] = useState();
   const [answer, setAnswer] = useState();
   const [tableLoading, setTableLoading] = useState();
   const [modalLoading, setModalLoading] = useState();
+
   useEffect(() => {
-    getResult();
+    getWaitingConfirm();
   }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = (e) => {
@@ -23,13 +24,15 @@ export const EvaluationCompletePage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const getResult = () => {
+  const getWaitingConfirm = () => {
     setTableLoading(true);
-    axios.get(PATH_API + `/evaluation_results/get/${EventId}`).then((res) => {
-      console.log("getResult", res.data);
-      setResultData(res.data);
-      setTableLoading(false);
-    });
+    axios
+      .get(PATH_API + `/evaluation_results/getbystatus/${status}/${EventId}`)
+      .then((res) => {
+        console.log("getTeam", res.data);
+        setWaitingConfirmData(res.data);
+        setTableLoading(false);
+      });
   };
   const getAnswer = (e) => {
     setModalLoading(true);
@@ -93,8 +96,12 @@ export const EvaluationCompletePage = () => {
   ];
   return (
     <>
-      EvaluationCompletePage
-      <Table columns={columns} dataSource={resultData} loading={tableLoading} />
+      WaitingConfirmPage
+      <Table
+        columns={columns}
+        dataSource={waitingConfirmData}
+        loading={tableLoading}
+      />
       <Modal
         title="ผลการประมวลคะแนน"
         open={isModalOpen}

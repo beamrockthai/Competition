@@ -11,20 +11,25 @@
   background-color: #fff;
   border: none;
 }
-
+.ant-menu-dark.ant-menu-root.ant-menu-vertical {
+  background-color: transparent !important;
+}
 /* เมนูปกติ */
+.ant-menu-dark .ant-menu-item,
 .custom-menu .ant-menu-item {
   color: #333; /* สีข้อความปกติ */
   transition: background-color 0.3s, color 0.3s;
 }
 
 /* เมื่อ hover เมนู (ที่ไม่ได้ถูกเลือก) */
+
 .custom-menu .ant-menu-item:hover:not(.ant-menu-item-selected) {
   background-color: #b12341 !important;
   color: #fff !important;
 }
 
 /* เมนูที่ถูกเลือก */
+.ant-menu-dark .ant-menu-item-selected,
 .custom-menu .ant-menu-item-selected {
   background-color: #b12341 !important;
   color: #fff !important;

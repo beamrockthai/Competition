@@ -145,19 +145,30 @@ export const TeamMemberPage = () => {
   };
   const onFinish = async (values) => {
     console.log("Success:", values.items[0]);
-    console.log("PAONN", values);
+
     setButtonLoading(true);
     for (var i = 0; i < values.items.length; i++) {
-      console.log(dayjs(values.items[i].DateofBirth, "DDMMYYYY"));
+      console.log("PAONN", {
+        ...values.items[i],
+        IsPresident: values.items[i].IsPresident
+          ? values.items.IsPresident
+          : "No",
+        DateofBirth: dayjs(values.items[i].DateofBirth, "DDMMYYYY"),
+        GroupId: teamData.id,
+        CreatedBy: authUser.id,
+        Role: values.items[i].Role ? values.items.Role : 4,
+      });
+
       await axios
         .post(PATH_API + "/users/create", {
           ...values.items[i],
           IsPresident: values.items[i].IsPresident
             ? values.items.IsPresident
             : "No",
+          DateofBirth: dayjs(values.items[i].DateofBirth, "DDMMYYYY"),
           GroupId: teamData.id,
           CreatedBy: authUser.id,
-          Role: 4,
+          Role: values.items[i].Role ? values.items.Role : 4,
         })
         .then((res) => {
           if (res.status === 409) {
@@ -180,39 +191,23 @@ export const TeamMemberPage = () => {
     message.success("บันทึกข้อมูลทีมสำเร็จแล้ว!", 5);
   };
 
-  const onChange = (date, dateString) => {
+  const onChange = (date, dateString, name) => {
     console.log(dateString);
     if (date) {
       const age = dayjs().diff(date, "year"); // คำนวณอายุ
       if (age < 15) {
+        console.log("less15");
         message.error("คุณต้องมีอายุอย่างน้อย 15 ปีขึ้นไป!", 5);
-        form.setFieldsValue(["items", field.name, "DateofBirth"], null); // รีเซ็ตค่าในฟอร์ม
+        form.setFieldValue(["items", name, "DateofBirth"], null); // รีเซ็ตค่าในฟอร์ม
       } else {
-        form.setFieldsValue(["items", field.name, "DateofBirth"], date); // อัปเดตค่าในฟอร์ม
+        console.log("dateok");
+        form.setFieldValue(["items", name, "DateofBirth"], date); // อัปเดตค่าในฟอร์ม
       }
     }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  const uploadButton = (
-    <button
-      style={{
-        border: 0,
-        background: "none",
-      }}
-      type="button"
-    >
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div
-        style={{
-          marginTop: 8,
-        }}
-      >
-        Upload
-      </div>
-    </button>
-  );
 
   const getMyTeam = async () => {
     await axios
@@ -230,9 +225,10 @@ export const TeamMemberPage = () => {
           .get(PATH_API + `/users/getteammembers/${res.data.id}`)
           .then((res) => {
             console.log("getteammembers", res);
+
             const newdata = res.data.map((e) => ({
               ...e,
-              Occupation: e.OccupationId,
+              OccupationId: e.OccupationId,
               DateofBirth: e.DateofBirth
                 ? dayjs(e.DateofBirth, "YYYY-MM-DD")
                 : null,
@@ -251,7 +247,7 @@ export const TeamMemberPage = () => {
       LastName: a.LastName || null,
       NationalId: a.NationalId || null,
       // DateofBirth: a.DateofBirth || null,
-      Occupation: a.Occupation || null,
+      OccupationId: a.OccupationId || null,
       AffiliatedAgency: a.AffiliatedAgency || null,
       Address1: a.Address1 || null,
       Address2: a.Address2 || null,
@@ -525,13 +521,16 @@ export const TeamMemberPage = () => {
                               },
                             ]}
                           >
-                            <DatePicker locale={thLocale} onChange={onChange} />
+                            <DatePicker
+                              // locale={thLocale}
+                              onChange={(e) => onChange(e, field.name)}
+                            />
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={8}>
                           <Form.Item
                             label="อาชีพ"
-                            name={[field.name, "Occupation"]}
+                            name={[field.name, "OccupationId"]}
                             rules={[
                               {
                                 required: true,

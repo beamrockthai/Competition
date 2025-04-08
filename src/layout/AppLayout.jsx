@@ -132,7 +132,7 @@ export const AppLayout = (props) => {
 
         {/* Drawer สำหรับ Mobile Menu */}
         <Drawer
-          style={{ backgroundColor: "black" }}
+          style={{ backgroundColor: "#494949" }}
           title="Menu"
           placement="right"
           onClose={toggleDrawer}
