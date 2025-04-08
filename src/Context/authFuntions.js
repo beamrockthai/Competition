@@ -21,6 +21,7 @@ export async function signUpUser(
       email,
       password
     );
+
     const newUser = userCredential.user;
 
     const userDocRef = doc(db, "users", newUser.uid);
@@ -33,6 +34,7 @@ export async function signUpUser(
       role: "user",
       createdAt: serverTimestamp(),
     });
+    console.log("email:", email);
 
     return newUser;
   } catch (error) {

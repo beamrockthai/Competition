@@ -92,7 +92,7 @@ export const fetchUsers = async () => {
       ...doc.data(),
     }));
 
-    console.log("Fetched Users:", users); // ✅ ตรวจสอบว่าข้อมูลถูกดึงมาหรือไม่
+    console.log("Fetched Users:", users);
 
     return users;
   } catch (error) {

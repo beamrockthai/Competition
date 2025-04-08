@@ -13,6 +13,8 @@ import {
   FormOutlined,
   HomeOutlined,
   SelectOutlined,
+  HighlightOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useUserAuth } from "./Context/UserAuth";
@@ -69,7 +71,7 @@ const App = () => {
     },
     {
       key: "3",
-      icon: <UserOutlined />,
+      icon: <HighlightOutlined />,
       label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
 
@@ -82,13 +84,13 @@ const App = () => {
           },
           {
             key: "5",
-            icon: <UserOutlined />,
+            icon: <UserAddOutlined />,
             label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
           {
             key: "6",
             icon: <TrophyOutlined />,
-            label: <Link to="/admin-tournaments">สร้างการแข่งขัน</Link>,
+            label: <Link to="/admin-tournaments">จัดการการแข่งขัน</Link>,
           },
           {
             key: "7",
@@ -100,19 +102,34 @@ const App = () => {
             icon: <FormOutlined />,
             label: <Link to="/evaluation-admin">ผลการประเมิน</Link>,
           },
+          {
+            key: "9",
+            icon: <EditOutlined />,
+            label: <Link to="/AdminRank">จัดการคะเเนน</Link>,
+          },
+          // {
+          //   key: "teammanagement",
+          //   icon: <FormOutlined />,
+          //   label: <Link to="/teammanagement">จัดการทีม</Link>,
+          // },
+          // {
+          //   key: "director",
+          //   icon: <FormOutlined />,
+          //   label: <Link to="/director">หน้าหลักกรรมการ</Link>,
+          // },
         ]
       : []),
     ...(role === "director"
       ? [
           {
-            key: "9",
+            key: "11",
             icon: <SelectOutlined />,
             label: <Link to="/director-form">รายการต้องประเมิน</Link>,
           },
         ]
       : []),
     {
-      key: "10",
+      key: "12",
       icon: <SettingOutlined />,
       label: <Link to="/setting">ตั้งค่า</Link>,
     },
@@ -234,3 +251,9 @@ const App = () => {
 };
 
 export default App;
+// import { RouterProvider } from "react-router";
+// import { router } from "./routers";
+
+// function App() {
+//   return <RouterProvider router={router} />;
+// }

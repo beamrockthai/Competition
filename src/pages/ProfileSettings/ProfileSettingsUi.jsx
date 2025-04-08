@@ -28,7 +28,7 @@ const ProfileSettingUI = () => {
     >
       <Title level={3} style={{ textAlign: "left", color: "#ff4d4f" }}>
         ข้อมูลพื้นฐาน{" "}
-        <span style={{ color: "#ff4d4f", fontSize: "18px" }}>🔴</span>
+        <span style={{ color: "#ff4d4f", fontSize: "18px" }}></span>
       </Title>
 
       <Form form={form} layout="vertical" onFinish={updateProfile}>

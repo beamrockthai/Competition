@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Card, Button, Row, Col } from "antd";
+import { Card, Button, Row, Col, Badge, Typography } from "antd";
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import TournamentRegister from "./TournamentRegister";
-import { useUserAuth } from "../Context/UserAuth"; // ดึงข้อมูล User
+import { useUserAuth } from "../Context/UserAuth";
 
 const TournamentList = ({ tournaments }) => {
-  const { user } = useUserAuth(); // ดึงข้อมูล User ID
+  const { user } = useUserAuth();
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -14,49 +15,60 @@ const TournamentList = ({ tournaments }) => {
   };
 
   return (
-    // container ห่อหุ้มด้วย maxWidth และ overflowX เพื่อรองรับหน้าจอที่เล็กลง
-    <div style={{ padding: "15px", maxWidth: "100%", overflowX: "auto" }}>
-      <Row gutter={[30, 16]}>
+    <div style={{ padding: "30px", maxWidth: "100%", overflowX: "hidden" }}>
+      <Row gutter={[24, 24]}>
         {tournaments.map((tournament) => (
           <Col key={tournament.id} xs={24} sm={12} md={8} lg={6}>
-            <Card
-              title={tournament.tournamentName}
-              bordered={false}
-              style={{ width: "100%", marginBottom: "20px" }}
+            <Badge.Ribbon
+              text={tournament.status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}
+              color={tournament.status ? "green" : "red"}
             >
-              {/* คำอธิบายการแข่งขัน */}
-              <p>{tournament.description}</p>
-
-              {/* แสดงสถานะด้านล่างเนื้อหาการ์ด (ไม่ปิดชื่อ) */}
-              <Button
-                disabled
+              <Card
+                hoverable
+                bordered
                 style={{
-                  backgroundColor: tournament.status ? "#52c41a" : "#f5222d",
-                  color: "#fff",
-                  border: "none",
-                  cursor: "default",
                   width: "100%",
-                  marginBottom: "20px",
+                  minHeight: "280px",
+                  borderRadius: "12px",
                 }}
               >
-                {tournament.status ? "เปิดรับสมัคร" : "ปิดรับสมัคร"}
-              </Button>
+                <Typography.Title level={5} style={{ color: "#1677ff" }}>
+                  {tournament.tournamentName}
+                </Typography.Title>
 
-              {/* ปุ่มสมัครแข่งขัน */}
-              <Button
-                type="primary"
-                block
-                onClick={() => handleOpenRegister(tournament)}
-                disabled={!tournament.status}
-              >
-                สมัครแข่งขัน
-              </Button>
-            </Card>
+                <Typography.Paragraph
+                  type="secondary"
+                  style={{ minHeight: 60 }}
+                >
+                  {tournament.description}
+                </Typography.Paragraph>
+
+                <div style={{ marginBottom: 16 }}>
+                  {tournament.status ? (
+                    <CheckCircleTwoTone twoToneColor="#52c41a" /> // icon สีเขียว
+                  ) : (
+                    <CloseCircleTwoTone twoToneColor="#f5222d" /> // icon สีแดง
+                  )}{" "}
+                  <span style={{ marginLeft: 6 }}>
+                    {tournament.status ? "เปิดรับสมัครอยู่" : "ปิดรับสมัครแล้ว"}
+                  </span>
+                </div>
+
+                <Button
+                  type="primary"
+                  block
+                  disabled={!tournament.status}
+                  onClick={() => handleOpenRegister(tournament)}
+                >
+                  สมัครแข่งขัน
+                </Button>
+              </Card>
+            </Badge.Ribbon>
           </Col>
         ))}
       </Row>
 
-      {/* ตรวจสอบว่ามี user และ tournament ที่เลือกไว้หรือไม่ */}
+      {/* Modal สมัคร */}
       {selectedTournament && user && (
         <TournamentRegister
           visible={modalVisible}

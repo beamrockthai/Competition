@@ -34,6 +34,7 @@ const MyForm = () => {
           const evaluations = await fetchEvaluations();
 
           const allUsers = await loadUsers();
+          console.log(" users:", allUsers); // ← เพิ่มตรงนี้
           setUsers(allUsers);
 
           const evaluationsMap = evaluations.reduce((acc, evaluation) => {
@@ -79,11 +80,6 @@ const MyForm = () => {
           const directorName = user?.name || "Unknown Director";
           const criteria = selectedForm?.criteria || [];
 
-          console.log("formId:", formId);
-          console.log("formName:", formName);
-          console.log("directorName:", directorName);
-          console.log("evaluationResults:", evaluationResults);
-          console.log("criteria:", criteria);
           await submitEvaluationToFirestore({
             formId,
             formName,
@@ -123,31 +119,39 @@ const MyForm = () => {
         <Tabs.TabPane tab="ฟอร์มที่ต้องประเมิน" key="1">
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
             {unEvaluatedForms.length > 0 ? (
-              unEvaluatedForms.map((form) => (
-                <Card
-                  key={form.id}
-                  title={form.name}
-                  del={users.find((u) => u.id === form.createdBy)?.fullname}
-                  style={{ width: 300 }}
-                >
-                  <p>
-                    <strong>ชื่อกีฬา:</strong> {form.name}
-                  </p>
+              unEvaluatedForms.map((form) => {
+                const participant = users.find(
+                  (u) => u.id === form.participantId
+                );
+                console.log("🔎 form:", form);
+                console.log("📌 form.participantId:", form.participantId);
+                console.log(
+                  "👤 Assigned participant name:",
+                  user?.firstName,
+                  user?.lastName
+                );
+                return (
+                  <Card key={form.id} title={form.name} style={{ width: 300 }}>
+                    <p>
+                      <strong>ชื่อกีฬา:</strong> {form.name}
+                    </p>
 
-                  <p className="text-sm text-gray-400 mt-2">
-                    นักกีฬาที่ต้องประเมิน:{" "}
-                    {participant
-                      ? `${participant.firstName} ${participant.lastName}`
-                      : "ไม่พบชื่อนักกีฬา"}
-                  </p>
-                  <Button
-                    type="primary"
-                    onClick={() => handleEvaluateForm(form)}
-                  >
-                    ประเมิน
-                  </Button>
-                </Card>
-              ))
+                    <p className="text-sm text-gray-400 mt-2">
+                      นักกีฬาที่ต้องประเมิน:{" "}
+                      {participant
+                        ? `${participant.firstName} ${participant.lastName}`
+                        : "ไม่พบชื่อนักกีฬา"}
+                    </p>
+
+                    <Button
+                      type="primary"
+                      onClick={() => handleEvaluateForm(form)}
+                    >
+                      ประเมิน
+                    </Button>
+                  </Card>
+                );
+              })
             ) : (
               <p>ไม่มีฟอร์มที่ต้องประเมิน</p>
             )}
@@ -156,25 +160,30 @@ const MyForm = () => {
         <Tabs.TabPane tab="ฟอร์มที่ประเมินแล้ว" key="2">
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
             {alreadyEvaluatedForms.length > 0 ? (
-              alreadyEvaluatedForms.map((form) => (
-                <Card key={form.id} title={form.name} style={{ width: 300 }}>
-                  <p>
-                    <strong>ชื่อกีฬา:</strong> {form.name}
-                  </p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    นักกีฬาที่ประเมินเเล้ว:{" "}
-                    {participant
-                      ? `${participant.firstName} ${participant.lastName}`
-                      : "ไม่พบชื่อนักกีฬา"}
-                  </p>
-                  <Button
-                    type="primary"
-                    onClick={() => handleEvaluateForm(form)}
-                  >
-                    ดูผลลัพธ์การประเมิน
-                  </Button>
-                </Card>
-              ))
+              alreadyEvaluatedForms.map((form) => {
+                const participant = users.find(
+                  (u) => u.id === form.participantId
+                );
+                return (
+                  <Card key={form.id} title={form.name} style={{ width: 300 }}>
+                    <p>
+                      <strong>ชื่อกีฬา:</strong> {form.name}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      นักกีฬาที่ประเมินแล้ว:{" "}
+                      {participant
+                        ? `${participant.firstName} ${participant.lastName}`
+                        : "ไม่พบชื่อนักกีฬา"}
+                    </p>
+                    <Button
+                      type="primary"
+                      onClick={() => handleEvaluateForm(form)}
+                    >
+                      ดูผลลัพธ์การประเมิน
+                    </Button>
+                  </Card>
+                );
+              })
             ) : (
               <p>ไม่มีฟอร์มที่ประเมินแล้ว</p>
             )}

@@ -13,8 +13,8 @@ import App from "./App";
 import { ProtectedRoute } from "./pages/ProtectedRoute/ProtectedRoute";
 
 // Components
-import  Login  from "./pages/UserAuth/Login";
-import  Register  from "./pages/UserAuth/Register";
+import Login from "./pages/UserAuth/Login";
+import Register from "./pages/UserAuth/Register";
 import { Evaluation } from "./pages/Evaluation/evaluation";
 import { ManageDirectors } from "./pages/Admin/ManageDirectors";
 import { UserManagement } from "./pages/Admin/UserManagement";
@@ -25,6 +25,7 @@ import DashboardMain from "./pages/Dashboard/DashboardMain";
 import EvaluationAdmin from "./pages/Admin/EvaluationAdmin";
 import MyForm from "./pages/Assigned/MyForm";
 import ProfileSetting from "./pages/ProfileSettings/ProfileSettingsUi";
+import AdminRanking from "./pages/Admin/AdminRanking";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
   {
@@ -122,6 +123,15 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "AdminRank",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminRanking />
+          </ProtectedRoute>
+        ),
+      },
+
       // {
       //   path: "manage directors",
       //   element: <h1>Manage Directors</h1>,

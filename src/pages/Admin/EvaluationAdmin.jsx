@@ -35,8 +35,6 @@ const EvaluationAdmin = () => {
       dataIndex: "evaluationResults",
       key: "evaluationResults",
       render: (evaluationResults, record) => {
-        console.log("bead", record.criteria);
-        console.log("beam2", evaluationResults);
         // สร้าง map: id (string) => name
         const criteriaMap = {};
         (record.criteria || []).forEach((item) => {

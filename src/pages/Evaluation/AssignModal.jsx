@@ -68,6 +68,8 @@ const AssignModal = ({
     } catch (error) {
       console.error("Error assigning form:", error);
     }
+
+    console.log("Participant ID:", selectedParticipant);
   };
 
   return (
