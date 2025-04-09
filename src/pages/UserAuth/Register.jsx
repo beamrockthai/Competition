@@ -16,7 +16,6 @@ import {
 } from "@ant-design/icons";
 import { useUserAuth } from "../../Context/UserAuth";
 import thTH from "antd/locale/th_TH";
-// import CardIntro from "../../components/Card";
 
 const Register = () => {
   const [formValues, setFormValues] = useState(null);
@@ -72,9 +71,9 @@ const Register = () => {
             style={{
               flex: 1,
               display: "flex",
-              justifyContent: "flex-end", // ✅ ขยับเข้าในแนวนอน
-              alignItems: "center", // ✅ จัดให้อยู่กลางแนวตั้ง
-              paddingRight: 40, // ✅ ขยับให้ห่างจากขอบซ้าย
+              justifyContent: "flex-end", // ขยับเข้าในแนวนอน
+              alignItems: "center", // จัดให้อยู่กลางแนวตั้ง
+              paddingRight: 40, // ขยับให้ห่างจากขอบซ้าย
             }}
           >
             <CardIntro />

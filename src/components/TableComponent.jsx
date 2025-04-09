@@ -63,8 +63,8 @@ const TableComponent = ({
           value={searchText}
           onChange={(e) => handleSearch(e.target.value)}
           style={{
-            width: screens.xs ? "100%" : 300, // ✅ ยืดเต็มจอในหน้าจอเล็ก
-            maxWidth: "100%", // ✅ ป้องกันล้นกรอบ
+            width: screens.xs ? "100%" : 300, // ยืดเต็มจอในหน้าจอเล็ก
+            maxWidth: "100%", // ป้องกันล้นกรอบ
           }}
         />
       </div>

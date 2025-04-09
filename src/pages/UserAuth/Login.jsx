@@ -39,7 +39,7 @@ const Login = () => {
     setLoading(true);
     try {
       await logIn(values.username, values.password);
-      message.success("Login successful!");
+      message.success("ล็อกอินเข้าสู่ระบบเรียบร้อย");
       navigate("/");
     } catch (error) {
       console.log("Login error:", error.code, error.message);

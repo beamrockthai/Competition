@@ -123,21 +123,20 @@ const MyForm = () => {
                 const participant = users.find(
                   (u) => u.id === form.participantId
                 );
-                console.log("🔎 form:", form);
-                console.log("📌 form.participantId:", form.participantId);
-                console.log(
-                  "👤 Assigned participant name:",
-                  user?.firstName,
-                  user?.lastName
-                );
+                // console.log("🔎 form:", form);
+                // console.log("📌 form.participantId:", form.participantId);
+                // console.log(
+                //   "👤 Assigned participant name:",
+                //   user?.firstName,
+                //   user?.lastName
+                // );
                 return (
                   <Card key={form.id} title={form.name} style={{ width: 300 }}>
                     <p>
-                      <strong>ชื่อกีฬา:</strong> {form.name}
+                      <strong>ชื่อกีฬาที่ต้องประเมิน:</strong> {form.name}
                     </p>
-
-                    <p className="text-sm text-gray-400 mt-2">
-                      นักกีฬาที่ต้องประเมิน:{" "}
+                    <p>
+                      <strong>นักกีฬาที่ต้องประเมิน:</strong>
                       {participant
                         ? `${participant.firstName} ${participant.lastName}`
                         : "ไม่พบชื่อนักกีฬา"}
@@ -169,8 +168,8 @@ const MyForm = () => {
                     <p>
                       <strong>ชื่อกีฬา:</strong> {form.name}
                     </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      นักกีฬาที่ประเมินแล้ว:{" "}
+                    <p>
+                      <strong>นักกีฬาที่ต้องประเมิน:</strong>
                       {participant
                         ? `${participant.firstName} ${participant.lastName}`
                         : "ไม่พบชื่อนักกีฬา"}
