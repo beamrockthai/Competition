@@ -42,19 +42,19 @@ const Login = () => {
       message.success("ล็อกอินเข้าสู่ระบบเรียบร้อย");
       navigate("/");
     } catch (error) {
-      console.log("Login error:", error.code, error.message);
+      // console.log("Login error:", error.code, error.message);
       switch (error.code) {
         case "auth/wrong-password":
-          message.error("Wrong password! Please try again.");
+          message.error("รหัสผ่านผิด กรุณาลองใหม่อีกครั้ง.");
           break;
         case "auth/user-not-found":
-          message.error("User not found. Please register first.");
+          message.error("ไม่พบผู้ใช้ กรุณาลงทะเบียนก่อน.");
           break;
         case "auth/too-many-requests":
-          message.error("Too many failed attempts. Please try again later.");
+          message.error("คุณล็อกอินมากเกินไปกรุณาลองใหม่อีกครั้ง");
           break;
         default:
-          message.error("Login failed! " + error.message);
+          message.error("ล็อกอินไม่สําเร็จ " + error.message);
       }
     }
     setLoading(false);

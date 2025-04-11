@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Table,
   Button,
@@ -8,6 +8,7 @@ import {
   Select,
   message,
   Typography,
+  Input,
 } from "antd";
 import {
   createScore,
@@ -27,6 +28,8 @@ const AdminTableRank = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [searchTournament, setSearchTournament] = useState("");
 
   const fetchData = async () => {
     const data = await GetAllScore();
@@ -39,7 +42,6 @@ const AdminTableRank = () => {
       id: doc.id,
       ...doc.data(),
     }));
-
     const filteredUsers = allUsers.filter((user) => user.role === "user");
     setUsers(filteredUsers);
 
@@ -88,12 +90,34 @@ const AdminTableRank = () => {
     });
   };
 
+  const filteredScores = useMemo(() => {
+    return scores.filter((score) => {
+      const user = users.find((u) => u.id === score.userId);
+      const tournament = tournaments.find((t) => t.id === score.tournamentId);
+
+      const fullName = `${user?.firstName || ""} ${user?.lastName || ""}`;
+      const tournamentName = tournament?.tournamentName || "";
+
+      const userMatch = fullName
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      const tournamentMatch = tournamentName
+        .toLowerCase()
+        .includes(searchTournament.toLowerCase());
+
+      return userMatch && tournamentMatch;
+    });
+  }, [scores, users, tournaments, searchText, searchTournament]);
+
   const columns = [
     {
       title: "ชื่อผู้ใช้",
       dataIndex: "userId",
       key: "userId",
-      render: (id) => users.find((u) => u.id === id)?.firstName || id,
+      render: (id) => {
+        const user = users.find((u) => u.id === id);
+        return user ? `${user.firstName} ${user.lastName}` : id;
+      },
     },
     {
       title: "ชื่อกีฬา",
@@ -133,15 +157,35 @@ const AdminTableRank = () => {
   return (
     <div style={{ maxWidth: 1000, margin: "auto", padding: "20px" }}>
       <Title level={3}>จัดการคะแนนผู้ใช้</Title>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={() => setIsModalOpen(true)}
-      >
-        เพิ่มคะแนน
-      </Button>
 
-      <Table columns={columns} dataSource={scores} rowKey="id" />
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 16,
+          marginBottom: 16,
+        }}
+      >
+        <Input.Search
+          placeholder="ค้นหาชื่อผู้ใช้"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 250 }}
+        />
+
+        <Input.Search
+          placeholder="ค้นหาชื่อกีฬา"
+          allowClear
+          onChange={(e) => setSearchTournament(e.target.value)}
+          style={{ width: 250 }}
+        />
+
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+          เพิ่มคะแนน
+        </Button>
+      </div>
+
+      <Table columns={columns} dataSource={filteredScores} rowKey="id" />
 
       <Modal
         title={editingId ? "แก้ไขคะแนน" : "เพิ่มคะแนน"}

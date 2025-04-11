@@ -135,12 +135,12 @@ const MyForm = () => {
                     <p>
                       <strong>ชื่อกีฬาที่ต้องประเมิน:</strong> {form.name}
                     </p>
-                    <p>
+                    {/* <p>
                       <strong>นักกีฬาที่ต้องประเมิน:</strong>
                       {participant
                         ? `${participant.firstName} ${participant.lastName}`
                         : "ไม่พบชื่อนักกีฬา"}
-                    </p>
+                    </p> */}
 
                     <Button
                       type="primary"
@@ -168,12 +168,12 @@ const MyForm = () => {
                     <p>
                       <strong>ชื่อกีฬา:</strong> {form.name}
                     </p>
-                    <p>
+                    {/* <p>
                       <strong>นักกีฬาที่ต้องประเมิน:</strong>
                       {participant
                         ? `${participant.firstName} ${participant.lastName}`
                         : "ไม่พบชื่อนักกีฬา"}
-                    </p>
+                    </p> */}
                     <Button
                       type="primary"
                       onClick={() => handleEvaluateForm(form)}

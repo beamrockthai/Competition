@@ -7,6 +7,7 @@ import FAQ from "../../components/faq";
 import DashboardHeader2 from "../../components/DashboardHeader2";
 import CardGet from "../../components/CardGet";
 import DashboardHeader3 from "../../components/DashboardHeader3";
+import ScoreBarChart from "../../components/Grapbar";
 const Dashboard = () => {
   return (
     <div style={{ padding: "20px" }}>
@@ -14,7 +15,8 @@ const Dashboard = () => {
       <DashboardHeader2 />
       <MockupCard />
       <DashboardHeader />
-      <UserTable />
+      <ScoreBarChart />
+      {/* <UserTable /> */}
       <DashboardHeader3 />
       <CardGet />
       <FAQ />
