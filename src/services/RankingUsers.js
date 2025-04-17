@@ -13,7 +13,7 @@ import {
 import { db } from "../firebase";
 
 // เพิ่มคะแนน (เฉพาะ role "user")
-export async function createScore(userId, tournamentId, score) {
+export async function createScore(userId, tournamentId, score, round) {
   // ดึงข้อมูล user ก่อน
   const userDocRef = doc(db, "users", userId);
   const userSnap = await getDoc(userDocRef);
@@ -35,6 +35,7 @@ export async function createScore(userId, tournamentId, score) {
     userId,
     tournamentId,
     score,
+    round,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });

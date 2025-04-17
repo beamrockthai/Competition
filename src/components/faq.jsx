@@ -31,7 +31,7 @@ const FAQ = () => {
           <QuestionCircleOutlined style={{ color: "#b12341" }} />
           คำถามที่พบบ่อย (FAQ)
         </h2>
-        <p style={{ fontSize: "15px", color: "#888", marginTop: "8px" }}>
+        <p style={{ fontSize: "15px", color: "#b12341", marginTop: "8px" }}>
           รวมคำถามที่ผู้ใช้งานถามบ่อย พร้อมคำตอบแบบกระชับ
         </p>
       </div>

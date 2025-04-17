@@ -33,13 +33,13 @@ export const ManageDirectors = () => {
     loadDirectors(setDirectors);
   }, []);
 
-  // ✅ เปิด Popup ยืนยันก่อนสมัคร
+  // เปิด Popup ยืนยันก่อนสมัคร
   const showConfirmModal = (values) => {
     setFormValues(values);
     setIsConfirmModalOpen(true);
   };
 
-  // ✅ ยืนยันสมัครกรรมการ
+  // ยืนยันสมัครกรรมการ
   const handleConfirmRegister = async () => {
     setLoading(true);
     setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
@@ -72,7 +72,7 @@ export const ManageDirectors = () => {
         style={{ marginBottom: "20px" }}
       >
         <Col>
-          <h2 style={{ margin: 0 }}>จัดการกรรมการ</h2>
+          <h2 style={{ margin: 0, color: "#b12341" }}>จัดการกรรมการ</h2>
         </Col>
         <Col>
           <Button

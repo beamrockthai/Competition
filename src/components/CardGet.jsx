@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Card, Flex, Typography } from "antd";
+import { color } from "chart.js/helpers";
 
 const cardStyle = {
   width: 620,
@@ -64,7 +65,7 @@ const CardGet = () => {
               style={{ padding: 24, flex: 1 }}
             >
               <Typography.Title level={4}>{item.text}</Typography.Title>
-              <Button type="primary" href={item.link} target="_blank">
+              <Button type="Danger" href={item.link} target="_blank">
                 {item.title}
               </Button>
             </Flex>

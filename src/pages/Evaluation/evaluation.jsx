@@ -57,9 +57,10 @@ export const Evaluation = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", color: "#b12341" }}>
       <h2>แบบประเมินการแข่งขัน</h2>
       <Button
+        danger
         type="primary"
         onClick={() => setIsFormModalVisible(true)}
         style={{ marginBottom: "20px" }}

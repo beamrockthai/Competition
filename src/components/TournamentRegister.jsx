@@ -30,7 +30,7 @@ const TournamentRegister = ({ visible, onClose, tournament }) => {
 
       if (!userId) {
         message.error("เกิดข้อผิดพลาด: ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
-        console.error("❌ Missing userId - user object:", user);
+        console.error(" Missing userId - user object:", user);
         return;
       }
 
@@ -40,7 +40,7 @@ const TournamentRegister = ({ visible, onClose, tournament }) => {
 
       console.log("🟢 Final Data before sending to registerTournament:", {
         tournamentId,
-        userId, // ✅ ใช้ userId ที่แก้ไขแล้ว
+        userId, // ใช้ userId ที่แก้ไขแล้ว
         teamType,
         teamMembers,
         teamName,
@@ -59,7 +59,7 @@ const TournamentRegister = ({ visible, onClose, tournament }) => {
       form.resetFields();
       onClose();
     } catch (error) {
-      console.error("❌ Error registering for tournament:", error);
+      console.error(" Error registering for tournament:", error);
       message.error("เกิดข้อผิดพลาดในการสมัคร กรุณาลองใหม่อีกครั้ง");
     } finally {
       setLoading(false);

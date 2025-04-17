@@ -100,7 +100,9 @@ const EvaluationAdmin = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <Title level={3}>ข้อมูลการส่งแบบฟอร์ม</Title>
+      <Title level={3} style={{ color: "#b12341" }}>
+        ข้อมูลการส่งแบบฟอร์ม
+      </Title>
 
       {loading ? (
         <Spin size="large" style={{ display: "block", marginTop: 50 }} />

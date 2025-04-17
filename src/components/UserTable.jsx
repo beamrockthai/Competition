@@ -10,6 +10,7 @@ const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [scores, setScores] = useState([]);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [selectedRound, setSelectedRound] = useState(null);
   const [tournaments, setTournaments] = useState([]);
 
   useEffect(() => {
@@ -26,7 +27,6 @@ const UserTable = () => {
         id: doc.id,
         ...doc.data(),
       }));
-
       const tournamentData = tournamentSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -44,7 +44,13 @@ const UserTable = () => {
     let filteredScores = scores;
 
     if (selectedSport) {
-      filteredScores = scores.filter((s) => s.tournamentId === selectedSport);
+      filteredScores = filteredScores.filter(
+        (s) => s.tournamentId === selectedSport
+      );
+    }
+
+    if (selectedRound) {
+      filteredScores = filteredScores.filter((s) => s.round === selectedRound);
     }
 
     const merged = filteredScores.map((score) => {
@@ -56,6 +62,7 @@ const UserTable = () => {
         tournament: tournament?.tournamentName || score.tournamentId,
         tournamentId: score.tournamentId,
         score: score.score,
+        round: score.round || "-", // ✅ เพิ่มบรรทัดนี้เพื่อให้แสดงรอบ
         createdAt: user?.createdAt?.toDate().toLocaleDateString("th-TH"),
       };
     });
@@ -73,6 +80,8 @@ const UserTable = () => {
     name: t.tournamentName,
   }));
 
+  const roundOptions = [...new Set(scores.map((s) => s.round))].filter(Boolean); // เอาเฉพาะรอบที่ไม่ว่าง
+
   const columns = [
     {
       title: "อันดับ",
@@ -80,21 +89,32 @@ const UserTable = () => {
       key: "rank",
       render: (rank) => <Tag color={rank === 1 ? "gold" : "blue"}>{rank}</Tag>,
     },
+
     {
       title: "ชื่อผู้เข้าแข่งขัน",
       dataIndex: "fullName",
       key: "fullName",
     },
+
     {
       title: "คะแนน",
       dataIndex: "score",
       key: "score",
     },
+
     {
       title: "กีฬา",
       dataIndex: "tournament",
       key: "tournament",
     },
+
+    {
+      title: "รอบที่",
+      dataIndex: "round",
+      key: "round",
+      render: (round) => `รอบที่ ${round}`,
+    },
+
     {
       title: "วันที่สมัคร",
       dataIndex: "createdAt",
@@ -107,7 +127,7 @@ const UserTable = () => {
       <Col span={24}>
         <Card
           title={
-            <Row justify="space-between" align="middle">
+            <Row justify="space-between" align="middle" gutter={[16, 16]}>
               <Col>
                 <Title level={4} style={{ margin: 0 }}>
                   คะแนนการแข่งขัน
@@ -117,12 +137,24 @@ const UserTable = () => {
                 <Select
                   allowClear
                   placeholder="เลือกกีฬา"
-                  style={{ minWidth: 200 }}
+                  style={{ minWidth: 150, marginRight: 10 }}
                   onChange={(value) => setSelectedSport(value)}
                 >
                   {tournamentOptions.map((t) => (
                     <Option key={t.id} value={t.id}>
                       {t.name}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  allowClear
+                  placeholder="เลือกรอบ"
+                  style={{ minWidth: 120 }}
+                  onChange={(value) => setSelectedRound(value)}
+                >
+                  {roundOptions.map((round) => (
+                    <Option key={round} value={round}>
+                      รอบ {round}
                     </Option>
                   ))}
                 </Select>

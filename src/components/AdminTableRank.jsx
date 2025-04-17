@@ -30,6 +30,7 @@ const AdminTableRank = () => {
   const [editingId, setEditingId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [searchTournament, setSearchTournament] = useState("");
+  // const [searchRound, setSearchRound] = useState(""); ไว้ก่อน
 
   const fetchData = async () => {
     const data = await GetAllScore();
@@ -62,7 +63,12 @@ const AdminTableRank = () => {
         await updateScore(editingId, values.score);
         message.success("อัปเดตคะแนนแล้ว");
       } else {
-        await createScore(values.userId, values.tournamentId, values.score);
+        await createScore(
+          values.userId,
+          values.tournamentId,
+          values.score,
+          values.round
+        );
         message.success("เพิ่มคะแนนแล้ว");
       }
       fetchData();
@@ -119,6 +125,7 @@ const AdminTableRank = () => {
         return user ? `${user.firstName} ${user.lastName}` : id;
       },
     },
+
     {
       title: "ชื่อกีฬา",
       dataIndex: "tournamentId",
@@ -131,6 +138,13 @@ const AdminTableRank = () => {
       dataIndex: "score",
       key: "score",
     },
+
+    {
+      title: "รอบ",
+      dataIndex: "round",
+      key: "round",
+    },
+
     {
       title: "การจัดการ",
       key: "action",
@@ -156,7 +170,9 @@ const AdminTableRank = () => {
 
   return (
     <div style={{ maxWidth: 1000, margin: "auto", padding: "20px" }}>
-      <Title level={3}>จัดการคะแนนผู้ใช้</Title>
+      <Title level={3} style={{ color: "#b12341" }}>
+        จัดการคะแนนผู้ใช้
+      </Title>
 
       <div
         style={{
@@ -180,7 +196,14 @@ const AdminTableRank = () => {
           style={{ width: 250 }}
         />
 
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        {/* <Input.Search
+          placeholder="ค้นหารอบการเเข่งขัน"
+          allowClear
+          onChange={(e) => setSearchTournament(e.target.value)}
+          style={{ width: 250 }}
+        /> ไว้ ก่อน*/}
+
+        <Button danger type="primary" onClick={() => setIsModalOpen(true)}>
           เพิ่มคะแนน
         </Button>
       </div>
@@ -231,6 +254,10 @@ const AdminTableRank = () => {
           )}
 
           <Form.Item name="score" label="คะแนน" rules={[{ required: true }]}>
+            <InputNumber min={0} max={100} style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item name="round" label="รอบ" rules={[{ required: true }]}>
             <InputNumber min={0} max={100} style={{ width: "100%" }} />
           </Form.Item>
         </Form>

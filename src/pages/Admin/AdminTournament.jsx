@@ -104,7 +104,7 @@ const AdminTournament = () => {
       <Row
         justify="space-between"
         align="middle"
-        style={{ marginBottom: "20px" }}
+        style={{ marginBottom: "20px", color: "#b12341" }}
       >
         <Col>
           <h2>จัดการการแข่งขัน</h2>

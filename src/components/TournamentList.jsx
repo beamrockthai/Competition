@@ -32,7 +32,7 @@ const TournamentList = ({ tournaments }) => {
                   borderRadius: "12px",
                 }}
               >
-                <Typography.Title level={5} style={{ color: "#1677ff" }}>
+                <Typography.Title level={5} style={{ color: "#b12341" }}>
                   {tournament.tournamentName}
                 </Typography.Title>
 
@@ -55,6 +55,7 @@ const TournamentList = ({ tournaments }) => {
                 </div>
 
                 <Button
+                  danger
                   type="primary"
                   block
                   disabled={!tournament.status}

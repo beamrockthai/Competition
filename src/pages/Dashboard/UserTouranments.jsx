@@ -51,7 +51,7 @@ const UserDashboard = () => {
       <Content style={{ maxWidth: "1200px", margin: "auto" }}>
         <Typography.Title
           level={2}
-          style={{ textAlign: "center", color: "#2C3E50" }}
+          style={{ textAlign: "center", color: "#b12341" }}
         >
           รายการเเข่งขันกีฬาทุกรายการ
         </Typography.Title>
@@ -60,7 +60,7 @@ const UserDashboard = () => {
 
         <TournamentList
           tournaments={tournaments}
-          onRegister={setSelectedTournament} // ✅ ใช้การสมัครแบบเดิม ไม่เปลี่ยนแปลงการทำงาน
+          onRegister={setSelectedTournament} // ใช้การสมัครแบบเดิม ไม่เปลี่ยนแปลงการทำงาน
         />
 
         {selectedTournament && (

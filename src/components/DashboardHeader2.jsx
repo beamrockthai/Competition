@@ -15,11 +15,11 @@ const DashboardHeader2 = () => {
         marginBottom: "20px",
         marginLeft: "20px",
         fontWeight: "bold",
-        color: "#1890ff",
+        color: "#b12341",
         flexWrap: "wrap",
       }}
     >
-      <span style={{ fontSize: "30px", color: "#1890ff" }}>
+      <span style={{ fontSize: "30px", color: "#b12341" }}>
         <HomeOutlined />
       </span>
       Home

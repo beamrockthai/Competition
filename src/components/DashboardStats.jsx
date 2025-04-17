@@ -76,25 +76,25 @@ const DashboardStats = () => {
       title: "วันที่",
       value: stats.todayDate,
       icon: <CalendarOutlined />,
-      color: "#00bcd4",
+      color: "#b12341",
     },
     {
       title: "จํานวนทีมเเข่งขัน",
       value: stats.competitorCount,
       icon: <UserOutlined />,
-      color: "#1890ff",
+      color: "#b12341",
     },
     {
       title: "รายการเเข่งขัน",
       value: stats.tournamentCount,
       icon: <TrophyOutlined />,
-      color: "#52c41a",
+      color: "#b12341",
     },
     {
       title: "จํานวนกรรมการ",
       value: stats.directorCount,
       icon: <UserOutlined />,
-      color: "#faad14",
+      color: "#b12341",
     },
   ];
 

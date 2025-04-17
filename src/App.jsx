@@ -60,18 +60,18 @@ const App = () => {
   const menuItems = [
     {
       key: "1",
-      icon: <HomeOutlined />,
+      icon: <HomeOutlined style={{ color: "#b12341" }} />,
       label: <Link to="/userdashboardmain">หน้าหลัก</Link>,
     },
 
     {
       key: "2",
-      icon: <UnorderedListOutlined />,
+      icon: <UnorderedListOutlined style={{ color: "#b12341" }} />,
       label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
     },
     {
       key: "3",
-      icon: <HighlightOutlined />,
+      icon: <HighlightOutlined style={{ color: "#b12341" }} />,
       label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
     },
 
@@ -79,32 +79,32 @@ const App = () => {
       ? [
           {
             key: "4",
-            icon: <UserAddOutlined />,
+            icon: <UserAddOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
           },
           {
             key: "5",
-            icon: <UserAddOutlined />,
+            icon: <UserAddOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/user-management">จัดการผู้ใช้</Link>,
           },
           {
             key: "6",
-            icon: <TrophyOutlined />,
+            icon: <TrophyOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/admin-tournaments">จัดการการแข่งขัน</Link>,
           },
           {
             key: "7",
-            icon: <FormOutlined />,
+            icon: <FormOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/evaluation">สร้างใบประเมิน</Link>,
           },
           {
             key: "8",
-            icon: <FormOutlined />,
+            icon: <FormOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/evaluation-admin">ผลการประเมิน</Link>,
           },
           {
             key: "9",
-            icon: <EditOutlined />,
+            icon: <EditOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/AdminRank">จัดการคะเเนน</Link>,
           },
           // {
@@ -123,14 +123,14 @@ const App = () => {
       ? [
           {
             key: "11",
-            icon: <SelectOutlined />,
+            icon: <SelectOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/director-form">รายการต้องประเมิน</Link>,
           },
         ]
       : []),
     {
       key: "12",
-      icon: <SettingOutlined />,
+      icon: <SettingOutlined style={{ color: "#b12341" }} />,
       label: <Link to="/setting">ตั้งค่า</Link>,
     },
   ];
@@ -148,8 +148,8 @@ const App = () => {
     // },
     {
       key: "3",
-      label: "ออกจากระบบ",
-      icon: <LogoutOutlined />,
+      label: "ออกจากระบบ ",
+      icon: <LogoutOutlined style={{ color: "#b12341" }} />,
       onClick: handleLogout,
     },
   ];
