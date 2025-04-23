@@ -8,249 +8,197 @@ import {
   Radio,
   Tabs,
   InputNumber,
+  Row,
+  Col,
+  Grid,
 } from "antd";
 import {
   fetchDirecForm,
   submitEvaluationToFirestore,
   fetchEvaluations,
 } from "../../services/MyForm";
-import { loadUsers } from "../../services/userFunctions";
 import { useUserAuth } from "../../Context/UserAuth";
-import { use } from "react";
 
-const MyForm = () => {
+export default function MyForm() {
+  const { user } = useUserAuth();
   const [forms, setForms] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [evaluatedFormsMap, setEvaluatedFormsMap] = useState({});
   const [loading, setLoading] = useState(true);
-  const [evaluationModalVisible, setEvaluationModalVisible] = useState(false);
+  const screens = Grid.useBreakpoint();
+
+  // modal state
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMode, setModalMode] = useState("edit");
   const [selectedForm, setSelectedForm] = useState(null);
   const [evaluationResults, setEvaluationResults] = useState({});
-  const [evaluatedForms, setEvaluatedForms] = useState({});
-  const { user } = useUserAuth();
+  const [totalScore, setTotalScore] = useState(0);
 
   useEffect(() => {
-    const loadData = async () => {
-      if (user) {
-        try {
-          setLoading(true);
-          const formsData = await fetchDirecForm(user.id); // ไอดีกรรมการ
-
-          // const formsData = await fetchDirecForm(user.uid); //ใหม่
-          console.log("Logged in UID:", user?.id);
-          setForms(formsData);
-          console.log("formsData:", formsData);
-
-          const evaluations = await fetchEvaluations();
-
-          const allUsers = await loadUsers();
-          console.log(" users:", allUsers); // ← เพิ่มตรงนี้
-          setUsers(allUsers);
-
-          const evaluationsMap = evaluations.reduce((acc, evaluation) => {
-            acc[evaluation.formId] = evaluation.evaluationResults;
-            return acc;
-          }, {});
-          setEvaluatedForms(evaluationsMap);
-        } catch (error) {
-          console.error("Error loading data:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    loadData();
+    if (!user) return;
+    (async () => {
+      setLoading(true);
+      // 1) load assigned forms
+      const formsData = await fetchDirecForm(user.id);
+      setForms(formsData);
+      // 2) load evaluations
+      const allEvals = await fetchEvaluations();
+      const evMap = {};
+      allEvals
+        .filter((e) => e.directorName === user.name)
+        .forEach((e) => {
+          evMap[e.formId] = {
+            evaluationResults: e.evaluationResults,
+            score: e.score,
+          };
+        });
+      setEvaluatedFormsMap(evMap);
+      setLoading(false);
+    })();
   }, [user]);
 
-  const handleEvaluateForm = (form) => {
+  const openModal = (form) => {
+    const isView = !!evaluatedFormsMap[form.id];
+    setModalMode(isView ? "view" : "edit");
     setSelectedForm(form);
-    const savedResults = evaluatedForms[form.id] || {};
-    const initialResults = {};
-    form.criteria.forEach((criterion) => {
-      initialResults[criterion.id] = savedResults[criterion.id] || null;
-    });
-    setEvaluationResults(initialResults);
-    setEvaluationModalVisible(true);
+
+    if (isView) {
+      const { evaluationResults, score } = evaluatedFormsMap[form.id];
+      setEvaluationResults(evaluationResults);
+      setTotalScore(score);
+    } else {
+      const init = {};
+      form.criteria.forEach((c) => (init[c.id] = null));
+      setEvaluationResults(init);
+      setTotalScore(0);
+    }
+
+    setModalVisible(true);
   };
 
-  const handleCloseModal = () => {
-    setEvaluationModalVisible(false);
-    setSelectedForm(null);
-  };
-
-  const handleSaveEvaluation = async () => {
+  const saveEvaluation = () => {
     Modal.confirm({
-      title: "ยืนยันการประเมินนี้หรือไม่?",
-      okText: "ยืนยัน",
-      cancelText: "ยกเลิก",
+      title: "ยืนยันการบันทึกผลการประเมิน?",
       onOk: async () => {
-        try {
-          const formId = selectedForm.id;
-          const formName = selectedForm.name;
-          const directorName = user?.name || "Unknown Director";
-          const criteria = selectedForm?.criteria || [];
-          const score = evaluationResults.totalScore ?? 0;
-
-          await submitEvaluationToFirestore({
-            formId,
-            formName,
-            directorName,
-            evaluationResults,
-            criteria,
-            score: score !== undefined ? score : 0,
-          });
-
-          setEvaluatedForms((prev) => ({
-            ...prev,
-            [formId]: { ...evaluationResults },
-          }));
-          handleCloseModal();
-        } catch (error) {
-          console.error("Error saving evaluation:", error);
-        }
+        const { id: formId, name: formName, criteria } = selectedForm;
+        await submitEvaluationToFirestore({
+          formId,
+          formName,
+          directorName: user.name,
+          evaluationResults,
+          criteria,
+          score: totalScore,
+        });
+        setEvaluatedFormsMap((prev) => ({
+          ...prev,
+          [formId]: { evaluationResults, score: totalScore },
+        }));
+        setModalVisible(false);
       },
     });
   };
 
-  if (loading) {
-    return (
-      <Spin
-        size="large"
-        style={{ display: "block", textAlign: "center", marginTop: "20px" }}
-      />
-    );
-  }
+  if (loading) return <Spin style={{ marginTop: 50 }} />;
 
-  const unEvaluatedForms = forms.filter((form) => !evaluatedForms[form.id]);
-  const alreadyEvaluatedForms = forms.filter((form) => evaluatedForms[form.id]);
-  const participant = users.find((u) => u.id === forms.participantId);
+  const toEval = forms.filter((f) => !evaluatedFormsMap[f.id]);
+  const done = forms.filter((f) => evaluatedFormsMap[f.id]);
+
+  const modalWidth = screens.xs ? "90%" : 800;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: 20 }}>
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="ฟอร์มที่ต้องประเมิน" key="1">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-            {unEvaluatedForms.length > 0 ? (
-              unEvaluatedForms.map((form) => {
-                const participant = users.find(
-                  (u) => u.id === form.participantId
-                );
-                // console.log("🔎 form:", form);
-                // console.log("📌 form.participantId:", form.participantId);
-                // console.log(
-                //   "👤 Assigned participant name:",
-                //   user?.firstName,
-                //   user?.lastName
-                // );
-                return (
-                  <Card key={form.id} title={form.name} style={{ width: 300 }}>
-                    <p>
-                      <strong>ชื่อกีฬาที่ต้องประเมิน:</strong> {form.name}
-                    </p>
-                    {/* <p>
-                      <strong>นักกีฬาที่ต้องประเมิน:</strong>
-                      {participant
-                        ? `${participant.firstName} ${participant.lastName}`
-                        : "ไม่พบชื่อนักกีฬา"}
-                    </p> */}
-
-                    <Button
-                      type="primary"
-                      onClick={() => handleEvaluateForm(form)}
-                    >
+          <Row gutter={[16, 16]}>
+            {toEval.length ? (
+              toEval.map((f) => (
+                <Col key={f.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                  <Card title={f.name} style={{ width: "100%" }}>
+                    <Button block onClick={() => openModal(f)}>
                       ประเมิน
                     </Button>
                   </Card>
-                );
-              })
+                </Col>
+              ))
             ) : (
               <p>ไม่มีฟอร์มที่ต้องประเมิน</p>
             )}
-          </div>
+          </Row>
         </Tabs.TabPane>
+
         <Tabs.TabPane tab="ฟอร์มที่ประเมินแล้ว" key="2">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-            {alreadyEvaluatedForms.length > 0 ? (
-              alreadyEvaluatedForms.map((form) => {
-                const participant = users.find(
-                  (u) => u.id === form.participantId
-                );
-                return (
-                  <Card key={form.id} title={form.name} style={{ width: 300 }}>
-                    <p>
-                      <strong>ชื่อกีฬา:</strong> {form.name}
-                    </p>
-                    {/* <p>
-                      <strong>นักกีฬาที่ต้องประเมิน:</strong>
-                      {participant
-                        ? `${participant.firstName} ${participant.lastName}`
-                        : "ไม่พบชื่อนักกีฬา"}
-                    </p> */}
-                    <Button
-                      type="primary"
-                      onClick={() => handleEvaluateForm(form)}
-                    >
-                      ดูผลลัพธ์การประเมิน
+          <Row gutter={[16, 16]}>
+            {done.length ? (
+              done.map((f) => (
+                <Col key={f.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                  <Card title={f.name} style={{ width: "100%" }}>
+                    <Button block onClick={() => openModal(f)}>
+                      ดูผลการประเมิน
                     </Button>
                   </Card>
-                );
-              })
+                </Col>
+              ))
             ) : (
               <p>ไม่มีฟอร์มที่ประเมินแล้ว</p>
             )}
-          </div>
+          </Row>
         </Tabs.TabPane>
       </Tabs>
 
       <Modal
-        title={`ประเมินแบบฟอร์ม: ${selectedForm?.name || ""}`}
-        open={evaluationModalVisible}
-        onCancel={handleCloseModal}
-        footer={[
-          <Button key="cancel" onClick={handleCloseModal}>
-            ยกเลิก
-          </Button>,
-          <Button
-            key="save"
-            type="primary"
-            onClick={handleSaveEvaluation}
-            disabled={
-              !Object.values(evaluationResults).every((val) => val !== null)
-            }
-          >
-            บันทึก
-          </Button>,
-        ]}
-        width="800px"
+        title={`${modalMode === "edit" ? "ประเมิน" : "ผลการประเมิน"}: ${
+          selectedForm?.name
+        }`}
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={
+          modalMode === "edit"
+            ? [
+                <Button key="c" onClick={() => setModalVisible(false)}>
+                  ยกเลิก
+                </Button>,
+                <Button key="s" type="primary" onClick={saveEvaluation}>
+                  บันทึก
+                </Button>,
+              ]
+            : [
+                <Button key="c" onClick={() => setModalVisible(false)}>
+                  ปิด
+                </Button>,
+              ]
+        }
+        width={modalWidth}
       >
         <Table
-          dataSource={
-            selectedForm?.criteria?.map((criterion) => ({
-              key: criterion.id,
-              criterion: criterion.name,
-            })) || []
-          }
+          dataSource={selectedForm?.criteria.map((c) => ({
+            key: c.id,
+            criterion: c.name,
+          }))}
           columns={[
             {
               title: "เกณฑ์การประเมิน",
               dataIndex: "criterion",
-              key: "criterion",
+              key: "c",
+              align: "left",
             },
             {
-              title: "ระดับการประเมิน",
-              key: "evaluation",
-              render: (_, record) => (
+              title: "ระดับ",
+              align: "left",
+              key: "r",
+
+              render: (_, row) => (
                 <Radio.Group
-                  onChange={(e) => {
-                    setEvaluationResults({
-                      ...evaluationResults,
-                      [record.key]: e.target.value,
-                    });
-                  }}
-                  value={evaluationResults[record.key] || null}
+                  disabled={modalMode === "view"}
+                  value={evaluationResults[row.key]}
+                  onChange={(e) =>
+                    setEvaluationResults((p) => ({
+                      ...p,
+                      [row.key]: e.target.value,
+                    }))
+                  }
                 >
-                  {selectedForm?.evaluations?.map((evaluation) => (
-                    <Radio key={evaluation.id} value={evaluation.label}>
-                      {evaluation.label}
+                  {selectedForm.evaluations.map((opt) => (
+                    <Radio key={opt.id} value={opt.label}>
+                      {opt.label}
                     </Radio>
                   ))}
                 </Radio.Group>
@@ -259,31 +207,23 @@ const MyForm = () => {
           ]}
           pagination={false}
         />
-        {!evaluatedForms[selectedForm?.id] && (
-          <div
-            style={{
-              marginTop: "20px",
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
+        {modalMode === "edit" ? (
+          <div style={{ marginTop: 16, display: "flex", alignItems: "center" }}>
             <strong>คะแนนรวม:</strong>
             <InputNumber
               min={0}
               max={100}
-              value={evaluationResults.totalScore || null}
-              onChange={(value) =>
-                setEvaluationResults((prev) => ({ ...prev, totalScore: value }))
-              }
-              style={{ width: "120px" }}
-              placeholder="กรอกคะแนน"
+              value={totalScore}
+              onChange={setTotalScore}
+              style={{ marginLeft: 8 }}
             />
+          </div>
+        ) : (
+          <div style={{ marginTop: 16 }}>
+            <strong>คะแนนรวม:</strong> {totalScore}
           </div>
         )}
       </Modal>
     </div>
   );
-};
-
-export default MyForm;
+}

@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc, addDoc } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Firebase configuration
 
 // อ้างอิงถึงคอลเลกชัน evaluations ใน Firestore
@@ -33,25 +33,19 @@ export const submitEvaluationToFirestore = async ({
   directorName,
   evaluationResults,
   criteria,
-  score: totalScore,
+  score,
 }) => {
-  try {
-    await addDoc(collection(db, "submitform"), {
-      formId,
-      formName,
-      directorName,
-      evaluationResults,
-      submittedAt: new Date().toISOString(),
-      criteria,
-      score: totalScore,
-    });
-    console.log("✅ Evaluation successfully submitted to Firestore!");
-  } catch (error) {
-    console.error("❌ Error submitting evaluation:", error);
-    throw error;
-  }
+  const key = `${formId}_${directorName}`;
+  await setDoc(doc(db, "submitform", key), {
+    formId,
+    formName,
+    directorName,
+    evaluationResults,
+    criteria,
+    score,
+    submittedAt: new Date().toISOString(),
+  });
 };
-
 // ฟังก์ชันดึงข้อมูลผลการประเมินจาก Firestore
 export const fetchEvaluations = async () => {
   try {
