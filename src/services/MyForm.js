@@ -32,6 +32,9 @@ export const submitEvaluationToFirestore = async ({
   formName,
   directorName,
   evaluationResults,
+  evaluations,
+  tournamentName,
+  participantName,
   criteria,
   score,
 }) => {
@@ -41,11 +44,17 @@ export const submitEvaluationToFirestore = async ({
     formName,
     directorName,
     evaluationResults,
+    evaluations,
     criteria,
     score,
     submittedAt: new Date().toISOString(),
+
+    //  ป้องกัน undefined ด้วย fallback
+    tournamentName: tournamentName || "ไม่ระบุชื่อกีฬา",
+    participantName: participantName || "ไม่ระบุนักกีฬา",
   });
 };
+
 // ฟังก์ชันดึงข้อมูลผลการประเมินจาก Firestore
 export const fetchEvaluations = async () => {
   try {

@@ -14,8 +14,11 @@ const EvaluationAdmin = async () => {
       formName: formData.formName || "ไม่ระบุ",
       submittedAt: new Date(formData.submittedAt).toLocaleString() || "ไม่ระบุ",
       evaluationResults: formData.evaluationResults || {},
+      evaluations: formData.evaluations || [],
       criteria: formData.criteria || [],
       score: formData.score !== undefined ? formData.score : null,
+      tournamentName: formData.tournamentName || "ไม่ระบุชื่อกีฬา",
+      participantName: formData.participantName || "ไม่ระบุนักกีฬา",
     };
   });
 

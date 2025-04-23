@@ -80,11 +80,19 @@ export default function MyForm() {
       title: "ยืนยันการบันทึกผลการประเมิน?",
       onOk: async () => {
         const { id: formId, name: formName, criteria } = selectedForm;
+        const tournamentName =
+          selectedForm?.tournamentName || "ไม่ระบุชื่อกีฬา";
+        const participantName =
+          selectedForm?.participantName || "ไม่ระบุนักกีฬา";
+
         await submitEvaluationToFirestore({
           formId,
           formName,
+          tournamentName,
+          participantName,
           directorName: user.name,
           evaluationResults,
+          evaluations: selectedForm.evaluations,
           criteria,
           score: totalScore,
         });
@@ -168,6 +176,20 @@ export default function MyForm() {
         }
         width={modalWidth}
       >
+        {/*  แสดงชื่อกีฬาและชื่อนักกีฬา */}
+        <div style={{ marginBottom: 16, lineHeight: 1.8 }}>
+          <p>
+            <strong>ชื่อใบประเมิน:</strong> {selectedForm?.name || "-"}
+          </p>
+          <p>
+            <strong>ชื่อกีฬา:</strong> {selectedForm?.tournamentName || "-"}
+          </p>
+          <p>
+            <strong>นักกีฬา:</strong> {selectedForm?.participantName || "-"}
+          </p>
+        </div>
+
+        {/* ตารางการประเมิน */}
         <Table
           dataSource={selectedForm?.criteria.map((c) => ({
             key: c.id,
@@ -184,20 +206,22 @@ export default function MyForm() {
               title: "ระดับ",
               align: "left",
               key: "r",
-
               render: (_, row) => (
                 <Radio.Group
+                  name={`criterion-${row.key}`}
                   disabled={modalMode === "view"}
                   value={evaluationResults[row.key]}
                   onChange={(e) =>
-                    setEvaluationResults((p) => ({
-                      ...p,
+                    setEvaluationResults((prev) => ({
+                      ...prev,
                       [row.key]: e.target.value,
                     }))
                   }
                 >
                   {selectedForm.evaluations.map((opt) => (
-                    <Radio key={opt.id} value={opt.label}>
+                    <Radio key={`${row.key}-${opt.id}`} value={opt.id}>
+                      {" "}
+                      {/* เปลี่ยนตรงนี้ */}
                       {opt.label}
                     </Radio>
                   ))}

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Typography, Table, Spin } from "antd";
+import { Button, Modal, Typography, Table, Spin, Row, Col, Grid } from "antd";
 import TableComponent from "../../components/TableComponent";
 import fetchSubmitForm from "../../services/EvaluationAdmin";
-import handleDelete from "../../services/EvaluationAdmin";
 
 const { Title } = Typography;
 
 const EvaluationAdmin = () => {
+  const screens = Grid.useBreakpoint();
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -19,14 +20,12 @@ const EvaluationAdmin = () => {
       key: "directorName",
       align: "left",
     },
-
     {
       title: "ชื่อแบบฟอร์ม",
       dataIndex: "formName",
       key: "formName",
       align: "left",
     },
-
     {
       title: "วันที่ส่ง",
       dataIndex: "submittedAt",
@@ -41,12 +40,12 @@ const EvaluationAdmin = () => {
         });
       },
     },
-
     {
       title: "ผลการประเมิน",
       key: "evaluationView",
       render: (_, record) => (
         <Button
+          type="primary"
           onClick={() => {
             setSelectedRecord(record);
             setModalVisible(true);
@@ -56,17 +55,8 @@ const EvaluationAdmin = () => {
         </Button>
       ),
     },
-    // {
-    //   title: "Actions",
-    //   key: "actions",
-    //   render: (_, record) => (
-    //     <Button type="primary" danger onClick={() => handleDelete(record.key)}>
-    //       ลบ
-    //     </Button>
-    //   ),
-    // },
   ];
-  // console.log(handleDelete.onClick, "eRr"),
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -85,41 +75,72 @@ const EvaluationAdmin = () => {
 
   const renderEvaluationTable = () => {
     if (!selectedRecord) return null;
-    console.log(selectedRecord, "test");
 
-    const { criteria = [], evaluationResults = {}, score } = selectedRecord;
+    const {
+      criteria = [],
+      evaluationResults = {},
+      score,
+      formName,
+      tournamentName,
+      participantName,
+    } = selectedRecord;
 
-    const dataSource = criteria.map((criterion) => ({
-      key: criterion.id,
-      criterion: criterion.name,
-      score: evaluationResults[criterion.id] || "ไม่ได้ประเมิน",
-    }));
+    const dataSource = criteria.map((criterion) => {
+      const scoreId = evaluationResults[String(criterion.id)];
+      const scoreLabel =
+        selectedRecord.evaluations?.find((e) => e.id === Number(scoreId))
+          ?.label || "ไม่ได้ประเมิน";
 
-    console.log(dataSource, "Ne");
+      return {
+        key: criterion.id,
+        criterion: criterion.name,
+        score: scoreLabel,
+      };
+    });
     const columns = [
       {
         title: "หัวข้อการประเมิน",
         dataIndex: "criterion",
         key: "criterion",
-        align: "left", //  ชิดซ้าย
+        align: "left",
       },
       {
         title: "คะแนนที่ได้",
         dataIndex: "score",
         key: "score",
-        align: "center", // หรือ "right" ตามต้องการ
+        align: "center",
       },
     ];
 
     return (
       <>
-        <Table dataSource={dataSource} columns={columns} pagination={false} />
+        <Row gutter={[16, 8]} style={{ marginBottom: 16 }}>
+          <Col span={24}>
+            <p>
+              <strong>ชื่อแบบฟอร์ม:</strong> {formName || "-"}
+            </p>
+            <p>
+              <strong>ชื่อกีฬา:</strong> {tournamentName || "ไม่ระบุชื่อกีฬา"}
+            </p>
+            <p>
+              <strong>ชื่อนักกีฬา:</strong>{" "}
+              {participantName || "ไม่ระบุนักกีฬา"}
+            </p>
+          </Col>
+        </Row>
+
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          pagination={false}
+          bordered
+        />
+
         <div
           style={{
             marginTop: "20px",
-            textAlign: "left",
             backgroundColor: "#f5f5f5",
-            padding: "16px 16px",
+            padding: "16px",
             borderRadius: "8px",
             fontSize: "16px",
             fontWeight: "bold",
@@ -129,7 +150,7 @@ const EvaluationAdmin = () => {
           }}
         >
           คะแนนรวม:{" "}
-          <span style={{ color: "#b12341", fontSize: "16px" }}>
+          <span style={{ color: "#b12341", fontSize: "18px" }}>
             {score !== undefined && score !== null ? score : "ไม่ได้กรอก"}
           </span>
         </div>
@@ -166,7 +187,7 @@ const EvaluationAdmin = () => {
             ปิด
           </Button>,
         ]}
-        width={700}
+        width={screens?.xs ? "90%" : 700} // ✅ ป้องกัน screens undefined
       >
         {renderEvaluationTable()}
       </Modal>
