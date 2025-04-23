@@ -8,6 +8,7 @@ import {
 import FormModal from "./FormModal";
 import AssignModal from "./AssignModal";
 import EvaluationTable from "./EvaluationTable";
+import { message } from "antd";
 
 export const Evaluation = () => {
   const [forms, setForms] = useState([]);
@@ -77,6 +78,16 @@ export const Evaluation = () => {
         }}
         onDelete={handleDeleteForm}
         onAssign={(form) => {
+          if (
+            (form.assignedTo && form.assignedTo.length > 0) ||
+            form.participantId
+          ) {
+            message.warning(
+              "ฟอร์มนี้ได้ถูกมอบหมายไปแล้ว ไม่สามารถมอบหมายซ้ำได้"
+            );
+            return;
+          }
+
           setSelectedForm(form);
           setIsAssignModalVisible(true);
         }}

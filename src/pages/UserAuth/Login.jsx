@@ -22,6 +22,9 @@ import {
 import { Button, Divider, Space, Tabs, message, theme } from "antd";
 import { useUserAuth } from "../../Context/UserAuth";
 
+//vido
+import backgroundVideoUrl from "../../assets/sport.mp4";
+
 const Login = () => {
   const [loginType, setLoginType] = useState("account");
   const [loading, setLoading] = useState(false);
@@ -64,12 +67,12 @@ const Login = () => {
     <ProConfigProvider dark>
       <div style={{ backgroundColor: "white", height: "100vh" }}>
         <LoginFormPage
-          backgroundVideoUrl="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4"
+          backgroundVideoUrl={backgroundVideoUrl}
           logo={
             <CodeSandboxOutlined style={{ fontSize: 50, color: "#DC143C" }} />
           }
-          title="Compatition"
-          subTitle="ระบบการเเข่งขันกีฬา"
+          title="Competitive"
+          subTitle="ระบบการเเข่งขัน"
           onFinish={handleLogin}
           submitter={{
             searchConfig: {
@@ -91,8 +94,8 @@ const Login = () => {
               backgroundColor: "rgba(220, 20, 60)",
               backdropFilter: "blur(4px)",
             },
-            title: "กิจกรรมแนะนำ",
-            subTitle: "ลงชื่อเข้าใช้งานเพื่อรับสิทธิพิเศษ",
+            // title: "กิจกรรมแนะนำ",
+            // subTitle: "ลงชื่อเข้าใช้งานเพื่อรับสิทธิพิเศษ",
             // action: (
             //   <Button
             //     size="large"
@@ -127,7 +130,11 @@ const Login = () => {
             activeKey={loginType}
             onChange={(key) => setLoginType(key)}
           >
-            <Tabs.TabPane key="account" tab="บัญชีผู้ใช้" />
+            <Tabs.TabPane
+              key="account"
+              style={{ color: "#b12341" }}
+              tab="บัญชีผู้ใช้"
+            />
             {/* <Tabs.TabPane key="phone" tab="เบอร์โทรศัพท์" /> */}
           </Tabs>
 
@@ -196,7 +203,9 @@ const Login = () => {
 
           <div style={{ marginBottom: 26 }}>
             {/* <a style={{ float: "right"  }} href="/register">สมัครเข้าสู่ระบบ</a> */}
-            <Link to="/register">สมัครสมาชิกเข้าสู่ระบบ</Link>
+            <Link style={{ color: "#fff" }} to="/register">
+              สมัครสมาชิกเข้าสู่ระบบ
+            </Link>
           </div>
         </LoginFormPage>
       </div>

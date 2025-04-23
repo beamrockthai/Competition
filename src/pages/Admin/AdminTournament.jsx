@@ -68,7 +68,7 @@ const AdminTournament = () => {
       startDate: record.startDate ? moment(record.startDate.toDate()) : null,
       endDate: record.endDate ? moment(record.endDate.toDate()) : null,
       maxRounds: record.maxRounds,
-      status: record.status ?? false, // ✅ ถ้า `status` ไม่มีค่า ให้ใช้ `false` แทน
+      status: record.status ?? false, //  ถ้า `status` ไม่มีค่า ให้ใช้ `false` แทน
     });
     setEditModalVisible(true);
   };

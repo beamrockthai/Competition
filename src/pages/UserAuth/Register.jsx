@@ -16,6 +16,10 @@ import {
 } from "@ant-design/icons";
 import { useUserAuth } from "../../Context/UserAuth";
 import thTH from "antd/locale/th_TH";
+import BackToLoginButton from "../../components/logout";
+
+//vido
+import backgroundVideoUrl from "../../assets/sport.mp4";
 
 const Register = () => {
   const [formValues, setFormValues] = useState(null);
@@ -82,7 +86,7 @@ const Register = () => {
           <LoginFormPage
             title="สมัครสมาชิก"
             subTitle="กรุณากรอกข้อมูลให้ครบถ้วน"
-            backgroundVideoUrl="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4"
+            backgroundVideoUrl={backgroundVideoUrl}
             containerStyle={{
               backgroundColor: "rgba(0, 0, 0, 0.6)",
               backdropFilter: "blur(6px)",
@@ -101,15 +105,15 @@ const Register = () => {
             <ProForm.Group>
               <ProFormText
                 name="firstName"
-                label="ชื่อ"
-                placeholder="ชื่อ"
+                label="ชื่อ "
+                placeholder="ชื่อ นาย "
                 rules={[{ required: true, message: "กรุณากรอกชื่อ!" }]}
                 fieldProps={{ prefix: <UserOutlined /> }}
               />
               <ProFormText
                 name="lastName"
-                label="นามสกุล"
-                placeholder="นามสกุล"
+                label="นามสกุล พร้อมชื่อทีม"
+                placeholder="นามสกุล จร โรงเรียน สตรี"
                 rules={[{ required: true, message: "กรุณากรอกนามสกุล!" }]}
                 fieldProps={{ prefix: <UserOutlined /> }}
               />
@@ -169,6 +173,15 @@ const Register = () => {
               rules={[{ required: true, message: "กรุณากรอกที่อยู่!" }]}
               fieldProps={{ prefix: <HomeOutlined /> }}
             />
+            <div style={{ textAlign: "center", marginTop: 16 }}>
+              <Button
+                type="link"
+                style={{ color: "#fff" }}
+                onClick={() => navigate("/login")}
+              >
+                ⬅ ย้อนกลับไปหน้าล็อกอิน
+              </Button>
+            </div>
           </LoginFormPage>
 
           {/* Modal Popup */}

@@ -26,6 +26,7 @@ import EvaluationAdmin from "./pages/Admin/EvaluationAdmin";
 import MyForm from "./pages/Assigned/MyForm";
 import ProfileSetting from "./pages/ProfileSettings/ProfileSettingsUi";
 import AdminRanking from "./pages/Admin/AdminRanking";
+import AdminAllRegistrations from "./pages/Admin/AdminUsersRegister";
 // สร้าง Router ด้วยโครงสร้าง children
 const router = createBrowserRouter([
   {
@@ -128,6 +129,15 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["admin"]}>
             <AdminRanking />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "AdminGetAll",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminAllRegistrations />
           </ProtectedRoute>
         ),
       },

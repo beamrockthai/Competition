@@ -50,31 +50,46 @@ const UserRegisteredList = () => {
       title: "ชื่อการแข่งขัน",
       dataIndex: "tournamentName",
       key: "tournamentName",
+      align: "left",
     },
+
     {
       title: "ประเภท",
       dataIndex: "teamType",
       key: "teamType",
+      align: "left",
       render: (type) => (type === "individual" ? "เดี่ยว" : "ทีม"),
     },
+
     {
       title: "ชื่อทีม",
       dataIndex: "teamName",
       key: "teamName",
+      align: "left",
       render: (_, record) =>
         record.teamType === "team" ? record.teamName || "ไม่ได้ระบุ" : "-",
     },
+
     {
       title: "สมาชิกในทีม",
       key: "teamMembers",
+      align: "left",
       render: (_, record) =>
         record.teamType === "team" ? (
           record.teamMembers && record.teamMembers.length > 0 ? (
-            <ul style={{ paddingLeft: "16px" }}>
+            <ol
+              style={{
+                paddingLeft: "0.8em", // ขยับเข้าเล็กน้อยพอให้เลขเห็น
+                listStyle: "decimal",
+                listStylePosition: "inside", //  ให้ชื่อชิดกับเลข
+                margin: 0,
+                textAlign: "left", //  จัดให้ชิดซ้าย (ชิดหัว column)
+              }}
+            >
               {record.teamMembers.map((member, idx) => (
                 <li key={idx}>{member}</li>
               ))}
-            </ul>
+            </ol>
           ) : (
             <span style={{ color: "#aaa" }}>ไม่มีสมาชิกในทีม</span>
           )
@@ -82,18 +97,19 @@ const UserRegisteredList = () => {
           "-"
         ),
     },
-    {
-      title: "การจัดการ",
-      key: "action",
-      render: (_, record) => (
-        <Button
-          danger
-          onClick={() => handleCancel(record.id, record.tournamentId)}
-        >
-          ยกเลิกการสมัคร
-        </Button>
-      ),
-    },
+
+    // {
+    //   title: "การจัดการ",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Button
+    //       danger
+    //       onClick={() => handleCancel(record.id, record.tournamentId)}
+    //     >
+    //       ยกเลิกการสมัคร
+    //     </Button>
+    //   ),
+    // },
   ];
 
   return (

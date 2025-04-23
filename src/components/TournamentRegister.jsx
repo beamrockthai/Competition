@@ -5,7 +5,7 @@ import { registerTournament } from "../services/registrationService";
 import { useUserAuth } from "../Context/UserAuth"; // ดึง Context ของผู้ใช้
 
 const TournamentRegister = ({ visible, onClose, tournament }) => {
-  const { user, userId } = useUserAuth(); // ✅ ดึง userId จาก Context
+  const { user, userId } = useUserAuth(); // ดึง userId จาก Context
   const [form] = Form.useForm();
   const [teamType, setTeamType] = useState("individual");
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const TournamentRegister = ({ visible, onClose, tournament }) => {
         message.error(
           "ไม่พบข้อมูลการแข่งขัน กรุณารีเฟรชหน้าเว็บแล้วลองอีกครั้ง"
         );
-        console.error("❌ Missing tournament data");
+        console.error("Missing tournament data");
         return;
       }
 
@@ -38,13 +38,13 @@ const TournamentRegister = ({ visible, onClose, tournament }) => {
       const teamName = values.teamName || "";
       const teamMembers = values.teamMembers || [];
 
-      console.log("🟢 Final Data before sending to registerTournament:", {
-        tournamentId,
-        userId, // ใช้ userId ที่แก้ไขแล้ว
-        teamType,
-        teamMembers,
-        teamName,
-      });
+      // console.log(" Final Data before sending to registerTournament:", {
+      //   tournamentId,
+      //   userId, // ใช้ userId ที่แก้ไขแล้ว
+      //   teamType,
+      //   teamMembers,
+      //   teamName,
+      // });
 
       setLoading(true);
       await registerTournament(

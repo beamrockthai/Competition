@@ -13,7 +13,7 @@ import {
 import { message } from "antd";
 import moment from "moment";
 
-// 📌 ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
+// ดึงข้อมูลทัวร์นาเมนต์ทั้งหมดจาก Firestore
 export const fetchTournaments = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "tournaments"));
@@ -29,7 +29,7 @@ export const fetchTournaments = async () => {
   }
 };
 
-// 📌 เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
+//  เพิ่มทัวร์นาเมนต์ใหม่ลง Firestore
 export const addTournament = async (form) => {
   try {
     const {

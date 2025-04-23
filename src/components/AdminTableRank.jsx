@@ -117,9 +117,10 @@ const AdminTableRank = () => {
 
   const columns = [
     {
-      title: "ชื่อผู้ใช้",
+      title: "ชื่อผู้เข้าเเข่งขัน",
       dataIndex: "userId",
       key: "userId",
+      align: "left",
       render: (id) => {
         const user = users.find((u) => u.id === id);
         return user ? `${user.firstName} ${user.lastName}` : id;
@@ -130,24 +131,29 @@ const AdminTableRank = () => {
       title: "ชื่อกีฬา",
       dataIndex: "tournamentId",
       key: "tournamentId",
+      align: "left",
       render: (id) =>
         tournaments.find((t) => t.id === id)?.tournamentName || id,
     },
+
     {
       title: "คะแนน",
       dataIndex: "score",
       key: "score",
+      align: "left",
     },
 
     {
       title: "รอบ",
       dataIndex: "round",
       key: "round",
+      align: "left",
     },
 
     {
       title: "การจัดการ",
       key: "action",
+      align: "left",
       render: (_, record) => (
         <>
           <Button

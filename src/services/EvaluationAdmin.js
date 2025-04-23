@@ -15,6 +15,7 @@ const EvaluationAdmin = async () => {
       submittedAt: new Date(formData.submittedAt).toLocaleString() || "ไม่ระบุ",
       evaluationResults: formData.evaluationResults || {},
       criteria: formData.criteria || [],
+      score: formData.score !== undefined ? formData.score : null,
     };
   });
 
@@ -36,3 +37,4 @@ const handleDelete = async (key) => {
 };
 
 export default EvaluationAdmin;
+export { handleDelete };

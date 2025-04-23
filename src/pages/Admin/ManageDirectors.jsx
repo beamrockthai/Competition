@@ -42,7 +42,7 @@ export const ManageDirectors = () => {
   // ยืนยันสมัครกรรมการ
   const handleConfirmRegister = async () => {
     setLoading(true);
-    setIsConfirmModalOpen(false); // ✅ ปิด popup ยืนยัน
+    setIsConfirmModalOpen(false); //  ปิด popup ยืนยัน
 
     try {
       await addDirector(
@@ -88,20 +88,22 @@ export const ManageDirectors = () => {
       {/* TableComponent */}
       <TableComponent
         columns={[
-          { title: "First Name", dataIndex: "firstName" },
-          { title: "Last Name", dataIndex: "lastName" },
-          { title: "ID Card", dataIndex: "idCard" },
-          { title: "Address", dataIndex: "address" },
-          { title: "Email", dataIndex: "email" },
-          { title: "Role", dataIndex: "role" },
+          { title: "First Name", dataIndex: "firstName", align: "left" },
+          { title: "Last Name", dataIndex: "lastName", align: "left" },
+          { title: "ID Card", dataIndex: "idCard", align: "left" },
+          { title: "Address", dataIndex: "address", align: "left" },
+          { title: "Email", dataIndex: "email", align: "left" },
+          { title: "Role", dataIndex: "role", align: "left" },
           {
             title: "Password",
             dataIndex: "email",
+            align: "left",
             render: (email) => passwords[email] || "N/A",
           },
           {
             title: "Actions",
             dataIndex: "id",
+
             render: (id) => (
               <Popconfirm
                 title="คุณแน่ใจหรือไม่ว่าต้องการลบ ?"

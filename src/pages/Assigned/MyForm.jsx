@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card, Spin, Button, Modal, Table, Radio, Tabs } from "antd";
+import {
+  Card,
+  Spin,
+  Button,
+  Modal,
+  Table,
+  Radio,
+  Tabs,
+  InputNumber,
+} from "antd";
 import {
   fetchDirecForm,
   submitEvaluationToFirestore,
@@ -79,6 +88,7 @@ const MyForm = () => {
           const formName = selectedForm.name;
           const directorName = user?.name || "Unknown Director";
           const criteria = selectedForm?.criteria || [];
+          const score = evaluationResults.totalScore ?? 0;
 
           await submitEvaluationToFirestore({
             formId,
@@ -86,6 +96,7 @@ const MyForm = () => {
             directorName,
             evaluationResults,
             criteria,
+            score: score !== undefined ? score : 0,
           });
 
           setEvaluatedForms((prev) => ({
@@ -248,6 +259,28 @@ const MyForm = () => {
           ]}
           pagination={false}
         />
+        {!evaluatedForms[selectedForm?.id] && (
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
+            <strong>คะแนนรวม:</strong>
+            <InputNumber
+              min={0}
+              max={100}
+              value={evaluationResults.totalScore || null}
+              onChange={(value) =>
+                setEvaluationResults((prev) => ({ ...prev, totalScore: value }))
+              }
+              style={{ width: "120px" }}
+              placeholder="กรอกคะแนน"
+            />
+          </div>
+        )}
       </Modal>
     </div>
   );

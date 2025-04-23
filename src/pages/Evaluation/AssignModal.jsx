@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Modal, Checkbox, Button, Select } from "antd";
 import {
   assignForm,
-  fetchUsers,
   fetchTournaments,
+  fetchParticipantsByTournament, //  เพิ่มฟังก์ชันนี้จาก services
 } from "../../services/evaluation";
 
 const AssignModal = ({
@@ -22,11 +22,12 @@ const AssignModal = ({
   useEffect(() => {
     if (visible) {
       loadTournaments();
-      loadParticipants();
+      setParticipants([]); // เคลียร์ผู้เข้าแข่งขันเมื่อเปิดใหม่
+      setSelectedTournament(null);
+      setSelectedParticipant(null);
     }
   }, [visible]);
 
-  //แสดงtournamentทุกรายการในตาราง
   const loadTournaments = async () => {
     try {
       const fetchedTournaments = await fetchTournaments();
@@ -36,13 +37,14 @@ const AssignModal = ({
     }
   };
 
-  //ตรงนี้น่าจะเลือก users
-  const loadParticipants = async () => {
+  //  โหลดผู้เข้าแข่งขันเมื่อเลือกการแข่งขัน
+  const handleTournamentChange = async (tournamentId) => {
+    setSelectedTournament(tournamentId);
     try {
-      const fetchedParticipants = await fetchUsers();
-      setParticipants(
-        fetchedParticipants.filter((user) => user.role === "user")
+      const fetchedParticipants = await fetchParticipantsByTournament(
+        tournamentId
       );
+      setParticipants(fetchedParticipants);
     } catch (error) {
       console.error("Error fetching participants:", error);
     }
@@ -99,7 +101,7 @@ const AssignModal = ({
       <Select
         style={{ width: "100%" }}
         placeholder="เลือกการแข่งขัน"
-        onChange={setSelectedTournament}
+        onChange={handleTournamentChange} //  เปลี่ยน handler
         value={selectedTournament}
       >
         {tournaments.map((tournament) => (
@@ -116,9 +118,9 @@ const AssignModal = ({
         onChange={setSelectedParticipant}
         value={selectedParticipant}
       >
-        {participants.map((participant) => (
-          <Select.Option key={participant.id} value={participant.id}>
-            {participant.firstName} {participant.lastName}
+        {participants.map((participant, index) => (
+          <Select.Option key={index} value={participant.userId}>
+            {participant.fullName}
           </Select.Option>
         ))}
       </Select>

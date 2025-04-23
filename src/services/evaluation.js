@@ -7,6 +7,7 @@ import {
   doc,
   query,
   where,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -99,4 +100,33 @@ export const fetchUsers = async () => {
     console.error("Error fetching users:", error);
     return [];
   }
+};
+
+export const fetchParticipantsByTournament = async (tournamentId) => {
+  const registrationRef = collection(
+    db,
+    "tournaments",
+    tournamentId,
+    "registrations"
+  );
+  const snapshot = await getDocs(registrationRef);
+
+  const participants = await Promise.all(
+    snapshot.docs.map(async (docSnap) => {
+      const data = docSnap.data();
+      const userRef = doc(db, "users", data.userId);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.exists() ? userSnap.data() : {};
+
+      return {
+        userId: data.userId,
+        fullName: `${userData.firstName || "ไม่ระบุ"} ${
+          userData.lastName || ""
+        }`,
+        registeredAt: data.registeredAt?.toDate().toLocaleString("th-TH"),
+      };
+    })
+  );
+
+  return participants;
 };

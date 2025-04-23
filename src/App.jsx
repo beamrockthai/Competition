@@ -78,6 +78,13 @@ const App = () => {
     ...(role === "admin"
       ? [
           {
+            key: "10",
+            icon: <HighlightOutlined style={{ color: "#b12341" }} />,
+            label: (
+              <Link to="/AdminGetAll">รายการลงทะเบียนผู้เข้าเเข่งขัน</Link>
+            ),
+          },
+          {
             key: "4",
             icon: <UserAddOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/manage-directors">จัดการกรรมการ</Link>,
@@ -107,6 +114,7 @@ const App = () => {
             icon: <EditOutlined style={{ color: "#b12341" }} />,
             label: <Link to="/AdminRank">จัดการคะเเนน</Link>,
           },
+
           // {
           //   key: "teammanagement",
           //   icon: <FormOutlined />,

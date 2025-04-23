@@ -60,7 +60,7 @@ const FormModal = ({ visible, onClose, onFormSaved, editingForm }) => {
           />
         </Form.Item>
 
-        <Form.Item label="เกณฑ์">
+        <Form.Item label="หัวข้อความสวยงาม">
           <Space direction="vertical" style={{ width: "100%" }}>
             {criteria.map((criterion, index) => (
               <Space key={criterion.id} style={{ width: "100%" }}>

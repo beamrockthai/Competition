@@ -17,17 +17,31 @@ const EvaluationAdmin = () => {
       title: "ชื่อผู้ส่ง",
       dataIndex: "directorName",
       key: "directorName",
+      align: "left",
     },
+
     {
       title: "ชื่อแบบฟอร์ม",
       dataIndex: "formName",
       key: "formName",
+      align: "left",
     },
+
     {
       title: "วันที่ส่ง",
       dataIndex: "submittedAt",
       key: "submittedAt",
+      align: "left",
+      render: (value) => {
+        const date = new Date(value);
+        return date.toLocaleDateString("th-TH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      },
     },
+
     {
       title: "ผลการประเมิน",
       key: "evaluationView",
@@ -42,17 +56,17 @@ const EvaluationAdmin = () => {
         </Button>
       ),
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <Button type="primary" danger onClick={() => handleDelete(record.key)}>
-          ลบ
-        </Button>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   key: "actions",
+    //   render: (_, record) => (
+    //     <Button type="primary" danger onClick={() => handleDelete(record.key)}>
+    //       ลบ
+    //     </Button>
+    //   ),
+    // },
   ];
-
+  // console.log(handleDelete.onClick, "eRr"),
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -71,8 +85,9 @@ const EvaluationAdmin = () => {
 
   const renderEvaluationTable = () => {
     if (!selectedRecord) return null;
+    console.log(selectedRecord, "test");
 
-    const { criteria = [], evaluationResults = {} } = selectedRecord;
+    const { criteria = [], evaluationResults = {}, score } = selectedRecord;
 
     const dataSource = criteria.map((criterion) => ({
       key: criterion.id,
@@ -80,21 +95,45 @@ const EvaluationAdmin = () => {
       score: evaluationResults[criterion.id] || "ไม่ได้ประเมิน",
     }));
 
+    console.log(dataSource, "Ne");
     const columns = [
       {
         title: "หัวข้อการประเมิน",
         dataIndex: "criterion",
         key: "criterion",
+        align: "left", //  ชิดซ้าย
       },
       {
         title: "คะแนนที่ได้",
         dataIndex: "score",
         key: "score",
+        align: "center", // หรือ "right" ตามต้องการ
       },
     ];
 
     return (
-      <Table dataSource={dataSource} columns={columns} pagination={false} />
+      <>
+        <Table dataSource={dataSource} columns={columns} pagination={false} />
+        <div
+          style={{
+            marginTop: "20px",
+            textAlign: "left",
+            backgroundColor: "#f5f5f5",
+            padding: "16px 16px",
+            borderRadius: "8px",
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: "#333",
+            border: "1px solid #d9d9d9",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          คะแนนรวม:{" "}
+          <span style={{ color: "#b12341", fontSize: "16px" }}>
+            {score !== undefined && score !== null ? score : "ไม่ได้กรอก"}
+          </span>
+        </div>
+      </>
     );
   };
 

@@ -18,25 +18,32 @@ export const UserManagement = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "left",
       render: (text) => <Text strong>{text}</Text>,
       responsive: ["xs", "sm", "md", "lg"],
     },
+
     {
       title: "Name",
       dataIndex: "firstName",
       key: "name",
+      align: "left",
       render: (_, record) => `${record.firstName} ${record.lastName}`,
       responsive: ["sm", "md", "lg"],
     },
+
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      align: "left",
       responsive: ["md", "lg"],
     },
+
     {
       title: "Action",
       key: "action",
+      align: "left",
       render: (_, record) => (
         <Popconfirm
           title="Are you sure to delete this user?"

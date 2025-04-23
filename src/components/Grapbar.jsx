@@ -109,7 +109,7 @@ const UserTable = () => {
 
   const roundOptions = [...new Set(scores.map((s) => s.round))]
     .filter((r) => r !== undefined && r !== null)
-    .sort((a, b) => a - b); // ✅ เรียงตัวเลข
+    .sort((a, b) => a - b); //  เรียงตัวเลข
 
   const columns = [
     {
