@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Card, Row, Col, Select, Typography, Tag } from "antd";
+import { Table, Card, Row, Col, Select, Typography, Tag, Input } from "antd";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import {
@@ -16,12 +16,55 @@ import {
 const { Title } = Typography;
 const { Option } = Select;
 
+// สมาชิกทีม toggle
+const TeamMemberToggle = ({ members = [] }) => {
+  const [expanded, setExpanded] = useState(false);
+  if (!members || members.length === 0) return "-";
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        style={{
+          fontSize: "1em",
+          color: "#1677ff",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        {expanded ? "ซ่อนสมาชิก" : "ดูสมาชิก"}
+      </button>
+      {expanded && (
+        <ol
+          style={{
+            margin: "8px 0 0 0",
+            paddingLeft: 20,
+            fontSize: "0.95em",
+            color: "#000",
+            textAlign: "left",
+          }}
+        >
+          {members.map((member, idx) => (
+            <li key={idx} style={{ marginBottom: 4 }}>
+              {member}
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+};
+
 const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [scores, setScores] = useState([]);
   const [selectedSport, setSelectedSport] = useState(null);
   const [selectedRound, setSelectedRound] = useState(null);
   const [tournaments, setTournaments] = useState([]);
+  const [registrations, setRegistrations] = useState([]);
+  const [teamFilter, setTeamFilter] = useState("all");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,26 +72,40 @@ const UserTable = () => {
       const scoreSnap = await getDocs(collection(db, "scores"));
       const tournamentSnap = await getDocs(collection(db, "tournaments"));
 
-      const usersData = userSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const scoresData = scoreSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const tournamentData = tournamentSnap.docs.map((doc) => ({
+      const tournamentDocs = tournamentSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      setUsers(usersData);
-      setScores(scoresData);
-      setTournaments(tournamentData);
+      const allRegistrations = [];
+
+      for (const tour of tournamentDocs) {
+        const regSnap = await getDocs(
+          collection(db, "tournaments", tour.id, "registrations")
+        );
+
+        regSnap.forEach((doc) => {
+          allRegistrations.push({
+            id: doc.id,
+            ...doc.data(),
+            tournamentId: tour.id, // เพิ่มไว้ใช้เปรียบเทียบ
+          });
+        });
+      }
+
+      setUsers(userSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setScores(scoreSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setTournaments(tournamentDocs);
+      setRegistrations(allRegistrations); //  ใช้ registrations ที่รวมจากทุก tournament
     };
 
     fetchData();
   }, []);
+
+  const getTeamType = (userId) => {
+    const reg = registrations.find((r) => r.userId === userId);
+    return reg?.teamType || "individual";
+  };
 
   const getTableData = () => {
     let filteredScores = scores;
@@ -63,21 +120,27 @@ const UserTable = () => {
       filteredScores = filteredScores.filter((s) => s.round === selectedRound);
     }
 
-    const merged = filteredScores.map((score) => {
-      const user = users.find((u) => u.id === score.userId);
-      const tournament = tournaments.find((t) => t.id === score.tournamentId);
-      return {
-        key: score.id,
-        fullName: `${user?.firstName || "-"} ${user?.lastName || ""}`,
-        tournament: tournament?.tournamentName || score.tournamentId,
-        tournamentId: score.tournamentId,
-        score: score.score,
-        round: score.round || "-",
-        createdAt: user?.createdAt?.toDate().toLocaleDateString("th-TH"),
-      };
-    });
+    if (teamFilter !== "all") {
+      filteredScores = filteredScores.filter(
+        (s) => getTeamType(s.userId) === teamFilter
+      );
+    }
 
-    return merged
+    return filteredScores
+      .map((score) => {
+        const user = users.find((u) => u.id === score.userId);
+        const tournament = tournaments.find((t) => t.id === score.tournamentId);
+        return {
+          key: score.id,
+          userId: score.userId,
+          fullName: `${user?.firstName || "-"} ${user?.lastName || ""}`,
+          tournament: tournament?.tournamentName || score.tournamentId,
+          tournamentId: score.tournamentId,
+          score: score.score,
+          round: score.round || "-",
+          createdAt: user?.createdAt?.toDate().toLocaleDateString("th-TH"),
+        };
+      })
       .sort((a, b) => b.score - a.score)
       .map((item, index) => ({
         ...item,
@@ -93,23 +156,14 @@ const UserTable = () => {
       score: item.score,
       fill:
         index === 0
-          ? "#FFD700" // ทอง
+          ? "#FFD700"
           : index === 1
-          ? "#cd7f32" // ทองแดงแดง
+          ? "#cd7f32"
           : index === 2
-          ? "#C0C0C0" // เงิน
-          : "#888888", // อื่น ๆ
+          ? "#C0C0C0"
+          : "#888888",
     }));
   };
-
-  const tournamentOptions = tournaments.map((t) => ({
-    id: t.id,
-    name: t.tournamentName,
-  }));
-
-  const roundOptions = [...new Set(scores.map((s) => s.round))]
-    .filter((r) => r !== undefined && r !== null)
-    .sort((a, b) => a - b); //  เรียงตัวเลข
 
   const columns = [
     {
@@ -118,16 +172,60 @@ const UserTable = () => {
       key: "rank",
       render: (rank) => {
         let color = "#888";
-        if (rank === 1) color = "#FFD700"; // ทอง
-        else if (rank === 2) color = "#cd7f32"; // ทองแดงแดง
-        else if (rank === 3) color = "#C0C0C0"; // เงิน
+        if (rank === 1) color = "#FFD700";
+        else if (rank === 2) color = "#cd7f32";
+        else if (rank === 3) color = "#C0C0C0";
         return <Tag color={color}>{rank}</Tag>;
       },
     },
     {
       title: "ชื่อผู้เข้าแข่งขัน",
-      dataIndex: "fullName",
-      key: "fullName",
+      dataIndex: "userId",
+      key: "userId",
+      align: "left",
+      render: (id) => {
+        const user = users.find((u) => u.id === id);
+        const name = user ? `${user.firstName} ${user.lastName}` : id;
+        const reg = registrations.find((r) => r.userId === id);
+
+        if (reg?.teamType === "team") {
+          return (
+            <div>
+              <strong>{reg.teamName || "ไม่ระบุ"}</strong>
+              <br />
+              <span style={{ fontSize: "0.85em", color: "#555" }}>
+                (หัวหน้าทีม: {name})
+              </span>
+            </div>
+          );
+        }
+
+        return name;
+      },
+    },
+    {
+      title: "ชื่อทีม",
+      dataIndex: "userId",
+      key: "teamName",
+      align: "left",
+      render: (id) => {
+        const reg = registrations.find((r) => r.userId === id);
+        return reg?.teamType === "team" ? reg.teamName || "-" : "ประเภทเดี่ยว";
+      },
+    },
+    {
+      title: "สมาชิกในทีม",
+      dataIndex: "userId",
+      key: "teamMembers",
+      align: "left",
+      render: (id) => {
+        const reg = registrations.find((r) => r.userId === id);
+        return reg?.teamType === "team" ? (
+          <TeamMemberToggle members={reg.teamMembers || []} />
+        ) : (
+          "เเข่งเดี่ยว"
+        );
+      },
     },
     {
       title: "คะแนน",
@@ -145,11 +243,6 @@ const UserTable = () => {
       key: "round",
       render: (round) => `รอบที่ ${round}`,
     },
-    // {
-    //   title: "วันที่สมัคร",
-    //   dataIndex: "createdAt",
-    //   key: "createdAt",
-    // },
   ];
 
   return (
@@ -163,16 +256,27 @@ const UserTable = () => {
                   คะแนนการแข่งขัน
                 </Title>
               </Col>
-              <Col>
+              <Col style={{ display: "flex", gap: 10 }}>
+                <Select
+                  allowClear
+                  placeholder="เลือกประเภททีม"
+                  style={{ minWidth: 150 }}
+                  onChange={(val) => setTeamFilter(val)}
+                  defaultValue="all"
+                >
+                  <Option value="all">ทั้งหมด</Option>
+                  <Option value="individual">เดี่ยว</Option>
+                  <Option value="team">ทีม</Option>
+                </Select>
                 <Select
                   allowClear
                   placeholder="เลือกกีฬา"
-                  style={{ minWidth: 150, marginRight: 10 }}
-                  onChange={(value) => setSelectedSport(value)}
+                  style={{ minWidth: 150 }}
+                  onChange={(val) => setSelectedSport(val)}
                 >
-                  {tournamentOptions.map((t) => (
+                  {tournaments.map((t) => (
                     <Option key={t.id} value={t.id}>
-                      {t.name}
+                      {t.tournamentName}
                     </Option>
                   ))}
                 </Select>
@@ -180,13 +284,16 @@ const UserTable = () => {
                   allowClear
                   placeholder="เลือกรอบ"
                   style={{ minWidth: 120 }}
-                  onChange={(value) => setSelectedRound(value)}
+                  onChange={(val) => setSelectedRound(val)}
                 >
-                  {roundOptions.map((round) => (
-                    <Option key={round} value={round}>
-                      รอบ {round}
-                    </Option>
-                  ))}
+                  {[...new Set(scores.map((s) => s.round))]
+                    .filter((r) => r != null)
+                    .sort((a, b) => a - b)
+                    .map((round) => (
+                      <Option key={round} value={round}>
+                        รอบ {round}
+                      </Option>
+                    ))}
                 </Select>
               </Col>
             </Row>
@@ -203,7 +310,7 @@ const UserTable = () => {
 
           {selectedRound && (
             <div style={{ marginTop: 40 }}>
-              <Title level={5}>กราฟลําดับ{selectedRound}</Title>
+              <Title level={5}>กราฟลําดับรอบ {selectedRound}</Title>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={getBarChartData()}

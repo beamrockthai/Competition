@@ -13,32 +13,33 @@ import {
 import { db } from "../firebase";
 
 // เพิ่มคะแนน (เฉพาะ role "user")
-export async function createScore(userId, tournamentId, score, round) {
-  // ดึงข้อมูล user ก่อน
-  const userDocRef = doc(db, "users", userId);
-  const userSnap = await getDoc(userDocRef);
+export async function getTournamentParticipants(tournamentId) {
+  const q = query(
+    collection(db, "scores"),
+    where("tournamentId", "==", tournamentId)
+  );
+  const querySnapshot = await getDocs(q);
 
-  if (!userSnap.exists()) {
-    throw new Error("ไม่พบผู้ใช้");
+  const participants = [];
+
+  for (const docSnap of querySnapshot.docs) {
+    const scoreData = docSnap.data();
+    const userRef = doc(db, "users", scoreData.userId);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      participants.push({
+        userId: scoreData.userId,
+        displayName: userData.displayName || "ไม่ระบุชื่อ",
+        teamName: userData.teamName || "ไม่ระบุทีม",
+        score: scoreData.score,
+        round: scoreData.round,
+      });
+    }
   }
 
-  const userData = userSnap.data();
-
-  if (userData.role !== "user") {
-    throw new Error(
-      "เฉพาะผู้ใช้ทั่วไป (role: user) เท่านั้นที่สามารถเพิ่มคะแนนได้"
-    );
-  }
-
-  // ถ้าผ่านการตรวจสอบ role แล้ว → เพิ่มคะแนน
-  return await addDoc(collection(db, "scores"), {
-    userId,
-    tournamentId,
-    score,
-    round,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
+  return participants;
 }
 
 export async function updateScore(scoreId, newScore) {
@@ -72,4 +73,30 @@ export async function getUserScores(userId) {
     scores,
     totalScore,
   };
+}
+
+export async function createScore(userId, tournamentId, score, round) {
+  const userDocRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userDocRef);
+
+  if (!userSnap.exists()) {
+    throw new Error("ไม่พบผู้ใช้");
+  }
+
+  const userData = userSnap.data();
+
+  if (userData.role !== "user") {
+    throw new Error(
+      "เฉพาะผู้ใช้ทั่วไป (role: user) เท่านั้นที่สามารถเพิ่มคะแนนได้"
+    );
+  }
+
+  return await addDoc(collection(db, "scores"), {
+    userId,
+    tournamentId,
+    score,
+    round,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
 }

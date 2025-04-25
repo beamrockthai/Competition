@@ -120,7 +120,14 @@ export default function MyForm() {
             {toEval.length ? (
               toEval.map((f) => (
                 <Col key={f.id} xs={24} sm={12} md={8} lg={6} xl={6}>
-                  <Card title={f.name} style={{ width: "100%" }}>
+                  <Card
+                    title={
+                      <span style={{ fontSize: "14px", fontWeight: "normal" }}>
+                        {f.name}
+                      </span>
+                    }
+                    style={{ width: "100%" }}
+                  >
                     <Button block onClick={() => openModal(f)}>
                       ประเมิน
                     </Button>

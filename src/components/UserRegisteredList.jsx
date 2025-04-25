@@ -67,7 +67,9 @@ const UserRegisteredList = () => {
       key: "teamName",
       align: "left",
       render: (_, record) =>
-        record.teamType === "team" ? record.teamName || "ไม่ได้ระบุ" : "-",
+        record.teamType === "team"
+          ? record.teamName || "ไม่ได้ระบุ"
+          : "เเข่งประเภทเดี่ยว",
     },
 
     {
@@ -94,7 +96,7 @@ const UserRegisteredList = () => {
             <span style={{ color: "#aaa" }}>ไม่มีสมาชิกในทีม</span>
           )
         ) : (
-          "-"
+          "เเข่งประเภทเดี่ยว"
         ),
     },
 
