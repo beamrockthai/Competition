@@ -193,7 +193,7 @@ export const ManageDirectors = () => {
         </Form>
       </Modal>
 
-      {/* ✅ Modal Popup ยืนยันการสมัคร */}
+      {/* Modal Popup ยืนยันการสมัคร */}
       <Modal
         title="ยืนยันข้อมูล"
         open={isConfirmModalOpen}

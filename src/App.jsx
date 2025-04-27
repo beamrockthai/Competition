@@ -64,19 +64,36 @@ const App = () => {
       label: <Link to="/userdashboardmain">หน้าหลัก</Link>,
     },
 
-    {
-      key: "2",
-      icon: <UnorderedListOutlined style={{ color: "#b12341" }} />,
-      label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
-    },
-    {
-      key: "3",
-      icon: <HighlightOutlined style={{ color: "#b12341" }} />,
-      label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
-    },
+    // {
+    //   key: "2",
+    //   icon: <UnorderedListOutlined style={{ color: "#b12341" }} />,
+    //   label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
+    // },
+
+    ...(role === "user"
+      ? [
+          {
+            key: "2",
+            icon: <UnorderedListOutlined style={{ color: "#b12341" }} />,
+            label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
+          },
+
+          {
+            key: "3",
+            icon: <HighlightOutlined style={{ color: "#b12341" }} />,
+            label: <Link to="/userregisteredlist">รายการที่คุณลงทะเบียน</Link>,
+          },
+        ]
+      : []),
 
     ...(role === "admin"
       ? [
+          {
+            key: "2",
+            icon: <UnorderedListOutlined style={{ color: "#b12341" }} />,
+            label: <Link to="/userdashboard">รายการเเข่งขัน</Link>,
+          },
+
           {
             key: "10",
             icon: <HighlightOutlined style={{ color: "#b12341" }} />,

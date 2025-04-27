@@ -112,8 +112,8 @@ const Register = () => {
               />
               <ProFormText
                 name="lastName"
-                label="นามสกุล พร้อมชื่อทีม"
-                placeholder="นามสกุล จร โรงเรียน สตรี"
+                label="นามสกุล"
+                placeholder="นามสกุล "
                 rules={[{ required: true, message: "กรุณากรอกนามสกุล!" }]}
                 fieldProps={{ prefix: <UserOutlined /> }}
               />

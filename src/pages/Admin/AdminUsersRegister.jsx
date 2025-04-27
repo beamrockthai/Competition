@@ -109,7 +109,9 @@ const AdminAllRegistrations = () => {
       key: "teamName",
       align: "left",
       render: (_, record) =>
-        record.teamType === "team" ? record.teamName || "ไม่ได้ระบุ" : "-",
+        record.teamType === "team"
+          ? record.teamName || "ไม่ได้ระบุ"
+          : "ประเภทเดี่ยว",
     },
 
     {
@@ -136,7 +138,7 @@ const AdminAllRegistrations = () => {
             <span style={{ color: "#aaa" }}>ไม่มีสมาชิกในทีม</span>
           )
         ) : (
-          "-"
+          "ประเภทเดี่ยว"
         ),
     },
 
