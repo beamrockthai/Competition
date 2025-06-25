@@ -28,7 +28,7 @@ const TeamDisplay = ({ teamName, leaderName, teamMembers = [] }) => {
   return (
     <div>
       <strong>
-        ทีม11: {teamName || "ไม่ระบุ"} <br />
+        ทีม: {teamName || "ไม่ระบุ"} <br />
         <span style={{ fontSize: "0.85em", color: "#555" }}>
           (หัวหน้าทีม: {leaderName})
         </span>
